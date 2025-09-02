@@ -13,10 +13,7 @@ import './widgets/camera_preview_widget.dart';
 import './widgets/camera_top_bar_widget.dart';
 import './widgets/manual_entry_dialog_widget.dart';
 import './widgets/permission_dialog_widget.dart';
-
-// replace VisionService import with GeminiService
 import '../../services/gemini_service.dart';
-//import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class CameraScreen extends StatefulWidget {
   const CameraScreen({Key? key}) : super(key: key);
@@ -27,7 +24,6 @@ class CameraScreen extends StatefulWidget {
 
 class _CameraScreenState extends State<CameraScreen>
     with WidgetsBindingObserver {
-  // Camera related variables
   List<CameraDescription> _cameras = [];
   CameraController? _cameraController;
   bool _isCameraInitialized = false;
@@ -35,15 +31,12 @@ class _CameraScreenState extends State<CameraScreen>
   FlashMode _currentFlashMode = FlashMode.auto;
   int _selectedCameraIndex = 0;
 
-  // Gemini service
   late GeminiService _geminiService;
 
-  // UI state variables
   Offset? _focusPoint;
   XFile? _recentPhoto;
   XFile? _capturedImage;
 
-  // Image picker
   final ImagePicker _imagePicker = ImagePicker();
 
   @override
@@ -51,10 +44,7 @@ class _CameraScreenState extends State<CameraScreen>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
 
-    // load API key (if you use flutter_dotenv load it in main() before runApp)
-    final apiKey =
-        "AIzaSyA2h7qv0IodTx2tiaavH3wD56qMCMSjDr4"; // replace or use dotenv
-
+    final apiKey = "AIzaSyA2h7qv0IodTx2tiaavH3wD56qMCMSjDr4"; // 🔑 replace with dotenv if needed
     _geminiService = GeminiService(apiKey: apiKey, maxDimension: 1024);
 
     _initializeCamera();
@@ -72,7 +62,6 @@ class _CameraScreenState extends State<CameraScreen>
     if (_cameraController == null || !_cameraController!.value.isInitialized) {
       return;
     }
-
     if (state == AppLifecycleState.inactive) {
       _cameraController?.dispose();
     } else if (state == AppLifecycleState.resumed) {
@@ -82,7 +71,6 @@ class _CameraScreenState extends State<CameraScreen>
 
   Future<bool> _requestCameraPermission() async {
     if (kIsWeb) return true;
-
     final status = await Permission.camera.request();
     return status.isGranted;
   }
@@ -93,7 +81,6 @@ class _CameraScreenState extends State<CameraScreen>
         _showPermissionDialog();
         return;
       }
-
       _cameras = await availableCameras();
       if (_cameras.isEmpty) {
         _showErrorSnackBar('No cameras available on this device');
@@ -131,15 +118,12 @@ class _CameraScreenState extends State<CameraScreen>
 
   Future<void> _applySettings() async {
     if (_cameraController == null) return;
-
     try {
       await _cameraController!.setFocusMode(FocusMode.auto);
       if (!kIsWeb) {
         await _cameraController!.setFlashMode(_currentFlashMode);
       }
-    } catch (e) {
-      // Silently handle unsupported features
-    }
+    } catch (_) {}
   }
 
   void _showPermissionDialog() {
@@ -149,7 +133,7 @@ class _CameraScreenState extends State<CameraScreen>
       builder: (context) => PermissionDialogWidget(
         title: 'Camera Permission Required',
         message:
-            'Chefify needs camera access to recognize ingredients from photos. Please grant camera permission to continue.',
+            'Chefify needs camera access to recognize ingredients from photos.',
         onOpenSettings: () async {
           Navigator.of(context).pop();
           await openAppSettings();
@@ -176,10 +160,7 @@ class _CameraScreenState extends State<CameraScreen>
     if (_cameraController == null || !_cameraController!.value.isInitialized) {
       return;
     }
-
-    setState(() {
-      _isLoading = true;
-    });
+    setState(() => _isLoading = true);
 
     try {
       final XFile photo = await _cameraController!.takePicture();
@@ -188,10 +169,7 @@ class _CameraScreenState extends State<CameraScreen>
         _recentPhoto = photo;
       });
 
-      // Call Gemini service
       final rawResults = await _geminiService.detectFoods(photo.path);
-
-      // Map to your UI format
       final results = rawResults.map((r) {
         final name = (r['name'] ?? '') as String;
         return {
@@ -203,24 +181,29 @@ class _CameraScreenState extends State<CameraScreen>
         };
       }).toList();
 
-      _cameraController?.dispose();
-      Navigator.pushNamed(
-        context,
-        '/recognition-results-screen',
-        arguments: {
-          'imagePath': photo.path,
-          'imageSource': 'camera',
-          'detectedIngredients': results,
-        },
-      );
+      final args =
+          ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+
+      if (args != null && args['existingIngredients'] != null) {
+        // Return new detections to RecognitionResultsScreen
+        Navigator.pop(context, results);
+      } else {
+        // First-time flow
+        _cameraController?.dispose();
+        Navigator.pushNamed(
+          context,
+          '/recognition-results-screen',
+          arguments: {
+            'imagePath': photo.path,
+            'imageSource': 'camera',
+            'detectedIngredients': results,
+          },
+        );
+      }
     } catch (e) {
       _showErrorSnackBar('Recognition failed: ${e.toString()}');
     } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -230,25 +213,28 @@ class _CameraScreenState extends State<CameraScreen>
         source: ImageSource.gallery,
         imageQuality: 85,
       );
+      if (image == null) return;
 
-      if (image != null) {
-        setState(() {
-          _recentPhoto = image;
-        });
+      setState(() => _recentPhoto = image);
 
-        final rawResults = await _geminiService.detectFoods(image.path);
+      final rawResults = await _geminiService.detectFoods(image.path);
+      final results = rawResults.map((r) {
+        final name = (r['name'] ?? '') as String;
+        return {
+          'id': DateTime.now().millisecondsSinceEpoch ^ name.hashCode,
+          'name': name,
+          'confidence': (r['confidence'] as num?)?.toDouble() ?? 0.0,
+          'category': 'detected',
+          'boundingBox': r['boundingBox'],
+        };
+      }).toList();
 
-        final results = rawResults.map((r) {
-          final name = (r['name'] ?? '') as String;
-          return {
-            'id': DateTime.now().millisecondsSinceEpoch ^ name.hashCode,
-            'name': name,
-            'confidence': (r['confidence'] as num?)?.toDouble() ?? 0.0,
-            'category': 'detected',
-            'boundingBox': r['boundingBox'],
-          };
-        }).toList();
+      final args =
+          ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
 
+      if (args != null && args['existingIngredients'] != null) {
+        Navigator.pop(context, results);
+      } else {
         _cameraController?.dispose();
         Navigator.pushNamed(
           context,
@@ -266,8 +252,7 @@ class _CameraScreenState extends State<CameraScreen>
   }
 
   void _toggleFlash() {
-    if (kIsWeb) return; // Flash not supported on web
-
+    if (kIsWeb) return;
     setState(() {
       switch (_currentFlashMode) {
         case FlashMode.off:
@@ -284,13 +269,11 @@ class _CameraScreenState extends State<CameraScreen>
           break;
       }
     });
-
     _cameraController?.setFlashMode(_currentFlashMode);
   }
 
   void _flipCamera() async {
     if (_cameras.length < 2) return;
-
     setState(() {
       _selectedCameraIndex = (_selectedCameraIndex + 1) % _cameras.length;
       _isCameraInitialized = false;
@@ -303,34 +286,19 @@ class _CameraScreenState extends State<CameraScreen>
       kIsWeb ? ResolutionPreset.medium : ResolutionPreset.high,
       enableAudio: false,
     );
-
     try {
       await _cameraController!.initialize();
       await _applySettings();
-
-      if (mounted) {
-        setState(() {
-          _isCameraInitialized = true;
-        });
-      }
+      if (mounted) setState(() => _isCameraInitialized = true);
     } catch (e) {
       _showErrorSnackBar('Failed to switch camera');
     }
   }
 
   void _onTapToFocus() {
-    // Focus animation feedback
-    setState(() {
-      _focusPoint = Offset(50.w, 50.h);
-    });
-
-    // Remove focus indicator after animation
+    setState(() => _focusPoint = Offset(50.w, 50.h));
     Future.delayed(Duration(seconds: 1), () {
-      if (mounted) {
-        setState(() {
-          _focusPoint = null;
-        });
-      }
+      if (mounted) setState(() => _focusPoint = null);
     });
   }
 
@@ -339,7 +307,6 @@ class _CameraScreenState extends State<CameraScreen>
       context: context,
       builder: (context) => ManualEntryDialogWidget(
         onIngredientsEntered: (ingredients) {
-          // Navigate to recognition results with manual ingredients
           _cameraController?.dispose();
           Navigator.pushNamed(
             context,
@@ -355,7 +322,6 @@ class _CameraScreenState extends State<CameraScreen>
   }
 
   void _navigateToSettings() {
-    // Navigate to settings screen (placeholder for now)
     _showErrorSnackBar('Settings screen coming soon!');
   }
 
@@ -365,14 +331,12 @@ class _CameraScreenState extends State<CameraScreen>
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-          // Camera preview
           CameraPreviewWidget(
             cameraController: _cameraController,
             isInitialized: _isCameraInitialized,
             onTapToFocus: _onTapToFocus,
             focusPoint: _focusPoint,
           ),
-          // Top bar
           Positioned(
             top: 0,
             left: 0,
@@ -382,7 +346,6 @@ class _CameraScreenState extends State<CameraScreen>
               showBackButton: false,
             ),
           ),
-          // Bottom controls
           Positioned(
             bottom: 0,
             left: 0,

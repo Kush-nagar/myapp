@@ -25,17 +25,6 @@ class _RecognitionResultsScreenState extends State<RecognitionResultsScreen> {
   /// Minimum confidence threshold to keep a detected label (adjustable)
   final double _minConfidence = 0.35;
 
-  // /// Small normalization map for common synonyms (extend as needed)
-  // final Map<String, String> _normalizationMap = {
-  //   'roma tomato': 'tomato',
-  //   'cherry tomato': 'tomato',
-  //   'mozzarella cheese': 'cheese',
-  //   'cheddar cheese': 'cheese',
-  //   'spring onion': 'green onion',
-  //   'scallion': 'green onion',
-  //   // add more mappings as you discover
-  // };
-
   @override
   void initState() {
     super.initState();
@@ -44,7 +33,6 @@ class _RecognitionResultsScreenState extends State<RecognitionResultsScreen> {
 
   String _normalizeName(String raw) {
     final lower = raw.trim().toLowerCase();
-    //if (_normalizationMap.containsKey(lower)) return _normalizationMap[lower]!;
     // basic plural -> singular naive handling
     if (lower.endsWith('es')) return lower.substring(0, lower.length - 2);
     if (lower.endsWith('s')) return lower.substring(0, lower.length - 1);
@@ -263,7 +251,6 @@ class _RecognitionResultsScreenState extends State<RecognitionResultsScreen> {
       );
     }
   }
-
 
   Future<bool> _onWillPop() async {
     if (_recognizedIngredients.isNotEmpty) {
@@ -519,21 +506,71 @@ class _RecognitionResultsScreenState extends State<RecognitionResultsScreen> {
 
         // Floating action button
         floatingActionButton: !_isLoading && _recognizedIngredients.isNotEmpty
-            ? FloatingActionButton.extended(
-                onPressed: _findRecipes,
-                icon: CustomIconWidget(
-                  iconName: 'restaurant_menu',
-                  color: Colors.white,
-                  size: 6.w,
-                ),
-                label: Text(
-                  'Find Recipes',
-                  style: AppTheme.lightTheme.textTheme.labelLarge?.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
+            ? Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  FloatingActionButton.extended(
+                    onPressed: _findRecipes,
+                    icon: CustomIconWidget(
+                      iconName: 'restaurant_menu',
+                      color: Colors.white,
+                      size: 6.w,
+                    ),
+                    label: Text(
+                      'Find Recipes',
+                      style: AppTheme.lightTheme.textTheme.labelLarge?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    backgroundColor: AppTheme.lightTheme.colorScheme.primary,
                   ),
-                ),
-                backgroundColor: AppTheme.lightTheme.colorScheme.primary,
+                  SizedBox(height: 2.h),
+                  FloatingActionButton.extended(
+                    onPressed: () async {
+                      // Push camera again but keep current ingredients
+                      final newIngredients = await Navigator.pushNamed(
+                        context,
+                        '/camera-screen',
+                        arguments: {
+                          'existingIngredients': _recognizedIngredients,
+                        },
+                      );
+
+                      if (newIngredients != null &&
+                          newIngredients is List<Map<String, dynamic>>) {
+                        setState(() {
+                          // Merge old + new
+                          _recognizedIngredients.addAll(newIngredients);
+                          // Deduplicate by name
+                          final dedup = <String, Map<String, dynamic>>{};
+                          for (var it in _recognizedIngredients) {
+                            final key = (it['name'] as String).toLowerCase();
+                            if (!dedup.containsKey(key) ||
+                                (it['confidence'] as double) >
+                                    (dedup[key]!['confidence'] as double)) {
+                              dedup[key] = it;
+                            }
+                          }
+                          _recognizedIngredients = dedup.values.toList();
+                        });
+                      }
+                    },
+                    icon: CustomIconWidget(
+                      iconName: 'add_a_photo',
+                      color: Colors.white,
+                      size: 6.w,
+                    ),
+                    label: Text(
+                      'Add Another Photo',
+                      style: AppTheme.lightTheme.textTheme.labelLarge?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    backgroundColor: AppTheme.lightTheme.colorScheme.secondary,
+                  ),
+                ],
               )
             : null,
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,

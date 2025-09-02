@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../presentation/camera_screen/camera_screen.dart';
 import '../presentation/onboarding_screen/onboarding_screen.dart';
 import '../presentation/splash_screen/splash_screen.dart';
@@ -7,7 +8,6 @@ import '../presentation/recognition_results_screen/recognition_results_screen.da
 import '../presentation/recipe_detail_screen/recipe_detail_screen.dart';
 
 class AppRoutes {
-  // TODO: Add your routes here
   static const String initial = '/';
   static const String camera = '/camera-screen';
   static const String onboarding = '/onboarding-screen';
@@ -18,12 +18,11 @@ class AppRoutes {
 
   static Map<String, WidgetBuilder> routes = {
     initial: (context) => const SplashScreen(),
-    camera: (context) => const CameraScreen(),
-    onboarding: (context) => const OnboardingScreen(),
     splash: (context) => const SplashScreen(),
-    recipeSuggestions: (context) => const RecipeSuggestionsScreen(),
+    onboarding: (context) => const OnboardingScreen(),
+    camera: (context) => const CameraScreen(),
     recognitionResults: (context) => const RecognitionResultsScreen(),
+    recipeSuggestions: (context) => const RecipeSuggestionsScreen(),
     recipeDetail: (context) => const RecipeDetailScreen(),
-    // TODO: Add your other routes here
   };
 }
