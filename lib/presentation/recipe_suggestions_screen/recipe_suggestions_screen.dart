@@ -3,15 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sizer/sizer.dart';
 
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:flutter/foundation.dart';
+
 import '../../core/app_export.dart';
 import '../../services/gemini_service.dart';
 import './widgets/empty_state_widget.dart';
 import './widgets/filter_chip_widget.dart';
-import './widgets/ingredient_chip_widget.dart';
+import './widgets/ingredient_chip_widget.dart';   
 import './widgets/quick_actions_dialog_widget.dart';
 import './widgets/recipe_card_widget.dart';
 import './widgets/sort_bottom_sheet_widget.dart';
-
 
 class RecipeSuggestionsScreen extends StatefulWidget {
   const RecipeSuggestionsScreen({Key? key}) : super(key: key);
@@ -32,13 +35,37 @@ class _RecipeSuggestionsScreenState extends State<RecipeSuggestionsScreen> {
 
   late final GeminiService _geminiService;
 
+  Future<String> _fetchUnsplashImage(String query, String unsplashKey) async {
+    try {
+      final uri = Uri.parse(
+        'https://api.unsplash.com/search/photos?page=1&per_page=1&query=${Uri.encodeComponent(query)}&client_id=$unsplashKey',
+      );
+
+      final resp = await http.get(uri);
+      if (resp.statusCode == 200) {
+        final data = jsonDecode(resp.body);
+        if (data['results'] != null && data['results'].isNotEmpty) {
+          return data['results'][0]['urls']['regular'];
+        }
+      }
+    } catch (e) {
+      debugPrint("Unsplash error: $e");
+    }
+
+    // fallback placeholder
+    return "https://images.unsplash.com/photo-1504674900247-0877df9cc836";
+  }
+
   @override
   void initState() {
     super.initState();
 
     // IMPORTANT: don't hardcode your real API key in source for production.
     // Use secure storage, environment variables or native build-time variables.
-    _geminiService = GeminiService(apiKey: 'AIzaSyBHaPa5KHVpklOP9d_I6B1q4W-4d09FfsQ');
+    _geminiService = GeminiService(
+      apiKey: 'AIzaSyBHaPa5KHVpklOP9d_I6B1q4W-4d09FfsQ',
+      //unsplashKey: '98KP7IyvCWdYX0TLN8rTiKWBux0SW70ohmnTxmyb_o8',
+    );
 
     // ✅ Read navigation args after the first frame is rendered
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -64,17 +91,25 @@ class _RecipeSuggestionsScreenState extends State<RecipeSuggestionsScreen> {
     // Sort recipes
     switch (selectedSort) {
       case 'match':
-        filtered.sort((a, b) =>
-            (b['matchPercentage'] as num).compareTo(a['matchPercentage'] as num));
+        filtered.sort(
+          (a, b) => (b['matchPercentage'] as num).compareTo(
+            a['matchPercentage'] as num,
+          ),
+        );
         break;
       case 'time':
-        filtered.sort((a, b) =>
-            (a['cookingTime'] as num).compareTo(b['cookingTime'] as num));
+        filtered.sort(
+          (a, b) =>
+              (a['cookingTime'] as num).compareTo(b['cookingTime'] as num),
+        );
         break;
       case 'difficulty':
         final difficultyOrder = {'Easy': 1, 'Medium': 2, 'Hard': 3};
-        filtered.sort((a, b) => (difficultyOrder[a['difficulty']] ?? 2)
-            .compareTo(difficultyOrder[b['difficulty']] ?? 2));
+        filtered.sort(
+          (a, b) => (difficultyOrder[a['difficulty']] ?? 2).compareTo(
+            difficultyOrder[b['difficulty']] ?? 2,
+          ),
+        );
         break;
     }
 
@@ -93,7 +128,8 @@ class _RecipeSuggestionsScreenState extends State<RecipeSuggestionsScreen> {
         leading: IconButton(
           icon: CustomIconWidget(
             iconName: 'arrow_back',
-            color: Theme.of(context).appBarTheme.iconTheme?.color ?? Colors.black,
+            color:
+                Theme.of(context).appBarTheme.iconTheme?.color ?? Colors.black,
             size: 6.w,
           ),
           onPressed: () => Navigator.pop(context),
@@ -102,7 +138,8 @@ class _RecipeSuggestionsScreenState extends State<RecipeSuggestionsScreen> {
           IconButton(
             icon: CustomIconWidget(
               iconName: 'sort',
-              color: Theme.of(context).appBarTheme.iconTheme?.color ??
+              color:
+                  Theme.of(context).appBarTheme.iconTheme?.color ??
                   Colors.black,
               size: 6.w,
             ),
@@ -114,9 +151,7 @@ class _RecipeSuggestionsScreenState extends State<RecipeSuggestionsScreen> {
         bottom: isLoading
             ? PreferredSize(
                 preferredSize: Size.fromHeight(3),
-                child: LinearProgressIndicator(
-                  minHeight: 3,
-                ),
+                child: LinearProgressIndicator(minHeight: 3),
               )
             : null,
       ),
@@ -167,18 +202,18 @@ class _RecipeSuggestionsScreenState extends State<RecipeSuggestionsScreen> {
             children: [
               Text(
                 'Selected Ingredients',
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
               ),
               TextButton(
                 onPressed: () => Navigator.pop(context),
                 child: Text(
                   'Edit Ingredients',
                   style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                        color: AppTheme.lightTheme.colorScheme.primary,
-                        fontWeight: FontWeight.w500,
-                      ),
+                    color: AppTheme.lightTheme.colorScheme.primary,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
             ],
@@ -319,11 +354,9 @@ class _RecipeSuggestionsScreenState extends State<RecipeSuggestionsScreen> {
   }
 
   void _shareRecipe(Map<String, dynamic> recipe) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Sharing "${recipe['title']}"...'),
-      ),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text('Sharing "${recipe['title']}"...')));
     HapticFeedback.lightImpact();
   }
 
@@ -349,19 +382,33 @@ class _RecipeSuggestionsScreenState extends State<RecipeSuggestionsScreen> {
         maxRecipes: 8,
       );
 
-      // Normalize & compute match metrics
       int idCounter = 1;
-      final normalized = raw.map<Map<String, dynamic>>((r) {
-        final recipeIngredients = _normalizeIngredientList(r['ingredients']);
-        final availableIngredients = recipeIngredients.where((ing) =>
-            selectedIngredients.any((s) => s.toLowerCase() == ing.toLowerCase())).length;
-        final totalIngredients = recipeIngredients.isEmpty ? 1 : recipeIngredients.length;
-        final matchPercentage = ((availableIngredients / totalIngredients) * 100).round();
+      final List<Map<String, dynamic>> normalized = [];
 
-        return {
+      for (final r in raw) {
+        final recipeIngredients = _normalizeIngredientList(r['ingredients']);
+        final availableIngredients = recipeIngredients
+            .where((ing) => selectedIngredients.any(
+                  (s) => s.toLowerCase() == ing.toLowerCase(),
+                ))
+            .length;
+
+        final totalIngredients =
+            recipeIngredients.isEmpty ? 1 : recipeIngredients.length;
+
+        final matchPercentage =
+            ((availableIngredients / totalIngredients) * 100).round();
+
+        // 🔑 fetch Unsplash image for this recipe
+        final imageUrl = await _fetchUnsplashImage(
+          r['title'] ?? 'food',
+          '98KP7IyvCWdYX0TLN8rTiKWBux0SW70ohmnTxmyb_o8',
+        );
+
+        normalized.add({
           "id": idCounter++,
           "title": r['title'] ?? 'Untitled Recipe',
-          "image": r.containsKey('image') ? r['image'] : null,
+          "image": imageUrl,
           "cookingTime": (r['cookingTime'] is num)
               ? r['cookingTime']
               : ((r['cooking_time'] is num) ? r['cooking_time'] : 0),
@@ -373,34 +420,34 @@ class _RecipeSuggestionsScreenState extends State<RecipeSuggestionsScreen> {
           "ingredients": recipeIngredients,
           "nutrition": (r['nutrition'] is Map) ? r['nutrition'] : {},
           "instructions": r['instructions'] ?? [],
-        };
-      }).toList();
+        });
+      }
 
       setState(() {
         allRecipes
           ..clear()
           ..addAll(normalized);
       });
-    } catch (e, st) {
-      // Show user-friendly error
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to fetch recipes: ${e.toString()}')),
+        SnackBar(content: Text('Failed to fetch recipes: $e')),
       );
-      // optionally log stacktrace to console for debugging
-      // debugPrint(st.toString());
     } finally {
       setState(() {
         isLoading = false;
       });
-      HapticFeedback.lightImpact();
     }
   }
+
 
   List<String> _normalizeIngredientList(dynamic raw) {
     try {
       if (raw == null) return [];
       if (raw is List) {
-        return raw.map((e) => e.toString().trim()).where((s) => s.isNotEmpty).toList();
+        return raw
+            .map((e) => e.toString().trim())
+            .where((s) => s.isNotEmpty)
+            .toList();
       }
       if (raw is String) {
         // if model returns a single comma-separated string

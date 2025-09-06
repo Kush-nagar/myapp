@@ -44,8 +44,13 @@ class _CameraScreenState extends State<CameraScreen>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
 
-    final apiKey = "AIzaSyA2h7qv0IodTx2tiaavH3wD56qMCMSjDr4"; // 🔑 replace with dotenv if needed
-    _geminiService = GeminiService(apiKey: apiKey, maxDimension: 1024);
+    final apiKey =
+        "AIzaSyA2h7qv0IodTx2tiaavH3wD56qMCMSjDr4"; // 🔑 replace with dotenv if needed
+    _geminiService = GeminiService(
+      apiKey: apiKey,
+      maxDimension: 1024,
+      //unsplashKey: '98KP7IyvCWdYX0TLN8rTiKWBux0SW70ohmnTxmyb_o8',
+    );
 
     _initializeCamera();
   }

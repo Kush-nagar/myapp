@@ -175,7 +175,6 @@ Return nothing else.
   - "difficulty": string (Easy, Medium, Hard)
   - "dietaryTags": array of strings (e.g., ["All","Vegetarian","Keto"]) — optional but preferred
   - "nutrition": object with optional fields { "calories": number, "protein": number, "fat": number, "carbs": number }
-  - "image": "https://images.pexels.com/photos/2474661/pexels-photo-2474661.jpeg"
 
   Example of a single recipe entry:
   {
@@ -185,8 +184,7 @@ Return nothing else.
     "cookingTime": 40,
     "difficulty": "Medium",
     "dietaryTags": ["All"],
-    "nutrition": {"calories": 320, "protein": 28, "fat": 18, "carbs": 12},
-    "image": "https://images.pexels.com/photos/2474661/pexels-photo-2474661.jpeg"
+    "nutrition": {"calories": 320, "protein": 28, "fat": 18, "carbs": 12}
   }
 
   Input ingredients:
@@ -258,8 +256,7 @@ Return nothing else.
         "ingredients": [],
         "instructions": [],
         "cookingTime": 0,
-        "difficulty": "Unknown",
-        "image": "https://images.pexels.com/photos/2474661/pexels-photo-2474661.jpeg",
+        "difficulty": "Unknown"
       },
     ];
   }
