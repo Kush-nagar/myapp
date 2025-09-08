@@ -158,6 +158,29 @@ Return nothing else.
     }
   }
 
+  /// normalize instructions to always be a list of clean step strings
+  List<String> _normalizeInstructions(dynamic raw) {
+    if (raw == null) return [];
+
+    if (raw is List) {
+      return raw
+          .map((e) => e.toString().trim())
+          .where((s) => s.isNotEmpty)
+          .toList();
+    }
+
+    if (raw is String) {
+      // Split by numbers, bullets, or line breaks
+      return raw
+          .split(RegExp(r'(\d+\.|\n|•|- )'))
+          .map((s) => s.trim())
+          .where((s) => s.isNotEmpty)
+          .toList();
+    }
+
+    return [];
+  }
+
   Future<List<Map<String, dynamic>>> generateRecipesFromIngredients(
     List<String> ingredients, {
     int maxRecipes = 8,
@@ -170,7 +193,7 @@ Return nothing else.
 
   - "title": string
   - "ingredients": array of strings (the full ingredient list for the recipe)
-  - "instructions": array of short step strings (or a single string) — keep steps concise
+  - "instructions": array of detailed step strings (or a single string) — keep steps detailed but clear and not too long
   - "cookingTime": integer (estimated minutes)
   - "difficulty": string (Easy, Medium, Hard)
   - "dietaryTags": array of strings (e.g., ["All","Vegetarian","Keto"]) — optional but preferred
@@ -180,7 +203,12 @@ Return nothing else.
   {
     "title": "Tomato Chicken Curry",
     "ingredients": ["Chicken", "Tomatoes", "Onions", "Garlic", "Curry Powder", "Coconut Milk"],
-    "instructions": ["Sear chicken", "Saute aromatics", "Add spices and tomatoes", "Simmer with coconut milk"],
+    "instructions": [
+      "Sear the chicken pieces in oil until golden brown.",
+      "Remove chicken and sauté onions, garlic, and spices.",
+      "Add tomatoes and simmer until soft.",
+      "Return chicken, add coconut milk, and cook until tender."
+    ],
     "cookingTime": 40,
     "difficulty": "Medium",
     "dietaryTags": ["All"],
@@ -232,10 +260,16 @@ Return nothing else.
       final parsed = jsonDecode(modelText);
       if (parsed is List) {
         return parsed
-            .map<Map<String, dynamic>>((e) => Map<String, dynamic>.from(e))
+            .map<Map<String, dynamic>>((e) {
+              final map = Map<String, dynamic>.from(e);
+              map['instructions'] = _normalizeInstructions(map['instructions']);
+              return map;
+            })
             .toList();
       } else if (parsed is Map) {
-        return [Map<String, dynamic>.from(parsed)];
+        final map = Map<String, dynamic>.from(parsed);
+        map['instructions'] = _normalizeInstructions(map['instructions']);
+        return [map];
       }
     } catch (_) {
       final arrayMatch = RegExp(
@@ -244,7 +278,12 @@ Return nothing else.
       ).firstMatch(modelText);
       if (arrayMatch != null) {
         return (jsonDecode(arrayMatch.group(1)!) as List<dynamic>)
-            .map<Map<String, dynamic>>((e) => Map<String, dynamic>.from(e))
+            .map<Map<String, dynamic>>((e) {
+              final map = Map<String, dynamic>.from(e);
+              map['instructions'] =
+                  _normalizeInstructions(map['instructions']);
+              return map;
+            })
             .toList();
       }
     }

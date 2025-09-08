@@ -78,7 +78,7 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
   }
 
   void _startCooking() {
-    final steps = (recipeData['steps'] as List?) ?? [];
+    final steps = (recipeData['instructions'] as List?) ?? [];
     if (completedSteps == steps.length) {
       // Reset cooking progress
       setState(() {
@@ -114,12 +114,11 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
             .join('\n') ??
         "";
 
-    final steps = (recipeData['steps'] as List?)
-            ?.asMap()
-            .entries
-            .map((e) => "${e.key + 1}. ${e.value}")
-            .join('\n\n') ??
-        "";
+    final steps = (recipeData['instructions'] as List?)
+        ?.asMap()
+        .entries
+        .map((e) => "${e.key + 1}. ${e.value}")
+        .join('\n\n') ?? "";
 
     final nutrition = recipeData['nutrition'] as Map<String, dynamic>? ?? {};
 
@@ -160,7 +159,7 @@ Shared from Chefify App
   Widget build(BuildContext context) {
     final ingredients =
         (recipeData['ingredients'] as List?)?.cast<String>() ?? [];
-    final steps = (recipeData['steps'] as List?)?.cast<String>() ?? [];
+    final steps = (recipeData['instructions'] as List?)?.cast<String>() ?? [];
     final dietaryTags =
         (recipeData['dietaryTags'] as List?)?.cast<String>() ?? [];
     final nutrition = recipeData['nutrition'] as Map<String, dynamic>? ?? {};
