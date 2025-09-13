@@ -99,6 +99,7 @@ class _RecognitionResultsScreenState extends State<RecognitionResultsScreen> {
 
               if (rawName.trim().isEmpty) continue;
 
+              // ignore: unnecessary_cast
               if ((conf as num).toDouble() < _minConfidence) {
                 // skip low-confidence detections
                 continue;
@@ -107,6 +108,7 @@ class _RecognitionResultsScreenState extends State<RecognitionResultsScreen> {
               items.add(
                 _makeIngredientObject(
                   name: rawName,
+                  // ignore: unnecessary_cast
                   confidence: (conf as num).toDouble(),
                   category: 'detected',
                   boundingBox: box,

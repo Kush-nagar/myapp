@@ -35,6 +35,7 @@ class _CameraScreenState extends State<CameraScreen>
 
   Offset? _focusPoint;
   XFile? _recentPhoto;
+  // ignore: unused_field
   XFile? _capturedImage;
 
   final ImagePicker _imagePicker = ImagePicker();

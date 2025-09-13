@@ -37,6 +37,7 @@ class CameraPreviewWidget extends StatelessWidget {
     return GestureDetector(
       onTapUp: (details) {
         final RenderBox box = context.findRenderObject() as RenderBox;
+        // ignore: unused_local_variable
         final Offset localPoint = box.globalToLocal(details.globalPosition);
         onTapToFocus();
       },
