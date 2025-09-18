@@ -155,6 +155,7 @@ class _SplashScreenState extends State<SplashScreen>
     }
   }
 
+  // In your SplashScreen state class:
   Future<void> _navigateToNextScreen() async {
     final prefs = await SharedPreferences.getInstance();
     final isFirstLaunch = prefs.getBool('first_launch') ?? true;
@@ -163,13 +164,15 @@ class _SplashScreenState extends State<SplashScreen>
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
     if (mounted) {
-      if (isFirstLaunch) {
-        Navigator.pushReplacementNamed(context, '/onboarding-screen');
-      } else {
-        Navigator.pushReplacementNamed(context, '/camera-screen');
-      }
+      // Instead of going straight to camera/onboarding,
+      // go to a new choice screen
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => _ChoiceScreen(isFirstLaunch: isFirstLaunch)),
+      );
     }
   }
+
 
   void _showPermissionDialog() {
     if (mounted) {
@@ -442,6 +445,64 @@ class _SplashScreenState extends State<SplashScreen>
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ChoiceScreen extends StatelessWidget {
+  final bool isFirstLaunch;
+  const _ChoiceScreen({Key? key, required this.isFirstLaunch}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppTheme.lightTheme.scaffoldBackgroundColor,
+      appBar: AppBar(
+        title: const Text('Welcome to Chefify'),
+        centerTitle: true,
+      ),
+      body: Padding(
+        padding: EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'What would you like to do today?',
+              style: Theme.of(context).textTheme.headlineSmall,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 32),
+            ElevatedButton.icon(
+              icon: const Icon(Icons.restaurant),
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size.fromHeight(50),
+              ),
+              onPressed: () {
+                // normal recipe flow
+                if (isFirstLaunch) {
+                  Navigator.pushReplacementNamed(context, AppRoutes.onboarding);
+                } else {
+                  Navigator.pushReplacementNamed(context, AppRoutes.camera);
+                }
+              },
+              label: const Text('Cook / Get Recipes'),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton.icon(
+              icon: const Icon(Icons.volunteer_activism),
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size.fromHeight(50),
+              ),
+              onPressed: () {
+                // donation flow (your donation onboarding or map view)
+                Navigator.pushReplacementNamed(context, AppRoutes.home); 
+                // or AppRoutes.mapView if you want to go directly to map
+              },
+              label: const Text('Donate Food'),
+            ),
+          ],
         ),
       ),
     );

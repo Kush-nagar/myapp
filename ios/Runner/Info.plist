@@ -29,6 +29,12 @@
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
 
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>We need your location to show nearby donation centers</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>We need your location to show nearby donation centers</string>
+
+
 	<!-- Camera & Photo Library privacy strings (required by iOS) -->
 	<key>NSCameraUsageDescription</key>
 	<string>Chefify needs camera access to take photos of ingredients for recognition.</string>
@@ -54,5 +60,10 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <true />
+    </dict>
 </dict>
 </plist>

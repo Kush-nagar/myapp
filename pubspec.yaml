@@ -47,8 +47,16 @@ dependencies:
   http: ^1.2.2        # for sending images to Vision API
   path_provider: ^2.1.3
   image: ^4.0.21
-  flutter_dotenv: ^6.0.0
+  flutter_dotenv: ^6.0.0  
   google_generative_ai: ^0.4.7
+  dio: ^5.4.0
+  fl_chart: ^0.65.0
+  smooth_page_indicator: ^1.2.1
+  google_maps_flutter: ^2.12.3
+  geolocator: ^13.0.4
+  url_launcher: ^6.2.2
+  record: ^6.0.0
+  flutter_slidable: ^4.0.1
 
 dev_dependencies:
   flutter_test:
