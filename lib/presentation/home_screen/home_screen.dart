@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:geolocator/geolocator.dart';
 
 import '../../core/app_export.dart';
+import '../../services/places_service.dart'; // <-- make sure this file exists and exposes the methods used below
 import './widgets/empty_state_widget.dart';
 import './widgets/offline_banner_widget.dart';
 import './widgets/organization_card_widget.dart';
@@ -23,7 +26,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   DateTime _lastUpdated = DateTime.now();
   late AnimationController _refreshController;
 
-  final List<Map<String, dynamic>> _organizations = [
+  // Places + location
+  final PlacesService _placesService = PlacesService();
+  Position? _currentPosition;
+
+  // This is the master list (hard-coded demo). We'll filter this into _displayOrganizations.
+  final List<Map<String, dynamic>> _masterOrganizations = [
     {
       "id": 1,
       "name": "Downtown Food Bank",
@@ -84,7 +92,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       "address": "654 Maple Dr, New York, NY 10005",
       "isFavorited": false,
     },
+    // add more orgs here as needed...
   ];
+
+  // This is the list actually displayed (after filtering). Default will be master list.
+  List<Map<String, dynamic>> _displayOrganizations = [];
 
   @override
   void initState() {
@@ -94,12 +106,39 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       vsync: this,
     );
     _checkConnectivity();
+    // initialize with master list first
+    _displayOrganizations = List<Map<String, dynamic>>.from(_masterOrganizations);
     _loadOrganizations();
+
+    // read arguments after first frame to apply donation filters if present
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _handlePostFrameArgs();
+    });
+  }
+
+  Future<void> _handlePostFrameArgs() async {
+    final args =
+        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    if (args != null && args['donationIngredients'] != null) {
+      final List<dynamic> donationIngredients =
+          List<dynamic>.from(args['donationIngredients'] as List<dynamic>);
+      final List<String> names = donationIngredients
+          .map((e) => e.toString().toLowerCase())
+          .toList();
+
+      // Try to find nearby orgs via Places and apply donation filter to them.
+      // If that fails (no matches), fall back to master organizations.
+      await _searchNearbyAndApplyDonationFilter(names);
+    }
   }
 
   @override
   void dispose() {
     _refreshController.dispose();
+    // Dispose places service if it provides a dispose method (best-effort)
+    try {
+      _placesService.dispose();
+    } catch (_) {}
     super.dispose();
   }
 
@@ -220,7 +259,18 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               subtitle: Text("Enable GPS for precise results"),
               onTap: () {
                 Navigator.pop(context);
-                // Handle location permission and update
+                // Handle location permission and update - we'll try to request it here
+                _tryGetCurrentPosition().then((pos) {
+                  if (pos != null) {
+                    setState(() {
+                      _currentLocation = "${pos.latitude.toStringAsFixed(4)}, ${pos.longitude.toStringAsFixed(4)}";
+                    });
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("Could not get current location")),
+                    );
+                  }
+                });
               },
             ),
           ],
@@ -255,10 +305,18 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   void _onToggleFavorite(Map<String, dynamic> organization) {
     setState(() {
       final index =
-          _organizations.indexWhere((org) => org["id"] == organization["id"]);
+          _displayOrganizations.indexWhere((org) => org["id"] == organization["id"]);
       if (index != -1) {
-        _organizations[index]["isFavorited"] =
-            !(_organizations[index]["isFavorited"] ?? false);
+        _displayOrganizations[index]["isFavorited"] =
+            !(_displayOrganizations[index]["isFavorited"] ?? false);
+      }
+
+      // also update master copy if present
+      final masterIndex =
+          _masterOrganizations.indexWhere((org) => org["id"] == organization["id"]);
+      if (masterIndex != -1) {
+        _masterOrganizations[masterIndex]["isFavorited"] =
+            !(_masterOrganizations[masterIndex]["isFavorited"] ?? false);
       }
     });
   }
@@ -269,6 +327,364 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   void _onMapViewTap() {
     Navigator.pushNamed(context, '/map-view-screen');
+  }
+
+  // ---------- Filtering logic ----------
+  // A small produce keyword set for matching produce-type donations
+  final Set<String> _produceKeywords = {
+    'tomato',
+    'onion',
+    'potato',
+    'lettuce',
+    'carrot',
+    'apple',
+    'banana',
+    'pepper',
+    'cucumber',
+    'spinach',
+    'broccoli',
+    'cabbage',
+    'mushroom',
+    'garlic',
+    'ginger',
+    'avocado',
+    'cilantro',
+    'parsley',
+    'strawberry',
+    'blueberry',
+    'grape',
+    'orange',
+    'lemon',
+    'lime',
+    'mango',
+    'peach',
+    'pear',
+    'zucchini',
+    'melon',
+    'corn',
+    'okra'
+  };
+
+  // Map the incoming ingredient names to org needs and update _displayOrganizations
+  void _applyDonationFilter(List<String> ingredientNames) {
+    if (ingredientNames.isEmpty) {
+      setState(() {
+        _displayOrganizations = List<Map<String, dynamic>>.from(_masterOrganizations);
+      });
+      return;
+    }
+
+    // lower-case set for quick check
+    final Set<String> ingredientSet = ingredientNames.map((e) => e.toLowerCase()).toSet();
+
+    // For each organization compute a score (# of matches)
+    final List<Map<String, dynamic>> scored = [];
+
+    for (final org in _masterOrganizations) {
+      final List<String> needs = (org['currentNeeds'] as List<dynamic>)
+          .map((n) => n.toString().toLowerCase())
+          .toList();
+
+      int matches = 0;
+
+      // 1) direct substring match: ingredient appears in need text
+      for (final ing in ingredientSet) {
+        for (final need in needs) {
+          if (need.contains(ing)) {
+            matches++;
+            break;
+          }
+        }
+      }
+
+      // 2) category-level match for produce: if organization asks for produce/vegetables/fruits
+      final bool orgWantsProduce = needs.any((n) =>
+          n.contains('produce') || n.contains('vegetable') || n.contains('fruit') || n.contains('fresh'));
+
+      if (orgWantsProduce) {
+        // if any ingredient is in the produceKeywords, give a match
+        if (ingredientSet.any((ing) => _produceKeywords.contains(ing))) {
+          // Count each produce ingredient once (to avoid huge weight)
+          matches += ingredientSet.where((ing) => _produceKeywords.contains(ing)).length;
+        }
+      }
+
+      // 3) canned / non-perishables matching
+      final bool orgWantsCanned = needs.any((n) => n.contains('canned') || n.contains('non-perish') || n.contains('non perishable'));
+      if (orgWantsCanned) {
+        // If ingredient is 'beans' or 'canned' etc, increment
+        if (ingredientSet.any((ing) => ing.contains('beans') || ing.contains('soup') || ing.contains('canned'))) {
+          matches += 1;
+        }
+      }
+
+      if (matches > 0) {
+        final orgCopy = Map<String, dynamic>.from(org);
+        orgCopy['matchScore'] = matches;
+        scored.add(orgCopy);
+      }
+    }
+
+    // Sort descending by matchScore, then by rating (if present)
+    scored.sort((a, b) {
+      final aScore = (a['matchScore'] as int?) ?? 0;
+      final bScore = (b['matchScore'] as int?) ?? 0;
+      if (bScore != aScore) return bScore.compareTo(aScore);
+      final aRating = (a['rating'] as num?)?.toDouble() ?? 0.0;
+      final bRating = (b['rating'] as num?)?.toDouble() ?? 0.0;
+      return bRating.compareTo(aRating);
+    });
+
+    // Limit to 8 results. If no matches found, fallback to master list.
+    setState(() {
+      if (scored.isEmpty) {
+        _displayOrganizations = List<Map<String, dynamic>>.from(_masterOrganizations);
+      } else {
+        _displayOrganizations = scored.take(8).map((m) {
+          // Remove matchScore before passing to UI, but keep it if you like
+          final Map<String, dynamic> copy = Map<String, dynamic>.from(m);
+          //copy.remove('matchScore'); // optional
+          return copy;
+        }).toList();
+      }
+    });
+  }
+
+  // ---------- New: geolocation & places-based filtering ----------
+
+  /// Try to get current user location (best-effort). Returns null on failure.
+  Future<Position?> _tryGetCurrentPosition() async {
+    try {
+      final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) return null;
+
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) return null;
+      }
+      if (permission == LocationPermission.deniedForever) return null;
+
+      final pos = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
+      _currentPosition = pos;
+      return pos;
+    } catch (e) {
+      debugPrint('Location failed: $e');
+      return null;
+    }
+  }
+
+  double _metersToMiles(double meters) {
+    return meters / 1609.344;
+  }
+
+  /// Search nearby organizations (Places API), fetch details, synthesize an organization
+  /// model that includes a `currentNeeds` list where possible, then run donation matching
+  /// on that set. Limit to 8 displayed results.
+  Future<void> _searchNearbyAndApplyDonationFilter(List<String> ingredientNames) async {
+    if (ingredientNames.isEmpty) {
+      _applyDonationFilter([]);
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      // 1) Try to get position
+      final pos = await _tryGetCurrentPosition();
+
+      // 2) Perform a places text search. Query can be customized or passed in.
+      final query = 'food bank';
+      final places = await _placesService.textSearch(
+        query: query,
+        lat: pos?.latitude,
+        lng: pos?.longitude,
+        radiusMeters: 15000, // 15 km radius, tune as needed
+      );
+
+      if (places == null || places.isEmpty) {
+        // no nearby places -> fallback
+        _applyDonationFilter(ingredientNames);
+        return;
+      }
+
+      // 3) For each place (limit to first N), fetch details and try to create a rich org map
+      final List<Map<String, dynamic>> candidateOrgs = [];
+      final int maxDetails = 12; // fetch details for top 12, then filter to max 8
+      final sliced = places.take(maxDetails).toList();
+
+      // Use Future.wait to fetch details in parallel with safe error handling
+      final futures = sliced.map((p) async {
+        try {
+          final details = await _placesService.getPlaceDetails(p.placeId);
+
+          final List<String> inferredNeeds = [];
+
+          final lowerName = (details.name ?? '').toString().toLowerCase();
+          final List<String> typeKeywords = (details.types as List<dynamic>?)
+                  ?.map((t) => t.toString().toLowerCase())
+                  .toList() ??
+              [];
+
+          final isFoodOrg = lowerName.contains('food') ||
+              lowerName.contains('pantry') ||
+              lowerName.contains('shelter') ||
+              lowerName.contains('kitchen') ||
+              typeKeywords.any((t) =>
+                  t.contains('food') ||
+                  t.contains('pantry') ||
+                  t.contains('shelter') ||
+                  t.contains('point_of_interest'));
+
+          if (isFoodOrg) {
+            inferredNeeds.addAll(['canned goods', 'fresh produce', 'dairy products']);
+          }
+
+          if (typeKeywords.contains('restaurant')) {
+            inferredNeeds.add('prepared meals');
+          }
+          if (typeKeywords.contains('grocery_or_supermarket')) {
+            inferredNeeds.add('fresh produce');
+            inferredNeeds.add('bread');
+          }
+
+          final deduped = inferredNeeds.map((s) => s.toLowerCase()).toSet().toList();
+
+          final distanceText = (_currentPosition != null && details.lat != null && details.lng != null)
+              ? "${_metersToMiles(Geolocator.distanceBetween(
+                          _currentPosition!.latitude,
+                          _currentPosition!.longitude,
+                          details.lat,
+                          details.lng))
+                      .toStringAsFixed(1)} mi"
+              : '';
+
+          final org = <String, dynamic>{
+            'id': details.placeId.hashCode,
+            'placeId': details.placeId,
+            'name': details.name ?? '',
+            'logo': (details.photoReferences != null && (details.photoReferences as List).isNotEmpty)
+                ? _placesService.photoUrlFromReference((details.photoReferences as List).first)
+                : '',
+            'rating': details.rating ?? 0.0,
+            'distance': distanceText,
+            'currentNeeds': deduped,
+            'phone': details.phone ?? '',
+            'address': details.address ?? '',
+            'isFavorited': false,
+          };
+
+          return org;
+        } catch (e) {
+          debugPrint('Failed fetching details for ${p.placeId}: $e');
+          return null;
+        }
+      }).toList();
+
+      final results = await Future.wait(futures);
+      for (final r in results) {
+        if (r != null) candidateOrgs.add(r);
+      }
+
+      // 4) If candidateOrgs non-empty -> run donation filter on these orgs instead of master list.
+      if (candidateOrgs.isNotEmpty) {
+        _applyDonationFilterToOrgs(ingredientNames, candidateOrgs);
+      } else {
+        // fallback to master
+        _applyDonationFilter(ingredientNames);
+      }
+    } catch (e) {
+      debugPrint('Nearby search error: $e');
+      _applyDonationFilter(ingredientNames); // fallback
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  /// Apply donation matching to a custom org list (same matching logic as _applyDonationFilter,
+  /// but operates on a provided org list rather than _masterOrganizations).
+  void _applyDonationFilterToOrgs(List<String> ingredientNames, List<Map<String, dynamic>> orgList) {
+    if (ingredientNames.isEmpty) {
+      setState(() {
+        _displayOrganizations = List<Map<String, dynamic>>.from(orgList.take(8).toList());
+      });
+      return;
+    }
+
+    final Set<String> ingredientSet = ingredientNames.map((e) => e.toLowerCase()).toSet();
+    final List<Map<String, dynamic>> scored = [];
+
+    for (final org in orgList) {
+      final List<String> needs = (org['currentNeeds'] as List<dynamic>?)
+              ?.map((n) => n.toString().toLowerCase())
+              .toList() ??
+          [];
+
+      int matches = 0;
+
+      // 1) direct substring match
+      for (final ing in ingredientSet) {
+        for (final need in needs) {
+          if (need.contains(ing)) {
+            matches++;
+            break;
+          }
+        }
+      }
+
+      // 2) produce-level match using existing _produceKeywords
+      final bool orgWantsProduce =
+          needs.any((n) => n.contains('produce') || n.contains('vegetable') || n.contains('fruit') || n.contains('fresh'));
+
+      if (orgWantsProduce) {
+        if (ingredientSet.any((ing) => _produceKeywords.contains(ing))) {
+          matches += ingredientSet.where((ing) => _produceKeywords.contains(ing)).length;
+        }
+      }
+
+      // 3) canned / non-perishable logic
+      final bool orgWantsCanned = needs.any((n) => n.contains('canned') || n.contains('non-perish') || n.contains('non perishable'));
+      if (orgWantsCanned) {
+        if (ingredientSet.any((ing) => ing.contains('beans') || ing.contains('soup') || ing.contains('canned'))) {
+          matches += 1;
+        }
+      }
+
+      if (matches > 0) {
+        final orgCopy = Map<String, dynamic>.from(org);
+        orgCopy['matchScore'] = matches;
+        scored.add(orgCopy);
+      }
+    }
+
+    // Sort & limit exactly like _applyDonationFilter
+    scored.sort((a, b) {
+      final aScore = (a['matchScore'] as int?) ?? 0;
+      final bScore = (b['matchScore'] as int?) ?? 0;
+      if (bScore != aScore) return bScore.compareTo(aScore);
+      final aRating = (a['rating'] as num?)?.toDouble() ?? 0.0;
+      final bRating = (b['rating'] as num?)?.toDouble() ?? 0.0;
+      return bRating.compareTo(aRating);
+    });
+
+    setState(() {
+      if (scored.isEmpty) {
+        _displayOrganizations = List<Map<String, dynamic>>.from(_masterOrganizations);
+      } else {
+        _displayOrganizations = scored.take(8).map((m) {
+          final Map<String, dynamic> copy = Map<String, dynamic>.from(m);
+          //copy.remove('matchScore'); // optional
+          return copy;
+        }).toList();
+      }
+    });
   }
 
   @override
@@ -348,7 +764,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         ),
                       ),
                     )
-                  : _organizations.isEmpty
+                  : _displayOrganizations.isEmpty
                       ? SliverFillRemaining(
                           child: EmptyStateWidget(
                             onExpandSearch: _onExpandSearch,
@@ -357,7 +773,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       : SliverList(
                           delegate: SliverChildBuilderDelegate(
                             (context, index) {
-                              final organization = _organizations[index];
+                              final organization = _displayOrganizations[index];
                               return OrganizationCardWidget(
                                 organization: organization,
                                 onTap: () => _onOrganizationTap(organization),
@@ -368,7 +784,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                     _onToggleFavorite(organization),
                               );
                             },
-                            childCount: _organizations.length,
+                            childCount: _displayOrganizations.length,
                           ),
                         ),
               SliverToBoxAdapter(
