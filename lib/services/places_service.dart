@@ -1,30 +1,26 @@
-// lib/services/places_service.dart
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-/// Small typed results returned by the wrapper
 class PlaceSummary {
   final String placeId;
   final String name;
-  final String? address;
-  final double? lat;
-  final double? lng;
+  final String address;
+  final double lat;
+  final double lng;
   final double? rating;
-  final int? userRatingsTotal;
+  final bool? openNow;
   final List<String> types;
-  final String? icon;
   final String? photoReference;
 
   PlaceSummary({
     required this.placeId,
     required this.name,
-    this.address,
-    this.lat,
-    this.lng,
+    required this.address,
+    required this.lat,
+    required this.lng,
     this.rating,
-    this.userRatingsTotal,
+    this.openNow,
     this.types = const [],
-    this.icon,
     this.photoReference,
   });
 }
@@ -32,178 +28,163 @@ class PlaceSummary {
 class PlaceDetails {
   final String placeId;
   final String name;
-  final String? address;
-  final double? lat;
-  final double? lng;
+  final String address;
+  final double lat;
+  final double lng;
   final String? phone;
   final String? website;
   final double? rating;
-  final int? userRatingsTotal;
   final List<String> types;
   final bool? openNow;
   final List<String> photoReferences;
-  final Map<String, dynamic> raw;
+  final String? openingHours; // simplified string
 
   PlaceDetails({
     required this.placeId,
     required this.name,
-    this.address,
-    this.lat,
-    this.lng,
+    required this.address,
+    required this.lat,
+    required this.lng,
     this.phone,
     this.website,
     this.rating,
-    this.userRatingsTotal,
     this.types = const [],
     this.openNow,
     this.photoReferences = const [],
-    required this.raw,
+    this.openingHours,
   });
 }
 
 class PlacesService {
-  final String apiKey;
-  final String base = 'https://maps.googleapis.com/maps/api/place';
+  final String _apiKey = 'AIzaSyC2Ei8wsfT5dJuF9s3lkZC3je2G1NEzTB0';
+  final http.Client _client;
 
-  PlacesService({required this.apiKey});
+  PlacesService({http.Client? client}) : _client = client ?? http.Client();
 
-  Future<List<PlaceSummary>> nearbySearch({
-    required double lat,
-    required double lng,
-    int radius = 5000,
-    String keyword = 'food bank',
-    int maxResults = 20,
-  }) async {
-    final uri = Uri.parse(
-      '$base/nearbysearch/json'
-      '?location=$lat,$lng'
-      '&radius=$radius'
-      '&keyword=${Uri.encodeQueryComponent(keyword)}'
-      '&key=$apiKey',
-    );
-
-    final resp = await http.get(uri);
-    if (resp.statusCode != 200) {
-      throw Exception('Places API error ${resp.statusCode}: ${resp.body}');
-    }
-    final map = jsonDecode(resp.body) as Map<String, dynamic>;
-    final results = (map['results'] as List<dynamic>?) ?? [];
-
-    final list = results.take(maxResults).map<PlaceSummary>((r) {
-      final geometry = r['geometry'] ?? {};
-      final loc = geometry['location'] ?? {};
-      String? photoRef;
-      if (r['photos'] != null && (r['photos'] as List).isNotEmpty) {
-        photoRef = r['photos'][0]['photo_reference'] as String?;
-      }
-      return PlaceSummary(
-        placeId: r['place_id'] as String,
-        name: r['name'] as String? ?? 'Unknown',
-        address: r['vicinity'] as String? ?? r['formatted_address'] as String?,
-        lat: (loc['lat'] as num?)?.toDouble(),
-        lng: (loc['lng'] as num?)?.toDouble(),
-        rating: (r['rating'] as num?)?.toDouble(),
-        userRatingsTotal: (r['user_ratings_total'] as num?)?.toInt(),
-        types: (r['types'] as List<dynamic>?)?.map((t) => t.toString()).toList() ?? [],
-        icon: r['icon'] as String?,
-        photoReference: photoRef,
-      );
-    }).toList();
-
-    return list;
-  }
-
+  /// Text search using user's query and optional location (lat,lng) + radius (meters)
   Future<List<PlaceSummary>> textSearch({
     required String query,
-    int maxResults = 20,
+    double? lat,
+    double? lng,
+    int radiusMeters = 5000,
   }) async {
-    final uri = Uri.parse(
-      '$base/textsearch/json?query=${Uri.encodeQueryComponent(query)}&key=$apiKey',
-    );
+    final uri =
+        Uri.https('maps.googleapis.com', '/maps/api/place/textsearch/json', {
+      'query': query,
+      if (lat != null && lng != null) 'location': '$lat,$lng',
+      if (lat != null && lng != null) 'radius': '$radiusMeters',
+      'key': _apiKey,
+    });
 
-    final resp = await http.get(uri);
-    if (resp.statusCode != 200) {
-      throw Exception('Places TextSearch error ${resp.statusCode}: ${resp.body}');
+    final res = await _client.get(uri);
+    if (res.statusCode != 200)
+      throw Exception('Places API failed: ${res.statusCode}');
+    final Map body = json.decode(res.body);
+
+    if (body['status'] != 'OK' && body['status'] != 'ZERO_RESULTS') {
+      // you may want to handle OVER_QUERY_LIMIT, REQUEST_DENIED, etc.
+      throw Exception(
+          'Places API error: ${body['status']}: ${body['error_message'] ?? ''}');
     }
-    final map = jsonDecode(resp.body) as Map<String, dynamic>;
-    final results = (map['results'] as List<dynamic>?) ?? [];
-    return results.take(maxResults).map<PlaceSummary>((r) {
+
+    final results = (body['results'] as List<dynamic>? ?? []);
+    return results.map((r) {
       final geometry = r['geometry'] ?? {};
-      final loc = geometry['location'] ?? {};
+      final loc = (geometry['location'] ?? {});
       String? photoRef;
       if (r['photos'] != null && (r['photos'] as List).isNotEmpty) {
         photoRef = r['photos'][0]['photo_reference'] as String?;
       }
       return PlaceSummary(
-        placeId: r['place_id'] as String,
-        name: r['name'] as String? ?? 'Unknown',
-        address: r['formatted_address'] as String? ?? r['vicinity'] as String?,
-        lat: (loc['lat'] as num?)?.toDouble(),
-        lng: (loc['lng'] as num?)?.toDouble(),
+        placeId: r['place_id'],
+        name: r['name'] ?? '',
+        address: r['formatted_address'] ?? r['vicinity'] ?? '',
+        lat: (loc['lat'] as num?)?.toDouble() ?? 0.0,
+        lng: (loc['lng'] as num?)?.toDouble() ?? 0.0,
         rating: (r['rating'] as num?)?.toDouble(),
-        userRatingsTotal: (r['user_ratings_total'] as num?)?.toInt(),
-        types: (r['types'] as List<dynamic>?)?.map((t) => t.toString()).toList() ?? [],
-        icon: r['icon'] as String?,
+        openNow: (r['opening_hours'] != null)
+            ? r['opening_hours']['open_now'] as bool?
+            : null,
+        types: (r['types'] as List?)?.map((t) => t.toString()).toList() ?? [],
         photoReference: photoRef,
       );
     }).toList();
   }
 
+  /// Get details for a place
   Future<PlaceDetails> getPlaceDetails(String placeId) async {
+    // specify fields you need to reduce quota/cost
     final fields = [
-      'place_id',
       'name',
       'formatted_address',
       'geometry',
       'formatted_phone_number',
-      'opening_hours',
       'website',
-      'photo',
       'rating',
-      'user_ratings_total',
-      'types'
+      'types',
+      'opening_hours',
+      'photos'
     ].join(',');
 
-    final uri = Uri.parse(
-      '$base/details/json?place_id=${Uri.encodeQueryComponent(placeId)}&fields=$fields&key=$apiKey',
-    );
+    final uri =
+        Uri.https('maps.googleapis.com', '/maps/api/place/details/json', {
+      'place_id': placeId,
+      'fields': fields,
+      'key': _apiKey,
+    });
 
-    final resp = await http.get(uri);
-    if (resp.statusCode != 200) {
-      throw Exception('Places Details error ${resp.statusCode}: ${resp.body}');
+    final res = await _client.get(uri);
+    if (res.statusCode != 200)
+      throw Exception('Place details failed: ${res.statusCode}');
+    final Map body = json.decode(res.body);
+    if (body['status'] != 'OK') {
+      throw Exception('Place details error: ${body['status']}');
     }
-    final map = jsonDecode(resp.body) as Map<String, dynamic>;
-    final result = map['result'] as Map<String, dynamic>? ?? {};
-
-    final geometry = result['geometry'] ?? {};
+    final r = body['result'] as Map<String, dynamic>;
+    final geometry = r['geometry'] ?? {};
     final loc = (geometry['location'] ?? {});
-    final photos = (result['photos'] as List<dynamic>?)
-            ?.map((p) => p['photo_reference'] as String)
-            .toList() ??
-        [];
-
-    final openNow = result['opening_hours'] != null
-        ? (result['opening_hours']['open_now'] as bool?) ?? false
-        : null;
+    final List<String> photos = [];
+    if (r['photos'] != null) {
+      for (final p in (r['photos'] as List)) {
+        if (p['photo_reference'] != null) photos.add(p['photo_reference']);
+      }
+    }
+    // simple opening hours string
+    String? openingHours;
+    if (r['opening_hours'] != null &&
+        r['opening_hours']['weekday_text'] != null) {
+      openingHours = (r['opening_hours']['weekday_text'] as List).join('\n');
+    }
 
     return PlaceDetails(
-      placeId: result['place_id'] as String? ?? placeId,
-      name: result['name'] as String? ?? 'Unknown',
-      address: result['formatted_address'] as String?,
-      lat: (loc['lat'] as num?)?.toDouble(),
-      lng: (loc['lng'] as num?)?.toDouble(),
-      phone: result['formatted_phone_number'] as String?,
-      website: result['website'] as String?,
-      rating: (result['rating'] as num?)?.toDouble(),
-      userRatingsTotal: (result['user_ratings_total'] as num?)?.toInt(),
-      types: (result['types'] as List<dynamic>?)?.map((t) => t.toString()).toList() ?? [],
-      openNow: openNow,
+      placeId: placeId,
+      name: r['name'] ?? '',
+      address: r['formatted_address'] ?? '',
+      lat: (loc['lat'] as num?)?.toDouble() ?? 0.0,
+      lng: (loc['lng'] as num?)?.toDouble() ?? 0.0,
+      phone: r['formatted_phone_number'],
+      website: r['website'],
+      rating: (r['rating'] as num?)?.toDouble(),
+      types: (r['types'] as List?)?.map((t) => t.toString()).toList() ?? [],
+      openNow: r['opening_hours'] != null
+          ? r['opening_hours']['open_now'] as bool?
+          : null,
       photoReferences: photos,
-      raw: result,
+      openingHours: openingHours,
     );
   }
 
-  String photoUrl(String photoReference, {int maxWidth = 800}) {
-    return '$base/photo?maxwidth=$maxWidth&photoreference=${Uri.encodeComponent(photoReference)}&key=$apiKey';
+  /// Convert a photo reference to a URL
+  String photoUrlFromReference(String photoReference, {int maxWidth = 800}) {
+    final params = {
+      'photoreference': photoReference,
+      'maxwidth': '$maxWidth',
+      'key': _apiKey,
+    };
+    final uri =
+        Uri.https('maps.googleapis.com', '/maps/api/place/photo', params);
+    return uri.toString();
   }
+
+  void dispose() => _client.close();
 }

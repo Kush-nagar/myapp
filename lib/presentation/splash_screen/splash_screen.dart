@@ -43,21 +43,19 @@ class _SplashScreenState extends State<SplashScreen>
       vsync: this,
     );
 
-    _logoScaleAnimation = Tween<double>(
-      begin: 0.8,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _logoAnimationController,
-      curve: Curves.elasticOut,
-    ));
+    _logoScaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _logoAnimationController,
+        curve: Curves.elasticOut,
+      ),
+    );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _fadeAnimationController,
-      curve: Curves.easeInOut,
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _fadeAnimationController,
+        curve: Curves.easeInOut,
+      ),
+    );
 
     _logoAnimationController.forward();
     _fadeAnimationController.forward();
@@ -310,8 +308,9 @@ class _SplashScreenState extends State<SplashScreen>
                                   borderRadius: BorderRadius.circular(20.0),
                                   boxShadow: [
                                     BoxShadow(
-                                      color:
-                                          Colors.black.withValues(alpha: 0.2),
+                                      color: Colors.black.withValues(
+                                        alpha: 0.2,
+                                      ),
                                       blurRadius: 20.0,
                                       offset: const Offset(0, 10),
                                     ),
@@ -332,12 +331,14 @@ class _SplashScreenState extends State<SplashScreen>
                               Text(
                                 'Chefify',
                                 style: AppTheme
-                                    .lightTheme.textTheme.displaySmall
+                                    .lightTheme
+                                    .textTheme
+                                    .displaySmall
                                     ?.copyWith(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 1.2,
-                                ),
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      letterSpacing: 1.2,
+                                    ),
                               ),
 
                               SizedBox(height: 1.h),
@@ -347,9 +348,11 @@ class _SplashScreenState extends State<SplashScreen>
                                 'Cook Smart, Eat Better',
                                 style: AppTheme.lightTheme.textTheme.titleMedium
                                     ?.copyWith(
-                                  color: Colors.white.withValues(alpha: 0.9),
-                                  fontWeight: FontWeight.w400,
-                                ),
+                                      color: Colors.white.withValues(
+                                        alpha: 0.9,
+                                      ),
+                                      fontWeight: FontWeight.w400,
+                                    ),
                               ),
                             ],
                           ),
@@ -386,11 +389,11 @@ class _SplashScreenState extends State<SplashScreen>
                       child: Text(
                         _initializationStatus,
                         key: ValueKey(_initializationStatus),
-                        style:
-                            AppTheme.lightTheme.textTheme.bodyLarge?.copyWith(
-                          color: Colors.white.withValues(alpha: 0.9),
-                          fontWeight: FontWeight.w500,
-                        ),
+                        style: AppTheme.lightTheme.textTheme.bodyLarge
+                            ?.copyWith(
+                              color: Colors.white.withValues(alpha: 0.9),
+                              fontWeight: FontWeight.w500,
+                            ),
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -407,10 +410,10 @@ class _SplashScreenState extends State<SplashScreen>
                     children: [
                       Text(
                         'Discover recipes from your ingredients',
-                        style:
-                            AppTheme.lightTheme.textTheme.bodyMedium?.copyWith(
-                          color: Colors.white.withValues(alpha: 0.7),
-                        ),
+                        style: AppTheme.lightTheme.textTheme.bodyMedium
+                            ?.copyWith(
+                              color: Colors.white.withValues(alpha: 0.7),
+                            ),
                         textAlign: TextAlign.center,
                       ),
                       SizedBox(height: 1.h),
