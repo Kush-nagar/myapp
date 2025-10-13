@@ -1,18 +1,2 @@
-1) personal development (weight loss / health) --> CalAI
-	- create a user profile
-	- add authentication and authorization
-	- adding personal recipes and share with community
-2) food donation (community, commercial)
-	- planning for drives
-3) integration with retail website for online ordering
-4) connecting retails + food donation
-5) Dashboard (home page)
-	- set target for reducing personal consumption
-	- set target for food donation
-
-
-future work:
-1) partnering and onboarding with ngos
-
-
-AIzaSyAVDsSAs1DybWJrwf0qSkqoUgPzUZs5u3o
+make the button on the recongiztion screen bigger and make them static
+add home screen before camera screen to show msg and also tell previous activity and motto

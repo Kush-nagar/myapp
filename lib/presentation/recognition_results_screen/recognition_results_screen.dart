@@ -282,59 +282,19 @@ class _RecognitionResultsScreenState extends State<RecognitionResultsScreen> {
   void _storeItems() {
     if (_recognizedIngredients.isEmpty) return;
 
-    // Example local-store flow: show a bottom sheet to pick storage options
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (context) => Padding(
-        padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 3.h),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Store Items',
-              style: AppTheme.lightTheme.textTheme.titleMedium,
-            ),
-            SizedBox(height: 2.h),
-            Text(
-              'Choose where to store this list for later:',
-              style: AppTheme.lightTheme.textTheme.bodySmall,
-            ),
-            SizedBox(height: 2.h),
-            Row(
-              children: [
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Saved to My Lists')),
-                      );
-                    },
-                    child: Text('My Lists'),
-                  ),
-                ),
-                SizedBox(width: 3.w),
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Saved to Pantry')),
-                      );
-                    },
-                    child: Text('Pantry'),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 2.h),
-          ],
-        ),
-      ),
+    // Get ingredient names for storage tips
+    final ingredientNames = _recognizedIngredients
+        .map((ingredient) => ingredient['name'] as String)
+        .toList();
+
+    // Navigate to Store It screen with ingredients
+    Navigator.pushNamed(
+      context,
+      '/store-it-screen',
+      arguments: {
+        'ingredients': ingredientNames,
+        'imagePath': _capturedImagePath,
+      },
     );
   }
 
