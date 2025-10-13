@@ -32,6 +32,20 @@ class _OrganizationDetailScreenState extends State<OrganizationDetailScreen> {
 
   Map<String, dynamic>? _organizationData;
 
+  // --- STATUS: state + options + color mapping
+  String _orgStatus = 'Not started';
+  static const List<String> _statusOptions = [
+    'Not started',
+    'Started',
+    'Finished'
+  ];
+  static const Map<String, Color> _statusColors = {
+    'Not started': Colors.grey,
+    'Started': Color(0xFFFFA726), // amber/orange
+    'Finished': Color(0xFF66BB6A), // green
+  };
+  // --- END STATUS
+
   // Get a random organization from mock data as fallback/default
   Map<String, dynamic> _getRandomMockOrganization() {
     final random = Random();
@@ -208,7 +222,6 @@ class _OrganizationDetailScreenState extends State<OrganizationDetailScreen> {
     return combined;
   }
 
-
   Future<void> _loadOrganizationData() async {
     setState(() {
       _isLoading = true;
@@ -228,6 +241,8 @@ class _OrganizationDetailScreenState extends State<OrganizationDetailScreen> {
       }
 
       await _loadFavoriteStatus();
+      // --- STATUS: load saved status for this organization
+      await _loadOrgStatus();
 
       setState(() {
         _isLoading = false;
@@ -303,6 +318,41 @@ Shared via FoodBridge App
       const SnackBar(content: Text('Organization details copied to clipboard')),
     );
   }
+
+  // --- STATUS: load and save methods
+  Future<void> _loadOrgStatus() async {
+    if (_organizationData == null) return;
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'org_status_${_organizationData!['id']?.toString() ?? ''}';
+    final saved = prefs.getString(key);
+    if (saved != null && saved.isNotEmpty) {
+      setState(() {
+        _orgStatus = saved;
+      });
+    } else {
+      setState(() {
+        _orgStatus = 'Not started';
+      });
+    }
+  }
+
+  Future<void> _saveOrgStatus(String status) async {
+    if (_organizationData == null) return;
+    final prefs = await SharedPreferences.getInstance();
+    final key = 'org_status_${_organizationData!['id']?.toString() ?? ''}';
+    await prefs.setString(key, status);
+    setState(() {
+      _orgStatus = status;
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Status updated: $status'),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+  // --- END STATUS
 
   Widget _buildLoadingState() {
     // simple skeleton placeholders
@@ -682,6 +732,67 @@ Shared via FoodBridge App
     );
   }
 
+  // --- STATUS: the actual dropdown widget (used inside a section card)
+  Widget _buildStatusDropdown() {
+    final color = _statusColors[_orgStatus] ?? Colors.grey;
+
+    return Row(
+      children: [
+        // colored indicator
+        Container(
+          width: 12,
+          height: 12,
+          decoration: BoxDecoration(
+            color: color,
+            shape: BoxShape.circle,
+          ),
+        ),
+        SizedBox(width: 3.w),
+        Expanded(
+          child: DropdownButtonFormField<String>(
+            value: _orgStatus,
+            items: _statusOptions
+                .map((s) => DropdownMenuItem(
+                      value: s,
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 10,
+                            height: 10,
+                            decoration: BoxDecoration(
+                              color: _statusColors[s] ?? Colors.grey,
+                              shape: BoxShape.circle,
+                            ),
+                          ),
+                          SizedBox(width: 2.w),
+                          Text(s),
+                        ],
+                      ),
+                    ))
+                .toList(),
+            onChanged: (val) {
+              if (val == null) return;
+              _saveOrgStatus(val);
+            },
+            decoration: InputDecoration(
+              labelText: 'Organization status',
+              isDense: true,
+              contentPadding:
+                  EdgeInsets.symmetric(horizontal: 3.w, vertical: 1.h),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+                borderSide: BorderSide.none,
+              ),
+              filled: true,
+              fillColor: DonationAppTheme.lightTheme.colorScheme.background,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+  // --- END STATUS
+
   @override
   Widget build(BuildContext context) {
     if (_isLoading) return _buildLoadingState();
@@ -703,6 +814,14 @@ Shared via FoodBridge App
                   padding: EdgeInsets.only(top: 2.h),
                   child: Column(
                     children: [
+                      // --- STATUS: insert a small card with dropdown so each org has its own status
+                      _sectionCard(
+                        child: Padding(
+                          padding: EdgeInsets.all(4.w),
+                          child: _buildStatusDropdown(),
+                        ),
+                      ),
+
                       // About
                       _sectionCard(
                         child: Padding(

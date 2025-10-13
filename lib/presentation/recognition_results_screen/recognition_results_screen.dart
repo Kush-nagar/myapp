@@ -226,7 +226,16 @@ class _RecognitionResultsScreenState extends State<RecognitionResultsScreen> {
   }
 
   void _retakePhoto() {
-    Navigator.of(context).pop();
+    // Navigate to camera screen for retaking photo
+    Navigator.pushNamed(context, '/camera-screen').then((result) {
+      // If user captures a new photo, replace current results
+      if (result != null && result is List<Map<String, dynamic>>) {
+        setState(() {
+          _recognizedIngredients = result;
+          _isLoading = false;
+        });
+      }
+    });
   }
 
   void _tryAgainRecognition() {
@@ -262,14 +271,11 @@ class _RecognitionResultsScreenState extends State<RecognitionResultsScreen> {
         .map((i) => (i['name'] as String).toLowerCase())
         .toList();
 
-    // Navigate to home screen and replace stack (so Home shows filtered results).
-    Navigator.pushNamedAndRemoveUntil(
+    // Navigate to home screen (keep recognition results in stack so we can return)
+    Navigator.pushNamed(
       context,
       '/home-screen',
-      (route) => false,
-      arguments: {
-        'donationIngredients': ingredientNames,
-      },
+      arguments: {'donationIngredients': ingredientNames},
     );
   }
 
@@ -374,8 +380,16 @@ class _RecognitionResultsScreenState extends State<RecognitionResultsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _onWillPop,
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) async {
+        if (!didPop) {
+          final shouldPop = await _onWillPop();
+          if (shouldPop && context.mounted) {
+            Navigator.of(context).pop();
+          }
+        }
+      },
       child: Scaffold(
         backgroundColor: AppTheme.lightTheme.scaffoldBackgroundColor,
         appBar: AppBar(
@@ -391,7 +405,13 @@ class _RecognitionResultsScreenState extends State<RecognitionResultsScreen> {
           leading: IconButton(
             onPressed: () async {
               if (await _onWillPop()) {
-                Navigator.of(context).pop();
+                // Check if we can pop (there's a previous screen in the stack)
+                if (Navigator.of(context).canPop()) {
+                  Navigator.of(context).pop();
+                } else {
+                  // If no previous screen, navigate to home/camera screen
+                  Navigator.of(context).pushReplacementNamed('/camera-screen');
+                }
               }
             },
             icon: CustomIconWidget(
@@ -429,104 +449,101 @@ class _RecognitionResultsScreenState extends State<RecognitionResultsScreen> {
                 child: _isLoading
                     ? const LoadingSkeletonWidget()
                     : _recognizedIngredients.isEmpty
-                        ? EmptyRecognitionWidget(
-                            onTryAgain: _tryAgainRecognition,
-                            onAddManually: _showAddIngredientModal,
-                          )
-                        : SingleChildScrollView(
-                            physics: const AlwaysScrollableScrollPhysics(),
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 4.w,
-                              vertical: 2.h,
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                    ? EmptyRecognitionWidget(
+                        onTryAgain: _tryAgainRecognition,
+                        onAddManually: _showAddIngredientModal,
+                      )
+                    : SingleChildScrollView(
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 4.w,
+                          vertical: 2.h,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Recognized Ingredients',
-                                          style: AppTheme
-                                              .lightTheme
-                                              .textTheme
-                                              .titleMedium
-                                              ?.copyWith(
-                                                fontWeight: FontWeight.w700,
-                                              ),
-                                        ),
-                                        SizedBox(height: 0.5.h),
-                                        Text(
-                                          '${_recognizedIngredients.length} items detected',
-                                          style: AppTheme
-                                              .lightTheme
-                                              .textTheme
-                                              .bodySmall
-                                              ?.copyWith(
-                                                color: AppTheme
-                                                    .lightTheme
-                                                    .colorScheme
-                                                    .onSurfaceVariant,
-                                              ),
-                                        ),
-                                      ],
+                                    Text(
+                                      'Recognized Ingredients',
+                                      style: AppTheme
+                                          .lightTheme
+                                          .textTheme
+                                          .titleMedium
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.w700,
+                                          ),
                                     ),
-                                    OutlinedButton.icon(
-                                      onPressed: _showAddIngredientModal,
-                                      icon: CustomIconWidget(
-                                        iconName: 'add',
-                                        color:
-                                            AppTheme.lightTheme.colorScheme.primary,
-                                        size: 5.w,
-                                      ),
-                                      label: Text(
-                                        'Add',
-                                        style: AppTheme
-                                            .lightTheme
-                                            .textTheme
-                                            .labelLarge
-                                            ?.copyWith(
-                                              color: AppTheme
-                                                  .lightTheme
-                                                  .colorScheme
-                                                  .primary,
-                                            ),
-                                      ),
-                                      style: OutlinedButton.styleFrom(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(12),
-                                        ),
-                                      ),
+                                    SizedBox(height: 0.5.h),
+                                    Text(
+                                      '${_recognizedIngredients.length} items detected',
+                                      style: AppTheme
+                                          .lightTheme
+                                          .textTheme
+                                          .bodySmall
+                                          ?.copyWith(
+                                            color: AppTheme
+                                                .lightTheme
+                                                .colorScheme
+                                                .onSurfaceVariant,
+                                          ),
                                     ),
                                   ],
                                 ),
-
-                                SizedBox(height: 2.h),
-
-                                Card(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(14),
+                                OutlinedButton.icon(
+                                  onPressed: _showAddIngredientModal,
+                                  icon: CustomIconWidget(
+                                    iconName: 'add',
+                                    color:
+                                        AppTheme.lightTheme.colorScheme.primary,
+                                    size: 5.w,
                                   ),
-                                  elevation: 2,
-                                  color: AppTheme.lightTheme.colorScheme.surface,
-                                  child: Padding(
-                                    padding: EdgeInsets.all(3.w),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Wrap(
-                                          spacing: 2.w,
-                                          runSpacing: 1.5.h,
-                                          children: _recognizedIngredients
-                                              .asMap()
-                                              .entries
-                                              .map((entry) {
+                                  label: Text(
+                                    'Add',
+                                    style: AppTheme
+                                        .lightTheme
+                                        .textTheme
+                                        .labelLarge
+                                        ?.copyWith(
+                                          color: AppTheme
+                                              .lightTheme
+                                              .colorScheme
+                                              .primary,
+                                        ),
+                                  ),
+                                  style: OutlinedButton.styleFrom(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+
+                            SizedBox(height: 2.h),
+
+                            Card(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                              elevation: 2,
+                              color: AppTheme.lightTheme.colorScheme.surface,
+                              child: Padding(
+                                padding: EdgeInsets.all(3.w),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Wrap(
+                                      spacing: 2.w,
+                                      runSpacing: 1.5.h,
+                                      children: _recognizedIngredients
+                                          .asMap()
+                                          .entries
+                                          .map((entry) {
                                             final index = entry.key;
                                             final ingredient = entry.value;
 
@@ -577,176 +594,175 @@ class _RecognitionResultsScreenState extends State<RecognitionResultsScreen> {
                                               ),
                                             );
                                           })
-                                              .toList(),
-                                        ),
+                                          .toList(),
+                                    ),
 
-                                        SizedBox(height: 2.h),
+                                    SizedBox(height: 2.h),
 
-                                        // Confidence legend (fixed overflow by using Wrap + constrained chips)
-                                        Container(
-                                          padding: EdgeInsets.all(3.w),
-                                          decoration: BoxDecoration(
+                                    // Confidence legend (fixed overflow by using Wrap + constrained chips)
+                                    Container(
+                                      padding: EdgeInsets.all(3.w),
+                                      decoration: BoxDecoration(
+                                        color: AppTheme
+                                            .lightTheme
+                                            .colorScheme
+                                            .surfaceVariant,
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: Wrap(
+                                        spacing: 3.w,
+                                        runSpacing: 1.2.h,
+                                        children: [
+                                          _buildConfidenceLegend(
                                             color: AppTheme
                                                 .lightTheme
                                                 .colorScheme
-                                                .surfaceVariant,
-                                            borderRadius:
-                                                BorderRadius.circular(12),
+                                                .tertiary,
+                                            label: 'High (80%+)',
                                           ),
-                                          child: Wrap(
-                                            spacing: 3.w,
-                                            runSpacing: 1.2.h,
-                                            children: [
-                                              _buildConfidenceLegend(
-                                                color: AppTheme
-                                                    .lightTheme
-                                                    .colorScheme
-                                                    .tertiary,
-                                                label: 'High (80%+)',
+                                          _buildConfidenceLegend(
+                                            color: AppTheme
+                                                .lightTheme
+                                                .colorScheme
+                                                .secondary,
+                                            label: 'Medium (50-80%)',
+                                          ),
+                                          _buildConfidenceLegend(
+                                            color: AppTheme
+                                                .lightTheme
+                                                .colorScheme
+                                                .error,
+                                            label: 'Low (<50%)',
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+
+                                    SizedBox(height: 2.h),
+
+                                    // Subtle helper text
+                                    Text(
+                                      'Tip: Long-press an item to edit its name. Swipe left to remove.',
+                                      style: AppTheme
+                                          .lightTheme
+                                          .textTheme
+                                          .bodySmall
+                                          ?.copyWith(
+                                            color: AppTheme
+                                                .lightTheme
+                                                .colorScheme
+                                                .onSurfaceVariant,
+                                          ),
+                                    ),
+
+                                    SizedBox(height: 1.h),
+
+                                    // Quick actions inside the card (icons added and spacing tightened)
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: ElevatedButton.icon(
+                                            onPressed: _findRecipes,
+                                            icon: CustomIconWidget(
+                                              iconName: 'restaurant_menu',
+                                              color: Colors.white,
+                                              size: 5.w,
+                                            ),
+                                            label: Text(
+                                              'Find Recipes',
+                                              style: AppTheme
+                                                  .lightTheme
+                                                  .textTheme
+                                                  .labelLarge
+                                                  ?.copyWith(
+                                                    color: Colors.white,
+                                                  ),
+                                            ),
+                                            style: ElevatedButton.styleFrom(
+                                              padding: EdgeInsets.symmetric(
+                                                vertical: 1.6.h,
                                               ),
-                                              _buildConfidenceLegend(
-                                                color: AppTheme
-                                                    .lightTheme
-                                                    .colorScheme
-                                                    .secondary,
-                                                label: 'Medium (50-80%)',
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
                                               ),
-                                              _buildConfidenceLegend(
-                                                color: AppTheme
-                                                    .lightTheme
-                                                    .colorScheme
-                                                    .error,
-                                                label: 'Low (<50%)',
-                                              ),
-                                            ],
+                                            ),
                                           ),
                                         ),
-
-                                        SizedBox(height: 2.h),
-
-                                        // Subtle helper text
-                                        Text(
-                                          'Tip: Long-press an item to edit its name. Swipe left to remove.',
-                                          style: AppTheme
-                                              .lightTheme
-                                              .textTheme
-                                              .bodySmall
-                                              ?.copyWith(
-                                                color: AppTheme
-                                                    .lightTheme
-                                                    .colorScheme
-                                                    .onSurfaceVariant,
+                                        SizedBox(width: 3.w),
+                                        Expanded(
+                                          child: OutlinedButton.icon(
+                                            onPressed: _donateItems,
+                                            icon: CustomIconWidget(
+                                              iconName: 'favorite',
+                                              color: AppTheme
+                                                  .lightTheme
+                                                  .colorScheme
+                                                  .primary,
+                                              size: 5.w,
+                                            ),
+                                            label: Text(
+                                              'Donate It',
+                                              style: AppTheme
+                                                  .lightTheme
+                                                  .textTheme
+                                                  .labelLarge,
+                                            ),
+                                            style: OutlinedButton.styleFrom(
+                                              padding: EdgeInsets.symmetric(
+                                                vertical: 1.6.h,
                                               ),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                            ),
+                                          ),
                                         ),
+                                      ],
+                                    ),
 
-                                        SizedBox(height: 1.h),
+                                    SizedBox(height: 2.h),
 
-                                        // Quick actions inside the card (icons added and spacing tightened)
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              child: ElevatedButton.icon(
-                                                onPressed: _findRecipes,
-                                                icon: CustomIconWidget(
-                                                  iconName: 'restaurant_menu',
-                                                  color: Colors.white,
-                                                  size: 5.w,
-                                                ),
-                                                label: Text(
-                                                  'Find Recipes',
-                                                  style: AppTheme
-                                                      .lightTheme
-                                                      .textTheme
-                                                      .labelLarge
-                                                      ?.copyWith(
-                                                        color: Colors.white,
-                                                      ),
-                                                ),
-                                                style: ElevatedButton.styleFrom(
-                                                  padding: EdgeInsets.symmetric(
-                                                    vertical: 1.6.h,
-                                                  ),
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(12),
-                                                  ),
-                                                ),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: OutlinedButton.icon(
+                                            onPressed: _storeItems,
+                                            icon: CustomIconWidget(
+                                              iconName: 'inventory',
+                                              color: AppTheme
+                                                  .lightTheme
+                                                  .colorScheme
+                                                  .onSurface,
+                                              size: 5.w,
+                                            ),
+                                            label: Text(
+                                              'Store It',
+                                              style: AppTheme
+                                                  .lightTheme
+                                                  .textTheme
+                                                  .labelLarge,
+                                            ),
+                                            style: OutlinedButton.styleFrom(
+                                              padding: EdgeInsets.symmetric(
+                                                vertical: 1.6.h,
+                                              ),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
                                               ),
                                             ),
-                                            SizedBox(width: 3.w),
-                                            Expanded(
-                                              child: OutlinedButton.icon(
-                                                onPressed: _donateItems,
-                                                icon: CustomIconWidget(
-                                                  iconName: 'favorite',
-                                                  color: AppTheme
-                                                      .lightTheme
-                                                      .colorScheme
-                                                      .primary,
-                                                  size: 5.w,
-                                                ),
-                                                label: Text(
-                                                  'Donate It',
-                                                  style: AppTheme
-                                                      .lightTheme
-                                                      .textTheme
-                                                      .labelLarge,
-                                                ),
-                                                style: OutlinedButton.styleFrom(
-                                                  padding: EdgeInsets.symmetric(
-                                                    vertical: 1.6.h,
-                                                  ),
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(12),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
+                                          ),
                                         ),
-
-                                        SizedBox(height: 2.h),
-
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              child: OutlinedButton.icon(
-                                                onPressed: _storeItems,
-                                                icon: CustomIconWidget(
-                                                  iconName: 'inventory',
-                                                  color: AppTheme
-                                                      .lightTheme
-                                                      .colorScheme
-                                                      .onSurface,
-                                                  size: 5.w,
-                                                ),
-                                                label: Text(
-                                                  'Store It',
-                                                  style: AppTheme
-                                                      .lightTheme
-                                                      .textTheme
-                                                      .labelLarge,
-                                                ),
-                                                style: OutlinedButton.styleFrom(
-                                                  padding: EdgeInsets.symmetric(
-                                                    vertical: 1.6.h,
-                                                  ),
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(12),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            SizedBox(width: 3.w),
-                                            SizedBox(
-                                              width: 36.w,
-                                              child: ElevatedButton.icon(
-                                                onPressed: () async {
-                                                  // Push camera again but keep current ingredients
-                                                  final newIngredients =
-                                                      await Navigator.pushNamed(
+                                        SizedBox(width: 3.w),
+                                        SizedBox(
+                                          width: 36.w,
+                                          child: ElevatedButton.icon(
+                                            onPressed: () async {
+                                              // Push camera again but keep current ingredients
+                                              final newIngredients =
+                                                  await Navigator.pushNamed(
                                                     context,
                                                     '/camera-screen',
                                                     arguments: {
@@ -755,86 +771,86 @@ class _RecognitionResultsScreenState extends State<RecognitionResultsScreen> {
                                                     },
                                                   );
 
-                                                  if (newIngredients != null &&
-                                                      newIngredients
-                                                          is List<
-                                                              Map<String,
-                                                                  dynamic>>) {
-                                                    setState(() {
-                                                      // Merge old + new
-                                                      _recognizedIngredients.addAll(
-                                                        newIngredients,
-                                                      );
-                                                      // Deduplicate by name
-                                                      final dedup =
-                                                          <String,
-                                                              Map<String,
-                                                                  dynamic>>{};
-                                                      for (var it
-                                                          in _recognizedIngredients) {
-                                                        final key =
-                                                            (it['name']
-                                                                    as String)
-                                                                .toLowerCase();
-                                                        if (!dedup.containsKey(
-                                                              key,
-                                                            ) ||
-                                                            (it['confidence']
-                                                                    as double) >
-                                                                (dedup[key]![
-                                                                        'confidence']
-                                                                    as double)) {
-                                                          dedup[key] = it;
-                                                        }
-                                                      }
-                                                      _recognizedIngredients =
-                                                          dedup.values.toList();
-                                                    });
+                                              if (newIngredients != null &&
+                                                  newIngredients
+                                                      is List<
+                                                        Map<String, dynamic>
+                                                      >) {
+                                                setState(() {
+                                                  // Merge old + new
+                                                  _recognizedIngredients.addAll(
+                                                    newIngredients,
+                                                  );
+                                                  // Deduplicate by name
+                                                  final dedup =
+                                                      <
+                                                        String,
+                                                        Map<String, dynamic>
+                                                      >{};
+                                                  for (var it
+                                                      in _recognizedIngredients) {
+                                                    final key =
+                                                        (it['name'] as String)
+                                                            .toLowerCase();
+                                                    if (!dedup.containsKey(
+                                                          key,
+                                                        ) ||
+                                                        (it['confidence']
+                                                                as double) >
+                                                            (dedup[key]!['confidence']
+                                                                as double)) {
+                                                      dedup[key] = it;
+                                                    }
                                                   }
-                                                },
-                                                icon: CustomIconWidget(
-                                                  iconName: 'add_a_photo',
-                                                  color: Colors.white,
-                                                  size: 5.w,
-                                                ),
-                                                label: Text(
-                                                  'Add Photo',
-                                                  style: AppTheme
-                                                      .lightTheme
-                                                      .textTheme
-                                                      .labelLarge
-                                                      ?.copyWith(
-                                                        color: Colors.white,
-                                                      ),
-                                                ),
-                                                style: ElevatedButton.styleFrom(
-                                                  padding: EdgeInsets.symmetric(
-                                                    vertical: 1.6.h,
-                                                  ),
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(12),
-                                                  ),
-                                                  backgroundColor: AppTheme
-                                                      .lightTheme
-                                                      .colorScheme
-                                                      .secondary,
-                                                ),
-                                              ),
+                                                  _recognizedIngredients = dedup
+                                                      .values
+                                                      .toList();
+                                                });
+                                              }
+                                            },
+                                            icon: CustomIconWidget(
+                                              iconName: 'add_a_photo',
+                                              color: Colors.white,
+                                              size: 5.w,
                                             ),
-                                          ],
+                                            label: Text(
+                                              'Add Photo',
+                                              style: AppTheme
+                                                  .lightTheme
+                                                  .textTheme
+                                                  .labelLarge
+                                                  ?.copyWith(
+                                                    color: Colors.white,
+                                                  ),
+                                            ),
+                                            style: ElevatedButton.styleFrom(
+                                              padding: EdgeInsets.symmetric(
+                                                vertical: 1.6.h,
+                                              ),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                              backgroundColor: AppTheme
+                                                  .lightTheme
+                                                  .colorScheme
+                                                  .secondary,
+                                            ),
+                                          ),
                                         ),
-
-                                        SizedBox(height: 1.h),
                                       ],
                                     ),
-                                  ),
-                                ),
 
-                                SizedBox(height: 6.h), // Space for bottom area
-                              ],
+                                    SizedBox(height: 1.h),
+                                  ],
+                                ),
+                              ),
                             ),
-                          ),
+
+                            SizedBox(height: 6.h), // Space for bottom area
+                          ],
+                        ),
+                      ),
               ),
             ],
           ),

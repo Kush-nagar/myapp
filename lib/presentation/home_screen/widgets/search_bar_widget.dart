@@ -17,92 +17,169 @@ class SearchBarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.h),
-      child: Column(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              color: DonationAppTheme.lightTheme.colorScheme.surface,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: DonationAppTheme.lightTheme.colorScheme.shadow,
-                  blurRadius: 8,
-                  offset: Offset(0, 2),
-                ),
-              ],
-            ),
-            child: TextField(
-              readOnly: true,
-              onTap: onSearchTap,
-              decoration: InputDecoration(
-                hintText: "Search food banks, shelters...",
-                prefixIcon: Padding(
-                  padding: EdgeInsets.all(3.w),
-                  child: CustomIconWidget(
-                    iconName: 'search',
-                    color: DonationAppTheme.lightTheme.colorScheme.onSurface
-                        .withValues(alpha: 0.6),
-                    size: 24,
-                  ),
-                ),
-                suffixIcon: Padding(
-                  padding: EdgeInsets.all(3.w),
-                  child: CustomIconWidget(
-                    iconName: 'tune',
-                    color: DonationAppTheme.lightTheme.colorScheme.primary,
-                    size: 24,
-                  ),
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide.none,
-                ),
-                filled: true,
-                fillColor: DonationAppTheme.lightTheme.colorScheme.surface,
-                contentPadding:
-                    EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
+    return Column(
+      children: [
+        // Search Bar
+        Container(
+          height: 7.5.h,
+          decoration: BoxDecoration(
+            color: DonationAppTheme.lightTheme.colorScheme.surface,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.06),
+                blurRadius: 12,
+                offset: Offset(0, 4),
+                spreadRadius: 0,
               ),
+              BoxShadow(
+                color: Colors.black.withOpacity(0.02),
+                blurRadius: 4,
+                offset: Offset(0, 1),
+                spreadRadius: 0,
+              ),
+            ],
+            border: Border.all(
+              color: DonationAppTheme.lightTheme.colorScheme.outline
+                  .withOpacity(0.08),
+              width: 1,
             ),
           ),
-          SizedBox(height: 1.h),
-          InkWell(
+          child: TextField(
+            readOnly: true,
+            onTap: onSearchTap,
+            style: DonationAppTheme.lightTheme.textTheme.bodyMedium?.copyWith(
+              fontSize: 16,
+              fontWeight: FontWeight.w400,
+            ),
+            decoration: InputDecoration(
+              hintText: "Search food banks, shelters...",
+              hintStyle: DonationAppTheme.lightTheme.textTheme.bodyMedium
+                  ?.copyWith(
+                    color: DonationAppTheme.lightTheme.colorScheme.onSurface
+                        .withOpacity(0.6),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                  ),
+              prefixIcon: Container(
+                width: 20,
+                height: 20,
+                alignment: Alignment.center,
+                margin: EdgeInsets.only(left: 4.w, right: 3.w),
+                child: CustomIconWidget(
+                  iconName: 'search',
+                  color: DonationAppTheme.lightTheme.colorScheme.onSurface
+                      .withOpacity(0.6),
+                  size: 22,
+                ),
+              ),
+              suffixIcon: Container(
+                width: 20,
+                height: 20,
+                alignment: Alignment.center,
+                margin: EdgeInsets.only(right: 4.w),
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(8),
+                    onTap: onSearchTap,
+                    child: Padding(
+                      padding: EdgeInsets.all(2.w),
+                      child: CustomIconWidget(
+                        iconName: 'tune',
+                        color: DonationAppTheme.lightTheme.colorScheme.primary,
+                        size: 20,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide.none,
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide.none,
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide(
+                  color: DonationAppTheme.lightTheme.colorScheme.primary
+                      .withOpacity(0.3),
+                  width: 2,
+                ),
+              ),
+              filled: true,
+              fillColor: DonationAppTheme.lightTheme.colorScheme.surface,
+              contentPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+            ),
+          ),
+        ),
+
+        // Location Button
+        SizedBox(height: 1.5.h),
+        Material(
+          color: Colors.transparent,
+          child: InkWell(
             onTap: onLocationTap,
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(12),
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 1.h),
+              padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 1.2.h),
+              decoration: BoxDecoration(
+                color: DonationAppTheme.lightTheme.colorScheme.primary
+                    .withOpacity(0.08),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color: DonationAppTheme.lightTheme.colorScheme.primary
+                      .withOpacity(0.2),
+                  width: 1,
+                ),
+              ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  CustomIconWidget(
-                    iconName: 'location_on',
-                    color: DonationAppTheme.lightTheme.colorScheme.primary,
-                    size: 16,
+                  Container(
+                    padding: EdgeInsets.all(1),
+                    decoration: BoxDecoration(
+                      color: DonationAppTheme.lightTheme.colorScheme.primary,
+                      shape: BoxShape.circle,
+                    ),
+                    child: CustomIconWidget(
+                      iconName: 'location_on',
+                      color: Colors.white,
+                      size: 14,
+                    ),
                   ),
-                  SizedBox(width: 1.w),
+                  SizedBox(width: 2.w),
                   Flexible(
                     child: Text(
                       currentLocation,
-                      style: DonationAppTheme.lightTheme.textTheme.bodySmall?.copyWith(
-                        color: DonationAppTheme.lightTheme.colorScheme.primary,
-                        fontWeight: FontWeight.w500,
-                      ),
+                      style: DonationAppTheme.lightTheme.textTheme.bodySmall
+                          ?.copyWith(
+                            color:
+                                DonationAppTheme.lightTheme.colorScheme.primary,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13,
+                          ),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  SizedBox(width: 1.w),
-                  CustomIconWidget(
-                    iconName: 'keyboard_arrow_down',
-                    color: DonationAppTheme.lightTheme.colorScheme.primary,
-                    size: 16,
+                  SizedBox(width: 1.5.w),
+                  Container(
+                    padding: EdgeInsets.all(1),
+                    child: CustomIconWidget(
+                      iconName: 'keyboard_arrow_down',
+                      color: DonationAppTheme.lightTheme.colorScheme.primary,
+                      size: 16,
+                    ),
                   ),
                 ],
               ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

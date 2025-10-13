@@ -107,7 +107,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
     _checkConnectivity();
     // initialize with master list first
-    _displayOrganizations = List<Map<String, dynamic>>.from(_masterOrganizations);
+    _displayOrganizations = List<Map<String, dynamic>>.from(
+      _masterOrganizations,
+    );
     _loadOrganizations();
 
     // read arguments after first frame to apply donation filters if present
@@ -120,8 +122,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     final args =
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
     if (args != null && args['donationIngredients'] != null) {
-      final List<dynamic> donationIngredients =
-          List<dynamic>.from(args['donationIngredients'] as List<dynamic>);
+      final List<dynamic> donationIngredients = List<dynamic>.from(
+        args['donationIngredients'] as List<dynamic>,
+      );
       final List<String> names = donationIngredients
           .map((e) => e.toString().toLowerCase())
           .toList();
@@ -229,9 +232,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             SizedBox(height: 3.h),
             Text(
               "Change Location",
-              style: DonationAppTheme.lightTheme.textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+              style: DonationAppTheme.lightTheme.textTheme.headlineSmall
+                  ?.copyWith(fontWeight: FontWeight.w600),
             ),
             SizedBox(height: 2.h),
             TextField(
@@ -263,7 +265,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 _tryGetCurrentPosition().then((pos) {
                   if (pos != null) {
                     setState(() {
-                      _currentLocation = "${pos.latitude.toStringAsFixed(4)}, ${pos.longitude.toStringAsFixed(4)}";
+                      _currentLocation =
+                          "${pos.latitude.toStringAsFixed(4)}, ${pos.longitude.toStringAsFixed(4)}";
                     });
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -292,9 +295,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     final phone = organization["phone"] as String?;
     if (phone != null) {
       // In a real app, use url_launcher to make phone calls
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Calling $phone")),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Calling $phone")));
     }
   }
 
@@ -304,16 +307,18 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   void _onToggleFavorite(Map<String, dynamic> organization) {
     setState(() {
-      final index =
-          _displayOrganizations.indexWhere((org) => org["id"] == organization["id"]);
+      final index = _displayOrganizations.indexWhere(
+        (org) => org["id"] == organization["id"],
+      );
       if (index != -1) {
         _displayOrganizations[index]["isFavorited"] =
             !(_displayOrganizations[index]["isFavorited"] ?? false);
       }
 
       // also update master copy if present
-      final masterIndex =
-          _masterOrganizations.indexWhere((org) => org["id"] == organization["id"]);
+      final masterIndex = _masterOrganizations.indexWhere(
+        (org) => org["id"] == organization["id"],
+      );
       if (masterIndex != -1) {
         _masterOrganizations[masterIndex]["isFavorited"] =
             !(_masterOrganizations[masterIndex]["isFavorited"] ?? false);
@@ -362,20 +367,24 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     'zucchini',
     'melon',
     'corn',
-    'okra'
+    'okra',
   };
 
   // Map the incoming ingredient names to org needs and update _displayOrganizations
   void _applyDonationFilter(List<String> ingredientNames) {
     if (ingredientNames.isEmpty) {
       setState(() {
-        _displayOrganizations = List<Map<String, dynamic>>.from(_masterOrganizations);
+        _displayOrganizations = List<Map<String, dynamic>>.from(
+          _masterOrganizations,
+        );
       });
       return;
     }
 
     // lower-case set for quick check
-    final Set<String> ingredientSet = ingredientNames.map((e) => e.toLowerCase()).toSet();
+    final Set<String> ingredientSet = ingredientNames
+        .map((e) => e.toLowerCase())
+        .toSet();
 
     // For each organization compute a score (# of matches)
     final List<Map<String, dynamic>> scored = [];
@@ -398,22 +407,41 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       }
 
       // 2) category-level match for produce: if organization asks for produce/vegetables/fruits
-      final bool orgWantsProduce = needs.any((n) =>
-          n.contains('produce') || n.contains('vegetable') || n.contains('fruit') || n.contains('fresh'));
+      final bool orgWantsProduce = needs.any(
+        (n) =>
+            n.contains('produce') ||
+            n.contains('vegetable') ||
+            n.contains('fruit') ||
+            n.contains('fresh'),
+      );
 
       if (orgWantsProduce) {
         // if any ingredient is in the produceKeywords, give a match
         if (ingredientSet.any((ing) => _produceKeywords.contains(ing))) {
           // Count each produce ingredient once (to avoid huge weight)
-          matches += ingredientSet.where((ing) => _produceKeywords.contains(ing)).length;
+          matches += ingredientSet
+              .where((ing) => _produceKeywords.contains(ing))
+              .length;
         }
       }
 
       // 3) canned / non-perishables matching
-      final bool orgWantsCanned = needs.any((n) => n.contains('canned') || n.contains('non-perish') || n.contains('non perishable'));
+      final bool orgWantsCanned = needs.any(
+        (n) =>
+            n.contains('canned') ||
+            n.contains('non-perish') ||
+            n.contains('non perishable') ||
+            n.contains('soda'),
+      );
       if (orgWantsCanned) {
         // If ingredient is 'beans' or 'canned' etc, increment
-        if (ingredientSet.any((ing) => ing.contains('beans') || ing.contains('soup') || ing.contains('canned'))) {
+        if (ingredientSet.any(
+          (ing) =>
+              ing.contains('beans') ||
+              ing.contains('soup') ||
+              ing.contains('canned') ||
+              ing.contains('soda'),
+        )) {
           matches += 1;
         }
       }
@@ -438,7 +466,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     // Limit to 8 results. If no matches found, fallback to master list.
     setState(() {
       if (scored.isEmpty) {
-        _displayOrganizations = List<Map<String, dynamic>>.from(_masterOrganizations);
+        _displayOrganizations = List<Map<String, dynamic>>.from(
+          _masterOrganizations,
+        );
       } else {
         _displayOrganizations = scored.take(8).map((m) {
           // Remove matchScore before passing to UI, but keep it if you like
@@ -466,7 +496,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       if (permission == LocationPermission.deniedForever) return null;
 
       final pos = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high);
+        desiredAccuracy: LocationAccuracy.high,
+      );
       _currentPosition = pos;
       return pos;
     } catch (e) {
@@ -482,7 +513,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   /// Search nearby organizations (Places API), fetch details, synthesize an organization
   /// model that includes a `currentNeeds` list where possible, then run donation matching
   /// on that set. Limit to 8 displayed results.
-  Future<void> _searchNearbyAndApplyDonationFilter(List<String> ingredientNames) async {
+  Future<void> _searchNearbyAndApplyDonationFilter(
+    List<String> ingredientNames,
+  ) async {
     if (ingredientNames.isEmpty) {
       _applyDonationFilter([]);
       return;
@@ -513,7 +546,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
       // 3) For each place (limit to first N), fetch details and try to create a rich org map
       final List<Map<String, dynamic>> candidateOrgs = [];
-      final int maxDetails = 12; // fetch details for top 12, then filter to max 8
+      final int maxDetails =
+          12; // fetch details for top 12, then filter to max 8
       final sliced = places.take(maxDetails).toList();
 
       // Use Future.wait to fetch details in parallel with safe error handling
@@ -524,23 +558,31 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           final List<String> inferredNeeds = [];
 
           final lowerName = (details.name ?? '').toString().toLowerCase();
-          final List<String> typeKeywords = (details.types as List<dynamic>?)
+          final List<String> typeKeywords =
+              (details.types as List<dynamic>?)
                   ?.map((t) => t.toString().toLowerCase())
                   .toList() ??
               [];
 
-          final isFoodOrg = lowerName.contains('food') ||
+          final isFoodOrg =
+              lowerName.contains('food') ||
               lowerName.contains('pantry') ||
               lowerName.contains('shelter') ||
               lowerName.contains('kitchen') ||
-              typeKeywords.any((t) =>
-                  t.contains('food') ||
-                  t.contains('pantry') ||
-                  t.contains('shelter') ||
-                  t.contains('point_of_interest'));
+              typeKeywords.any(
+                (t) =>
+                    t.contains('food') ||
+                    t.contains('pantry') ||
+                    t.contains('shelter') ||
+                    t.contains('point_of_interest'),
+              );
 
           if (isFoodOrg) {
-            inferredNeeds.addAll(['canned goods', 'fresh produce', 'dairy products']);
+            inferredNeeds.addAll([
+              'canned goods',
+              'fresh produce',
+              'dairy products',
+            ]);
           }
 
           if (typeKeywords.contains('restaurant')) {
@@ -551,23 +593,28 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             inferredNeeds.add('bread');
           }
 
-          final deduped = inferredNeeds.map((s) => s.toLowerCase()).toSet().toList();
+          final deduped = inferredNeeds
+              .map((s) => s.toLowerCase())
+              .toSet()
+              .toList();
 
-          final distanceText = (_currentPosition != null && details.lat != null && details.lng != null)
-              ? "${_metersToMiles(Geolocator.distanceBetween(
-                          _currentPosition!.latitude,
-                          _currentPosition!.longitude,
-                          details.lat,
-                          details.lng))
-                      .toStringAsFixed(1)} mi"
+          final distanceText =
+              (_currentPosition != null &&
+                  details.lat != null &&
+                  details.lng != null)
+              ? "${_metersToMiles(Geolocator.distanceBetween(_currentPosition!.latitude, _currentPosition!.longitude, details.lat, details.lng)).toStringAsFixed(1)} mi"
               : '';
 
           final org = <String, dynamic>{
             'id': details.placeId.hashCode,
             'placeId': details.placeId,
             'name': details.name ?? '',
-            'logo': (details.photoReferences != null && (details.photoReferences as List).isNotEmpty)
-                ? _placesService.photoUrlFromReference((details.photoReferences as List).first)
+            'logo':
+                (details.photoReferences != null &&
+                    (details.photoReferences as List).isNotEmpty)
+                ? _placesService.photoUrlFromReference(
+                    (details.photoReferences as List).first,
+                  )
                 : '',
             'rating': details.rating ?? 0.0,
             'distance': distanceText,
@@ -610,19 +657,27 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   /// Apply donation matching to a custom org list (same matching logic as _applyDonationFilter,
   /// but operates on a provided org list rather than _masterOrganizations).
-  void _applyDonationFilterToOrgs(List<String> ingredientNames, List<Map<String, dynamic>> orgList) {
+  void _applyDonationFilterToOrgs(
+    List<String> ingredientNames,
+    List<Map<String, dynamic>> orgList,
+  ) {
     if (ingredientNames.isEmpty) {
       setState(() {
-        _displayOrganizations = List<Map<String, dynamic>>.from(orgList.take(8).toList());
+        _displayOrganizations = List<Map<String, dynamic>>.from(
+          orgList.take(8).toList(),
+        );
       });
       return;
     }
 
-    final Set<String> ingredientSet = ingredientNames.map((e) => e.toLowerCase()).toSet();
+    final Set<String> ingredientSet = ingredientNames
+        .map((e) => e.toLowerCase())
+        .toSet();
     final List<Map<String, dynamic>> scored = [];
 
     for (final org in orgList) {
-      final List<String> needs = (org['currentNeeds'] as List<dynamic>?)
+      final List<String> needs =
+          (org['currentNeeds'] as List<dynamic>?)
               ?.map((n) => n.toString().toLowerCase())
               .toList() ??
           [];
@@ -640,19 +695,36 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       }
 
       // 2) produce-level match using existing _produceKeywords
-      final bool orgWantsProduce =
-          needs.any((n) => n.contains('produce') || n.contains('vegetable') || n.contains('fruit') || n.contains('fresh'));
+      final bool orgWantsProduce = needs.any(
+        (n) =>
+            n.contains('produce') ||
+            n.contains('vegetable') ||
+            n.contains('fruit') ||
+            n.contains('fresh'),
+      );
 
       if (orgWantsProduce) {
         if (ingredientSet.any((ing) => _produceKeywords.contains(ing))) {
-          matches += ingredientSet.where((ing) => _produceKeywords.contains(ing)).length;
+          matches += ingredientSet
+              .where((ing) => _produceKeywords.contains(ing))
+              .length;
         }
       }
 
       // 3) canned / non-perishable logic
-      final bool orgWantsCanned = needs.any((n) => n.contains('canned') || n.contains('non-perish') || n.contains('non perishable'));
+      final bool orgWantsCanned = needs.any(
+        (n) =>
+            n.contains('canned') ||
+            n.contains('non-perish') ||
+            n.contains('non perishable'),
+      );
       if (orgWantsCanned) {
-        if (ingredientSet.any((ing) => ing.contains('beans') || ing.contains('soup') || ing.contains('canned'))) {
+        if (ingredientSet.any(
+          (ing) =>
+              ing.contains('beans') ||
+              ing.contains('soup') ||
+              ing.contains('canned'),
+        )) {
           matches += 1;
         }
       }
@@ -676,7 +748,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
     setState(() {
       if (scored.isEmpty) {
-        _displayOrganizations = List<Map<String, dynamic>>.from(_masterOrganizations);
+        _displayOrganizations = List<Map<String, dynamic>>.from(
+          _masterOrganizations,
+        );
       } else {
         _displayOrganizations = scored.take(8).map((m) {
           final Map<String, dynamic> copy = Map<String, dynamic>.from(m);
@@ -697,35 +771,167 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           color: DonationAppTheme.lightTheme.colorScheme.primary,
           child: CustomScrollView(
             slivers: [
+              // replace the existing SliverToBoxAdapter(...) block with this one
               SliverToBoxAdapter(
                 child: Column(
                   children: [
-                    SizedBox(height: 1.h),
-                    SearchBarWidget(
-                      currentLocation: _currentLocation,
-                      onSearchTap: _onSearchTap,
-                      onLocationTap: _onLocationTap,
+                    SizedBox(height: 2.h),
+
+                    // --- HEADER WITH BACK BUTTON + SEARCH BAR ---
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 4.w),
+                      child: Column(
+                        children: [
+                          // Back Arrow Row
+                          Row(
+                            children: [
+                              Container(
+                                width: 12.w,
+                                height: 12.w,
+                                decoration: BoxDecoration(
+                                  color: DonationAppTheme
+                                      .lightTheme
+                                      .colorScheme
+                                      .surface,
+                                  borderRadius: BorderRadius.circular(14),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.06),
+                                      blurRadius: 12,
+                                      offset: Offset(0, 4),
+                                      spreadRadius: 0,
+                                    ),
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.02),
+                                      blurRadius: 4,
+                                      offset: Offset(0, 1),
+                                      spreadRadius: 0,
+                                    ),
+                                  ],
+                                  border: Border.all(
+                                    color: DonationAppTheme
+                                        .lightTheme
+                                        .colorScheme
+                                        .outline
+                                        .withOpacity(0.08),
+                                    width: 1,
+                                  ),
+                                ),
+                                child: Material(
+                                  color: Colors.transparent,
+                                  borderRadius: BorderRadius.circular(14),
+                                  child: InkWell(
+                                    borderRadius: BorderRadius.circular(14),
+                                    splashColor: DonationAppTheme
+                                        .lightTheme
+                                        .colorScheme
+                                        .primary
+                                        .withOpacity(0.1),
+                                    highlightColor: DonationAppTheme
+                                        .lightTheme
+                                        .colorScheme
+                                        .primary
+                                        .withOpacity(0.05),
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: Container(
+                                      alignment: Alignment.center,
+                                      child: CustomIconWidget(
+                                        iconName: 'arrow_back',
+                                        color: DonationAppTheme
+                                            .lightTheme
+                                            .colorScheme
+                                            .onSurface,
+                                        size: 6.w,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 4.w),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Find Organizations",
+                                      style: DonationAppTheme
+                                          .lightTheme
+                                          .textTheme
+                                          .headlineSmall
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 24,
+                                            color: DonationAppTheme
+                                                .lightTheme
+                                                .colorScheme
+                                                .onSurface,
+                                          ),
+                                    ),
+                                    SizedBox(height: 0.5.h),
+                                    Text(
+                                      "Donate your ingredients to those in need",
+                                      style: DonationAppTheme
+                                          .lightTheme
+                                          .textTheme
+                                          .bodyMedium
+                                          ?.copyWith(
+                                            color: DonationAppTheme
+                                                .lightTheme
+                                                .colorScheme
+                                                .onSurface
+                                                .withOpacity(0.7),
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          SizedBox(height: 3.h),
+
+                          // Search Bar
+                          SearchBarWidget(
+                            currentLocation: _currentLocation,
+                            onSearchTap: _onSearchTap,
+                            onLocationTap: _onLocationTap,
+                          ),
+                        ],
+                      ),
                     ),
+
+                    SizedBox(height: 2.h),
+
                     if (!_isOnline) ...[
                       OfflineBannerWidget(lastUpdated: _lastUpdated),
+                      SizedBox(height: 2.h),
                     ],
-                    SizedBox(height: 2.h),
+
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Padding(
                         padding: EdgeInsets.symmetric(horizontal: 4.w),
                         child: Text(
                           "Urgent Needs",
-                          style: DonationAppTheme.lightTheme.textTheme.titleLarge
+                          style: DonationAppTheme
+                              .lightTheme
+                              .textTheme
+                              .titleLarge
                               ?.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
+                                fontWeight: FontWeight.w700,
+                                fontSize: 20,
+                              ),
                         ),
                       ),
                     ),
-                    SizedBox(height: 1.h),
+                    SizedBox(height: 1.5.h),
                     UrgentNeedsBannerWidget(),
                     SizedBox(height: 3.h),
+
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 4.w),
                       child: Row(
@@ -733,63 +939,63 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         children: [
                           Text(
                             "Nearby Organizations",
-                            style: DonationAppTheme.lightTheme.textTheme.titleLarge
+                            style: DonationAppTheme
+                                .lightTheme
+                                .textTheme
+                                .titleLarge
                                 ?.copyWith(
-                              fontWeight: FontWeight.w600,
-                            ),
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 20,
+                                ),
                           ),
                           if (_isLoading)
-                            SizedBox(
-                              width: 20,
-                              height: 20,
+                            Container(
+                              width: 24,
+                              height: 24,
                               child: CircularProgressIndicator(
-                                strokeWidth: 2,
+                                strokeWidth: 2.5,
                                 valueColor: AlwaysStoppedAnimation<Color>(
-                                  DonationAppTheme.lightTheme.colorScheme.primary,
+                                  DonationAppTheme
+                                      .lightTheme
+                                      .colorScheme
+                                      .primary,
                                 ),
                               ),
                             ),
                         ],
                       ),
                     ),
-                    SizedBox(height: 1.h),
+                    SizedBox(height: 1.5.h),
                   ],
                 ),
               ),
+
               _isLoading
                   ? SliverFillRemaining(
                       child: Center(
                         child: CircularProgressIndicator(
-                          color: DonationAppTheme.lightTheme.colorScheme.primary,
+                          color:
+                              DonationAppTheme.lightTheme.colorScheme.primary,
                         ),
                       ),
                     )
                   : _displayOrganizations.isEmpty
-                      ? SliverFillRemaining(
-                          child: EmptyStateWidget(
-                            onExpandSearch: _onExpandSearch,
-                          ),
-                        )
-                      : SliverList(
-                          delegate: SliverChildBuilderDelegate(
-                            (context, index) {
-                              final organization = _displayOrganizations[index];
-                              return OrganizationCardWidget(
-                                organization: organization,
-                                onTap: () => _onOrganizationTap(organization),
-                                onCall: () => _onCallOrganization(organization),
-                                onDirections: () =>
-                                    _onGetDirections(organization),
-                                onFavorite: () =>
-                                    _onToggleFavorite(organization),
-                              );
-                            },
-                            childCount: _displayOrganizations.length,
-                          ),
-                        ),
-              SliverToBoxAdapter(
-                child: SizedBox(height: 10.h),
-              ),
+                  ? SliverFillRemaining(
+                      child: EmptyStateWidget(onExpandSearch: _onExpandSearch),
+                    )
+                  : SliverList(
+                      delegate: SliverChildBuilderDelegate((context, index) {
+                        final organization = _displayOrganizations[index];
+                        return OrganizationCardWidget(
+                          organization: organization,
+                          onTap: () => _onOrganizationTap(organization),
+                          onCall: () => _onCallOrganization(organization),
+                          onDirections: () => _onGetDirections(organization),
+                          onFavorite: () => _onToggleFavorite(organization),
+                        );
+                      }, childCount: _displayOrganizations.length),
+                    ),
+              SliverToBoxAdapter(child: SizedBox(height: 10.h)),
             ],
           ),
         ),
@@ -809,8 +1015,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         type: BottomNavigationBarType.fixed,
         backgroundColor: DonationAppTheme.lightTheme.colorScheme.surface,
         selectedItemColor: DonationAppTheme.lightTheme.colorScheme.primary,
-        unselectedItemColor:
-            DonationAppTheme.lightTheme.colorScheme.onSurface.withValues(alpha: 0.6),
+        unselectedItemColor: DonationAppTheme.lightTheme.colorScheme.onSurface
+            .withValues(alpha: 0.6),
         elevation: 8,
         items: [
           BottomNavigationBarItem(
@@ -819,7 +1025,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               color: _currentIndex == 0
                   ? DonationAppTheme.lightTheme.colorScheme.primary
                   : DonationAppTheme.lightTheme.colorScheme.onSurface
-                      .withValues(alpha: 0.6),
+                        .withValues(alpha: 0.6),
               size: 24,
             ),
             label: 'Home',
@@ -830,7 +1036,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               color: _currentIndex == 1
                   ? DonationAppTheme.lightTheme.colorScheme.primary
                   : DonationAppTheme.lightTheme.colorScheme.onSurface
-                      .withValues(alpha: 0.6),
+                        .withValues(alpha: 0.6),
               size: 24,
             ),
             label: 'Search',
@@ -841,7 +1047,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               color: _currentIndex == 2
                   ? DonationAppTheme.lightTheme.colorScheme.primary
                   : DonationAppTheme.lightTheme.colorScheme.onSurface
-                      .withValues(alpha: 0.6),
+                        .withValues(alpha: 0.6),
               size: 24,
             ),
             label: 'Favorites',
@@ -852,7 +1058,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               color: _currentIndex == 3
                   ? DonationAppTheme.lightTheme.colorScheme.primary
                   : DonationAppTheme.lightTheme.colorScheme.onSurface
-                      .withValues(alpha: 0.6),
+                        .withValues(alpha: 0.6),
               size: 24,
             ),
             label: 'Reciepes',
