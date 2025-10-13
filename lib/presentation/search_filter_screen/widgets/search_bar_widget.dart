@@ -56,8 +56,9 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
             color: DonationAppTheme.lightTheme.colorScheme.surface,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: DonationAppTheme.lightTheme.colorScheme.outline
-                  .withValues(alpha: 0.3),
+              color: DonationAppTheme.lightTheme.colorScheme.outline.withValues(
+                alpha: 0.3,
+              ),
               width: 1,
             ),
             boxShadow: [
@@ -75,14 +76,19 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
             style: DonationAppTheme.lightTheme.textTheme.bodyMedium,
             decoration: InputDecoration(
               hintText: 'Search organizations, food types...',
-              hintStyle: DonationAppTheme.lightTheme.textTheme.bodyMedium?.copyWith(
-                color: DonationAppTheme.lightTheme.colorScheme.onSurfaceVariant,
-              ),
+              hintStyle: DonationAppTheme.lightTheme.textTheme.bodyMedium
+                  ?.copyWith(
+                    color: DonationAppTheme
+                        .lightTheme
+                        .colorScheme
+                        .onSurfaceVariant,
+                  ),
               prefixIcon: Padding(
                 padding: EdgeInsets.all(2.w),
                 child: CustomIconWidget(
                   iconName: 'search',
-                  color: DonationAppTheme.lightTheme.colorScheme.onSurfaceVariant,
+                  color:
+                      DonationAppTheme.lightTheme.colorScheme.onSurfaceVariant,
                   size: 5.w,
                 ),
               ),
@@ -96,8 +102,10 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
                         padding: EdgeInsets.all(2.w),
                         child: CustomIconWidget(
                           iconName: 'clear',
-                          color:
-                              DonationAppTheme.lightTheme.colorScheme.onSurfaceVariant,
+                          color: DonationAppTheme
+                              .lightTheme
+                              .colorScheme
+                              .onSurfaceVariant,
                           size: 5.w,
                         ),
                       ),
@@ -117,8 +125,10 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
                 ],
               ),
               border: InputBorder.none,
-              contentPadding:
-                  EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.5.h),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 4.w,
+                vertical: 1.5.h,
+              ),
             ),
           ),
         ),
@@ -158,7 +168,10 @@ class _SearchBarWidgetState extends State<SearchBarWidget> {
                   dense: true,
                   leading: CustomIconWidget(
                     iconName: 'history',
-                    color: DonationAppTheme.lightTheme.colorScheme.onSurfaceVariant,
+                    color: DonationAppTheme
+                        .lightTheme
+                        .colorScheme
+                        .onSurfaceVariant,
                     size: 4.w,
                   ),
                   title: Text(

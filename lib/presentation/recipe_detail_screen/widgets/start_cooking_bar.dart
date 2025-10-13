@@ -46,8 +46,9 @@ class StartCookingBar extends StatelessWidget {
                 width: double.infinity,
                 padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 1.h),
                 decoration: BoxDecoration(
-                  color:
-                      AppTheme.lightTheme.primaryColor.withValues(alpha: 0.05),
+                  color: AppTheme.lightTheme.primaryColor.withValues(
+                    alpha: 0.05,
+                  ),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
@@ -165,8 +166,8 @@ class StartCookingBar extends StatelessWidget {
                           iconName: isCompleted
                               ? 'restaurant'
                               : completedSteps > 0
-                                  ? 'play_arrow'
-                                  : 'play_circle_filled',
+                              ? 'play_arrow'
+                              : 'play_circle_filled',
                           color: Colors.white,
                           size: 20,
                         ),
@@ -175,8 +176,8 @@ class StartCookingBar extends StatelessWidget {
                           isCompleted
                               ? 'Cook Again'
                               : completedSteps > 0
-                                  ? 'Continue Cooking'
-                                  : 'Start Cooking',
+                              ? 'Continue Cooking'
+                              : 'Start Cooking',
                           style: TextStyle(
                             fontSize: 14.sp,
                             fontWeight: FontWeight.w600,

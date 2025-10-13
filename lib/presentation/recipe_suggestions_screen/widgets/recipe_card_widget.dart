@@ -18,8 +18,8 @@ class RecipeCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final matchPercentage = (recipe['matchPercentage'] as num).toInt();
-    final availableIngredients =
-        (recipe['availableIngredients'] as num).toInt();
+    final availableIngredients = (recipe['availableIngredients'] as num)
+        .toInt();
     final totalIngredients = (recipe['totalIngredients'] as num).toInt();
 
     return GestureDetector(
@@ -44,8 +44,9 @@ class RecipeCardWidget extends StatelessWidget {
             Stack(
               children: [
                 ClipRRect(
-                  borderRadius:
-                      const BorderRadius.vertical(top: Radius.circular(16)),
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(16),
+                  ),
                   child: CustomImageWidget(
                     imageUrl: recipe['image'] as String,
                     width: double.infinity,
@@ -57,8 +58,10 @@ class RecipeCardWidget extends StatelessWidget {
                   top: 2.h,
                   right: 3.w,
                   child: Container(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 2.w, vertical: 0.5.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 2.w,
+                      vertical: 0.5.h,
+                    ),
                     decoration: BoxDecoration(
                       color: _getMatchColor(matchPercentage),
                       borderRadius: BorderRadius.circular(12),
@@ -66,9 +69,9 @@ class RecipeCardWidget extends StatelessWidget {
                     child: Text(
                       '$matchPercentage% Match',
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                          ),
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ),
@@ -82,8 +85,8 @@ class RecipeCardWidget extends StatelessWidget {
                   Text(
                     recipe['title'] as String,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
+                      fontWeight: FontWeight.w600,
+                    ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -128,7 +131,9 @@ class RecipeCardWidget extends StatelessWidget {
                             LinearProgressIndicator(
                               value: availableIngredients / totalIngredients,
                               backgroundColor: AppTheme
-                                  .lightTheme.colorScheme.outline
+                                  .lightTheme
+                                  .colorScheme
+                                  .outline
                                   .withValues(alpha: 0.2),
                               valueColor: AlwaysStoppedAnimation<Color>(
                                 _getMatchColor(matchPercentage),
@@ -141,11 +146,11 @@ class RecipeCardWidget extends StatelessWidget {
                       SizedBox(width: 4.w),
                       Text(
                         '$availableIngredients/$totalIngredients',
-                        style:
-                            Theme.of(context).textTheme.labelMedium?.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                  color: _getMatchColor(matchPercentage),
-                                ),
+                        style: Theme.of(context).textTheme.labelMedium
+                            ?.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: _getMatchColor(matchPercentage),
+                            ),
                       ),
                     ],
                   ),

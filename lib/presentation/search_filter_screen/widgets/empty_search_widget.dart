@@ -69,31 +69,35 @@ class EmptySearchWidget extends StatelessWidget {
               runSpacing: 1.h,
               alignment: WrapAlignment.center,
               children: suggestions
-                  .map((suggestion) => GestureDetector(
-                        onTap: () => onSuggestionTap(suggestion),
-                        child: Container(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 4.w, vertical: 1.h),
-                          decoration: BoxDecoration(
+                  .map(
+                    (suggestion) => GestureDetector(
+                      onTap: () => onSuggestionTap(suggestion),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 4.w,
+                          vertical: 1.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: DonationAppTheme.lightTheme.primaryColor
+                              .withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
                             color: DonationAppTheme.lightTheme.primaryColor
-                                .withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                              color: DonationAppTheme.lightTheme.primaryColor
-                                  .withValues(alpha: 0.3),
-                              width: 1,
-                            ),
-                          ),
-                          child: Text(
-                            suggestion,
-                            style: DonationAppTheme.lightTheme.textTheme.bodySmall
-                                ?.copyWith(
-                              color: DonationAppTheme.lightTheme.primaryColor,
-                              fontWeight: FontWeight.w500,
-                            ),
+                                .withValues(alpha: 0.3),
+                            width: 1,
                           ),
                         ),
-                      ))
+                        child: Text(
+                          suggestion,
+                          style: DonationAppTheme.lightTheme.textTheme.bodySmall
+                              ?.copyWith(
+                                color: DonationAppTheme.lightTheme.primaryColor,
+                                fontWeight: FontWeight.w500,
+                              ),
+                        ),
+                      ),
+                    ),
+                  )
                   .toList(),
             ),
           ] else ...[

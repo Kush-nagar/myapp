@@ -44,8 +44,9 @@ class FilterChipsWidget extends StatelessWidget {
       } else if (value is String && value.isNotEmpty) {
         chips.add(_buildFilterChip(category, value));
       } else if (value is bool && value == true) {
-        chips
-            .add(_buildFilterChip(category, _getCategoryDisplayName(category)));
+        chips.add(
+          _buildFilterChip(category, _getCategoryDisplayName(category)),
+        );
       } else if (value is double && value > 0) {
         chips.add(_buildFilterChip(category, '${value.toInt()} miles'));
       }
@@ -61,29 +62,30 @@ class FilterChipsWidget extends StatelessWidget {
             children: [
               Text(
                 '$totalFilters filter${totalFilters > 1 ? 's' : ''} applied',
-                style: DonationAppTheme.lightTheme.textTheme.bodySmall?.copyWith(
-                  color: DonationAppTheme.lightTheme.colorScheme.onSurfaceVariant,
-                ),
+                style: DonationAppTheme.lightTheme.textTheme.bodySmall
+                    ?.copyWith(
+                      color: DonationAppTheme
+                          .lightTheme
+                          .colorScheme
+                          .onSurfaceVariant,
+                    ),
               ),
               if (totalFilters > 0)
                 GestureDetector(
                   onTap: onClearAll,
                   child: Text(
                     'Clear All',
-                    style: DonationAppTheme.lightTheme.textTheme.bodySmall?.copyWith(
-                      color: DonationAppTheme.lightTheme.primaryColor,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: DonationAppTheme.lightTheme.textTheme.bodySmall
+                        ?.copyWith(
+                          color: DonationAppTheme.lightTheme.primaryColor,
+                          fontWeight: FontWeight.w600,
+                        ),
                   ),
                 ),
             ],
           ),
           SizedBox(height: 1.h),
-          Wrap(
-            spacing: 2.w,
-            runSpacing: 1.h,
-            children: chips,
-          ),
+          Wrap(spacing: 2.w, runSpacing: 1.h, children: chips),
         ],
       ),
     );
@@ -96,7 +98,9 @@ class FilterChipsWidget extends StatelessWidget {
         color: DonationAppTheme.lightTheme.primaryColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: DonationAppTheme.lightTheme.primaryColor.withValues(alpha: 0.3),
+          color: DonationAppTheme.lightTheme.primaryColor.withValues(
+            alpha: 0.3,
+          ),
           width: 1,
         ),
       ),

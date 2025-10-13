@@ -68,16 +68,24 @@ class FavoriteOrganizationCard extends StatelessWidget {
           child: Container(
             decoration: BoxDecoration(
               color: isSelected
-                  ? DonationAppTheme.lightTheme.primaryColor.withValues(alpha: 0.1)
-                  : (isDark ? DonationAppTheme.cardDark : DonationAppTheme.cardLight),
+                  ? DonationAppTheme.lightTheme.primaryColor.withValues(
+                      alpha: 0.1,
+                    )
+                  : (isDark
+                        ? DonationAppTheme.cardDark
+                        : DonationAppTheme.cardLight),
               borderRadius: BorderRadius.circular(12),
               border: isSelected
                   ? Border.all(
-                      color: DonationAppTheme.lightTheme.primaryColor, width: 2)
+                      color: DonationAppTheme.lightTheme.primaryColor,
+                      width: 2,
+                    )
                   : null,
               boxShadow: [
                 BoxShadow(
-                  color: (isDark ? DonationAppTheme.shadowDark : DonationAppTheme.shadowLight),
+                  color: (isDark
+                      ? DonationAppTheme.shadowDark
+                      : DonationAppTheme.shadowLight),
                   blurRadius: 8,
                   offset: Offset(0, 2),
                 ),
@@ -95,7 +103,8 @@ class FavoriteOrganizationCard extends StatelessWidget {
                         height: 15.w,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
-                          color: DonationAppTheme.lightTheme.colorScheme.surface,
+                          color:
+                              DonationAppTheme.lightTheme.colorScheme.surface,
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(8),
@@ -121,35 +130,39 @@ class FavoriteOrganizationCard extends StatelessWidget {
                                     style: Theme.of(context)
                                         .textTheme
                                         .titleMedium
-                                        ?.copyWith(
-                                          fontWeight: FontWeight.w600,
-                                        ),
+                                        ?.copyWith(fontWeight: FontWeight.w600),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                                 Container(
                                   padding: EdgeInsets.symmetric(
-                                      horizontal: 2.w, vertical: 0.5.h),
+                                    horizontal: 2.w,
+                                    vertical: 0.5.h,
+                                  ),
                                   decoration: BoxDecoration(
                                     color: organization['isOpen'] == true
-                                        ? DonationAppTheme.getSuccessColor(true)
-                                            .withValues(alpha: 0.1)
-                                        : DonationAppTheme.getWarningColor(true)
-                                            .withValues(alpha: 0.1),
+                                        ? DonationAppTheme.getSuccessColor(
+                                            true,
+                                          ).withValues(alpha: 0.1)
+                                        : DonationAppTheme.getWarningColor(
+                                            true,
+                                          ).withValues(alpha: 0.1),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: Text(
                                     organization['isOpen'] == true
                                         ? 'Open'
                                         : 'Closed',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodySmall
+                                    style: Theme.of(context).textTheme.bodySmall
                                         ?.copyWith(
                                           color: organization['isOpen'] == true
-                                              ? DonationAppTheme.getSuccessColor(true)
-                                              : DonationAppTheme.getWarningColor(true),
+                                              ? DonationAppTheme.getSuccessColor(
+                                                  true,
+                                                )
+                                              : DonationAppTheme.getWarningColor(
+                                                  true,
+                                                ),
                                           fontWeight: FontWeight.w500,
                                         ),
                                   ),
@@ -162,10 +175,9 @@ class FavoriteOrganizationCard extends StatelessWidget {
                                 CustomIconWidget(
                                   iconName: 'location_on',
                                   size: 14,
-                                  color: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall
-                                      ?.color,
+                                  color: Theme.of(
+                                    context,
+                                  ).textTheme.bodySmall?.color,
                                 ),
                                 SizedBox(width: 1.w),
                                 Text(
@@ -176,17 +188,17 @@ class FavoriteOrganizationCard extends StatelessWidget {
                                 CustomIconWidget(
                                   iconName: 'access_time',
                                   size: 14,
-                                  color: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall
-                                      ?.color,
+                                  color: Theme.of(
+                                    context,
+                                  ).textTheme.bodySmall?.color,
                                 ),
                                 SizedBox(width: 1.w),
                                 Expanded(
                                   child: Text(
                                     'Last visit: ${organization['lastVisit'] ?? 'Never'}',
-                                    style:
-                                        Theme.of(context).textTheme.bodySmall,
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.bodySmall,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                   ),
@@ -249,7 +261,9 @@ class FavoriteOrganizationCard extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 1.h),
         decoration: BoxDecoration(
-          color: DonationAppTheme.lightTheme.primaryColor.withValues(alpha: 0.1),
+          color: DonationAppTheme.lightTheme.primaryColor.withValues(
+            alpha: 0.1,
+          ),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Column(
@@ -263,9 +277,9 @@ class FavoriteOrganizationCard extends StatelessWidget {
             Text(
               label,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: DonationAppTheme.lightTheme.primaryColor,
-                    fontWeight: FontWeight.w500,
-                  ),
+                color: DonationAppTheme.lightTheme.primaryColor,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ],
         ),

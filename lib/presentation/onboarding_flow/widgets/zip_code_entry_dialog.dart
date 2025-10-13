@@ -46,9 +46,7 @@ class _ZipCodeEntryDialogState extends State<ZipCodeEntryDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Container(
         padding: EdgeInsets.all(6.w),
         child: Column(
@@ -58,8 +56,9 @@ class _ZipCodeEntryDialogState extends State<ZipCodeEntryDialog> {
               width: 15.w,
               height: 15.w,
               decoration: BoxDecoration(
-                color: AppTheme.lightTheme.colorScheme.tertiary
-                    .withValues(alpha: 0.1),
+                color: AppTheme.lightTheme.colorScheme.tertiary.withValues(
+                  alpha: 0.1,
+                ),
                 shape: BoxShape.circle,
               ),
               child: CustomIconWidget(
@@ -135,11 +134,14 @@ class _ZipCodeEntryDialogState extends State<ZipCodeEntryDialog> {
                     ),
                     child: Text(
                       'Cancel',
-                      style:
-                          AppTheme.lightTheme.textTheme.titleMedium?.copyWith(
-                        color: AppTheme.lightTheme.colorScheme.onSurfaceVariant,
-                        fontWeight: FontWeight.w600,
-                      ),
+                      style: AppTheme.lightTheme.textTheme.titleMedium
+                          ?.copyWith(
+                            color: AppTheme
+                                .lightTheme
+                                .colorScheme
+                                .onSurfaceVariant,
+                            fontWeight: FontWeight.w600,
+                          ),
                     ),
                   ),
                 ),
@@ -147,14 +149,16 @@ class _ZipCodeEntryDialogState extends State<ZipCodeEntryDialog> {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: _isValid
-                        ? () =>
-                            widget.onZipCodeEntered(_zipController.text.trim())
+                        ? () => widget.onZipCodeEntered(
+                            _zipController.text.trim(),
+                          )
                         : null,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: _isValid
                           ? AppTheme.lightTheme.colorScheme.primary
-                          : AppTheme.lightTheme.colorScheme.primary
-                              .withValues(alpha: 0.3),
+                          : AppTheme.lightTheme.colorScheme.primary.withValues(
+                              alpha: 0.3,
+                            ),
                       foregroundColor:
                           AppTheme.lightTheme.colorScheme.onPrimary,
                       shape: RoundedRectangleBorder(
@@ -164,11 +168,11 @@ class _ZipCodeEntryDialogState extends State<ZipCodeEntryDialog> {
                     ),
                     child: Text(
                       'Continue',
-                      style:
-                          AppTheme.lightTheme.textTheme.titleMedium?.copyWith(
-                        color: AppTheme.lightTheme.colorScheme.onPrimary,
-                        fontWeight: FontWeight.w600,
-                      ),
+                      style: AppTheme.lightTheme.textTheme.titleMedium
+                          ?.copyWith(
+                            color: AppTheme.lightTheme.colorScheme.onPrimary,
+                            fontWeight: FontWeight.w600,
+                          ),
                     ),
                   ),
                 ),

@@ -6,10 +6,8 @@ import '../../../core/app_export.dart';
 class AddIngredientModalWidget extends StatefulWidget {
   final Function(String) onAddIngredient;
 
-  const AddIngredientModalWidget({
-    Key? key,
-    required this.onAddIngredient,
-  }) : super(key: key);
+  const AddIngredientModalWidget({Key? key, required this.onAddIngredient})
+    : super(key: key);
 
   @override
   State<AddIngredientModalWidget> createState() =>

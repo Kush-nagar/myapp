@@ -18,10 +18,12 @@ class HeroIllustrationWidget extends StatelessWidget {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            AppTheme.lightTheme.colorScheme.primaryContainer
-                .withValues(alpha: 0.3),
-            AppTheme.lightTheme.colorScheme.secondaryContainer
-                .withValues(alpha: 0.2),
+            AppTheme.lightTheme.colorScheme.primaryContainer.withValues(
+              alpha: 0.3,
+            ),
+            AppTheme.lightTheme.colorScheme.secondaryContainer.withValues(
+              alpha: 0.2,
+            ),
           ],
         ),
         boxShadow: [
@@ -38,9 +40,7 @@ class HeroIllustrationWidget extends StatelessWidget {
           Positioned.fill(
             child: ClipRRect(
               borderRadius: BorderRadius.circular(20),
-              child: CustomPaint(
-                painter: _PatternPainter(),
-              ),
+              child: CustomPaint(painter: _PatternPainter()),
             ),
           ),
           // Main illustration content
@@ -57,8 +57,9 @@ class HeroIllustrationWidget extends StatelessWidget {
                     color: AppTheme.lightTheme.colorScheme.surface,
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: AppTheme.lightTheme.colorScheme.outline
-                          .withValues(alpha: 0.3),
+                      color: AppTheme.lightTheme.colorScheme.outline.withValues(
+                        alpha: 0.3,
+                      ),
                       width: 2,
                     ),
                     boxShadow: [
@@ -90,7 +91,9 @@ class HeroIllustrationWidget extends StatelessWidget {
                         left: 3.w,
                         child: Container(
                           padding: EdgeInsets.symmetric(
-                              horizontal: 2.w, vertical: 0.5.h),
+                            horizontal: 2.w,
+                            vertical: 0.5.h,
+                          ),
                           decoration: BoxDecoration(
                             color: AppTheme.lightTheme.colorScheme.primary,
                             borderRadius: BorderRadius.circular(8),
@@ -99,9 +102,9 @@ class HeroIllustrationWidget extends StatelessWidget {
                             'Tomato 95%',
                             style: AppTheme.lightTheme.textTheme.labelSmall
                                 ?.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                            ),
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                ),
                           ),
                         ),
                       ),
@@ -110,7 +113,9 @@ class HeroIllustrationWidget extends StatelessWidget {
                         right: 3.w,
                         child: Container(
                           padding: EdgeInsets.symmetric(
-                              horizontal: 2.w, vertical: 0.5.h),
+                            horizontal: 2.w,
+                            vertical: 0.5.h,
+                          ),
                           decoration: BoxDecoration(
                             color: AppTheme.lightTheme.colorScheme.secondary,
                             borderRadius: BorderRadius.circular(8),
@@ -119,9 +124,9 @@ class HeroIllustrationWidget extends StatelessWidget {
                             'Onion 87%',
                             style: AppTheme.lightTheme.textTheme.labelSmall
                                 ?.copyWith(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                            ),
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                ),
                           ),
                         ),
                       ),

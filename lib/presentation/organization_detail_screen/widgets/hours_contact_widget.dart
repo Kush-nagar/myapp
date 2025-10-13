@@ -7,10 +7,8 @@ import '../../../core/app_export.dart';
 class HoursContactWidget extends StatefulWidget {
   final Map<String, dynamic> organization;
 
-  const HoursContactWidget({
-    Key? key,
-    required this.organization,
-  }) : super(key: key);
+  const HoursContactWidget({Key? key, required this.organization})
+    : super(key: key);
 
   @override
   State<HoursContactWidget> createState() => _HoursContactWidgetState();
@@ -28,9 +26,9 @@ class _HoursContactWidgetState extends State<HoursContactWidget> {
 
   Future<void> _openWebsite(BuildContext context, String? rawUrl) async {
     if (rawUrl == null || rawUrl.trim().isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('No website available')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('No website available')));
       return;
     }
 
@@ -41,9 +39,9 @@ class _HoursContactWidgetState extends State<HoursContactWidget> {
 
     final uri = Uri.tryParse(urlString);
     if (uri == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Invalid website URL')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Invalid website URL')));
       return;
     }
 
@@ -57,7 +55,10 @@ class _HoursContactWidgetState extends State<HoursContactWidget> {
         return;
       }
 
-      final launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
+      final launched = await launchUrl(
+        uri,
+        mode: LaunchMode.externalApplication,
+      );
       if (!launched) {
         debugPrint('launchUrl returned false for $uri');
         ScaffoldMessenger.of(context).showSnackBar(
@@ -66,15 +67,16 @@ class _HoursContactWidgetState extends State<HoursContactWidget> {
       }
     } catch (e, st) {
       debugPrint('openWebsite error: $e\n$st');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error opening website')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Error opening website')));
     }
   }
 
   Future<void> _openMaps(String address) async {
-    final Uri mapsUri =
-        Uri.parse('https://maps.google.com/?q=${Uri.encodeComponent(address)}');
+    final Uri mapsUri = Uri.parse(
+      'https://maps.google.com/?q=${Uri.encodeComponent(address)}',
+    );
     if (await canLaunchUrl(mapsUri)) {
       await launchUrl(mapsUri, mode: LaunchMode.externalApplication);
     }
@@ -89,7 +91,7 @@ class _HoursContactWidgetState extends State<HoursContactWidget> {
       'thursday',
       'friday',
       'saturday',
-      'sunday'
+      'sunday',
     ];
     final currentDay = dayNames[now.weekday - 1];
     final hours = widget.organization['hours'] as Map<String, dynamic>;
@@ -136,10 +138,8 @@ class _HoursContactWidgetState extends State<HoursContactWidget> {
                       SizedBox(width: 3.w),
                       Text(
                         'Hours & Contact',
-                        style:
-                            DonationAppTheme.lightTheme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: DonationAppTheme.lightTheme.textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
@@ -162,10 +162,11 @@ class _HoursContactWidgetState extends State<HoursContactWidget> {
               ),
               child: Text(
                 _getCurrentDayStatus(),
-                style: DonationAppTheme.lightTheme.textTheme.bodyMedium?.copyWith(
-                  color: DonationAppTheme.lightTheme.colorScheme.primary,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: DonationAppTheme.lightTheme.textTheme.bodyMedium
+                    ?.copyWith(
+                      color: DonationAppTheme.lightTheme.colorScheme.primary,
+                      fontWeight: FontWeight.w600,
+                    ),
               ),
             ),
             if (isExpanded) ...[
@@ -186,9 +187,8 @@ class _HoursContactWidgetState extends State<HoursContactWidget> {
                   children: [
                     Text(
                       'Operating Hours',
-                      style: DonationAppTheme.lightTheme.textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
+                      style: DonationAppTheme.lightTheme.textTheme.bodyLarge
+                          ?.copyWith(fontWeight: FontWeight.w600),
                     ),
                     SizedBox(height: 1.h),
                     ...hours.entries.map((entry) {
@@ -199,14 +199,18 @@ class _HoursContactWidgetState extends State<HoursContactWidget> {
                           children: [
                             Text(
                               entry.key.toString().toUpperCase(),
-                              style: DonationAppTheme.lightTheme.textTheme.bodyMedium
-                                  ?.copyWith(
-                                fontWeight: FontWeight.w500,
-                              ),
+                              style: DonationAppTheme
+                                  .lightTheme
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(fontWeight: FontWeight.w500),
                             ),
                             Text(
                               entry.value as String,
-                              style: DonationAppTheme.lightTheme.textTheme.bodyMedium,
+                              style: DonationAppTheme
+                                  .lightTheme
+                                  .textTheme
+                                  .bodyMedium,
                             ),
                           ],
                         ),
@@ -232,9 +236,8 @@ class _HoursContactWidgetState extends State<HoursContactWidget> {
                   children: [
                     Text(
                       'Contact Information',
-                      style: DonationAppTheme.lightTheme.textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
+                      style: DonationAppTheme.lightTheme.textTheme.bodyLarge
+                          ?.copyWith(fontWeight: FontWeight.w600),
                     ),
                     SizedBox(height: 1.h),
                     // Phone
@@ -244,18 +247,25 @@ class _HoursContactWidgetState extends State<HoursContactWidget> {
                         children: [
                           CustomIconWidget(
                             iconName: 'phone',
-                            color: DonationAppTheme.lightTheme.colorScheme.primary,
+                            color:
+                                DonationAppTheme.lightTheme.colorScheme.primary,
                             size: 5.w,
                           ),
                           SizedBox(width: 3.w),
                           Expanded(
                             child: Text(
                               contact['phone'] as String,
-                              style: DonationAppTheme.lightTheme.textTheme.bodyMedium
+                              style: DonationAppTheme
+                                  .lightTheme
+                                  .textTheme
+                                  .bodyMedium
                                   ?.copyWith(
-                                color: DonationAppTheme.lightTheme.colorScheme.primary,
-                                decoration: TextDecoration.underline,
-                              ),
+                                    color: DonationAppTheme
+                                        .lightTheme
+                                        .colorScheme
+                                        .primary,
+                                    decoration: TextDecoration.underline,
+                                  ),
                             ),
                           ),
                         ],
@@ -270,18 +280,25 @@ class _HoursContactWidgetState extends State<HoursContactWidget> {
                         children: [
                           CustomIconWidget(
                             iconName: 'location_on',
-                            color: DonationAppTheme.lightTheme.colorScheme.primary,
+                            color:
+                                DonationAppTheme.lightTheme.colorScheme.primary,
                             size: 5.w,
                           ),
                           SizedBox(width: 3.w),
                           Expanded(
                             child: Text(
                               contact['address'] as String,
-                              style: DonationAppTheme.lightTheme.textTheme.bodyMedium
+                              style: DonationAppTheme
+                                  .lightTheme
+                                  .textTheme
+                                  .bodyMedium
                                   ?.copyWith(
-                                color: DonationAppTheme.lightTheme.colorScheme.primary,
-                                decoration: TextDecoration.underline,
-                              ),
+                                    color: DonationAppTheme
+                                        .lightTheme
+                                        .colorScheme
+                                        .primary,
+                                    decoration: TextDecoration.underline,
+                                  ),
                             ),
                           ),
                         ],
@@ -297,19 +314,27 @@ class _HoursContactWidgetState extends State<HoursContactWidget> {
                           children: [
                             CustomIconWidget(
                               iconName: 'language',
-                              color: DonationAppTheme.lightTheme.colorScheme.primary,
+                              color: DonationAppTheme
+                                  .lightTheme
+                                  .colorScheme
+                                  .primary,
                               size: 5.w,
                             ),
                             SizedBox(width: 3.w),
                             Expanded(
                               child: Text(
                                 'Visit Website',
-                                style: DonationAppTheme.lightTheme.textTheme.bodyMedium
+                                style: DonationAppTheme
+                                    .lightTheme
+                                    .textTheme
+                                    .bodyMedium
                                     ?.copyWith(
-                                  color:
-                                      DonationAppTheme.lightTheme.colorScheme.primary,
-                                  decoration: TextDecoration.underline,
-                                ),
+                                      color: DonationAppTheme
+                                          .lightTheme
+                                          .colorScheme
+                                          .primary,
+                                      decoration: TextDecoration.underline,
+                                    ),
                               ),
                             ),
                           ],

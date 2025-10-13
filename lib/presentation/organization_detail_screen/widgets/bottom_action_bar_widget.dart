@@ -7,10 +7,8 @@ import '../../../core/app_export.dart';
 class BottomActionBarWidget extends StatelessWidget {
   final Map<String, dynamic> organization;
 
-  const BottomActionBarWidget({
-    Key? key,
-    required this.organization,
-  }) : super(key: key);
+  const BottomActionBarWidget({Key? key, required this.organization})
+    : super(key: key);
 
   Future<void> _makePhoneCall() async {
     final contact = organization['contact'] as Map<String, dynamic>;
@@ -23,8 +21,9 @@ class BottomActionBarWidget extends StatelessWidget {
   Future<void> _openDirections() async {
     final contact = organization['contact'] as Map<String, dynamic>;
     final address = contact['address'] as String;
-    final Uri mapsUri =
-        Uri.parse('https://maps.google.com/?q=${Uri.encodeComponent(address)}');
+    final Uri mapsUri = Uri.parse(
+      'https://maps.google.com/?q=${Uri.encodeComponent(address)}',
+    );
     if (await canLaunchUrl(mapsUri)) {
       await launchUrl(mapsUri, mode: LaunchMode.externalApplication);
     }
@@ -81,7 +80,8 @@ class BottomActionBarWidget extends StatelessWidget {
                   onPressed: _makePhoneCall,
                   icon: 'phone',
                   label: 'Call Now',
-                  backgroundColor: DonationAppTheme.lightTheme.colorScheme.primary,
+                  backgroundColor:
+                      DonationAppTheme.lightTheme.colorScheme.primary,
                   foregroundColor: Colors.white,
                 ),
               ),
@@ -139,20 +139,17 @@ class BottomActionBarWidget extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CustomIconWidget(
-              iconName: icon,
-              color: foregroundColor,
-              size: 5.w,
-            ),
+            CustomIconWidget(iconName: icon, color: foregroundColor, size: 5.w),
             SizedBox(width: 2.w),
             Flexible(
               child: Text(
                 label,
-                style: DonationAppTheme.lightTheme.textTheme.bodyMedium?.copyWith(
-                  color: foregroundColor,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 13.sp,
-                ),
+                style: DonationAppTheme.lightTheme.textTheme.bodyMedium
+                    ?.copyWith(
+                      color: foregroundColor,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 13.sp,
+                    ),
                 overflow: TextOverflow.ellipsis,
               ),
             ),
@@ -175,7 +172,9 @@ class BottomActionBarWidget extends StatelessWidget {
           backgroundColor: DonationAppTheme.lightTheme.colorScheme.surface,
           foregroundColor: DonationAppTheme.lightTheme.colorScheme.primary,
           side: BorderSide(
-            color: DonationAppTheme.lightTheme.colorScheme.primary.withOpacity(0.3),
+            color: DonationAppTheme.lightTheme.colorScheme.primary.withOpacity(
+              0.3,
+            ),
             width: 1.5,
           ),
           shape: RoundedRectangleBorder(
@@ -196,11 +195,12 @@ class BottomActionBarWidget extends StatelessWidget {
             Flexible(
               child: Text(
                 label,
-                style: DonationAppTheme.lightTheme.textTheme.bodyMedium?.copyWith(
-                  color: DonationAppTheme.lightTheme.colorScheme.primary,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 13.sp,
-                ),
+                style: DonationAppTheme.lightTheme.textTheme.bodyMedium
+                    ?.copyWith(
+                      color: DonationAppTheme.lightTheme.colorScheme.primary,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 13.sp,
+                    ),
                 overflow: TextOverflow.ellipsis,
               ),
             ),
@@ -218,8 +218,8 @@ class BottomActionBarWidget extends StatelessWidget {
       height: 12.w,
       width: 12.w,
       child: Material(
-        color:
-            DonationAppTheme.lightTheme.colorScheme.primaryContainer.withOpacity(0.1),
+        color: DonationAppTheme.lightTheme.colorScheme.primaryContainer
+            .withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
         child: InkWell(
           onTap: onPressed,
@@ -228,7 +228,8 @@ class BottomActionBarWidget extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: DonationAppTheme.lightTheme.colorScheme.primary.withOpacity(0.2),
+                color: DonationAppTheme.lightTheme.colorScheme.primary
+                    .withOpacity(0.2),
                 width: 1,
               ),
             ),

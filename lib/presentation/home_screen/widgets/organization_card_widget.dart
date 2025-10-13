@@ -66,13 +66,14 @@ class _OrganizationCardWidgetState extends State<OrganizationCardWidget>
   void _openWebsite() {
     final website = widget.organization["website"] as String?;
     if (website != null && website.isNotEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Opening website: $website')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Opening website: $website')));
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-            content: Text('No website listed for this organization')),
+          content: Text('No website listed for this organization'),
+        ),
       );
     }
   }
@@ -93,7 +94,9 @@ class _OrganizationCardWidgetState extends State<OrganizationCardWidget>
       onPressed: onPressed,
       icon: CustomIconWidget(
         iconName: iconName,
-        color: DonationAppTheme.lightTheme.colorScheme.onSurface.withValues(alpha: 0.7),
+        color: DonationAppTheme.lightTheme.colorScheme.onSurface.withValues(
+          alpha: 0.7,
+        ),
         size: size,
       ),
     );
@@ -140,11 +143,15 @@ class _OrganizationCardWidgetState extends State<OrganizationCardWidget>
                                 height: 12.h,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(12),
-                                  color:
-                                      DonationAppTheme.lightTheme.colorScheme.surface,
+                                  color: DonationAppTheme
+                                      .lightTheme
+                                      .colorScheme
+                                      .surface,
                                   border: Border.all(
                                     color: DonationAppTheme
-                                        .lightTheme.colorScheme.outline
+                                        .lightTheme
+                                        .colorScheme
+                                        .outline
                                         .withValues(alpha: 0.08),
                                     width: 1,
                                   ),
@@ -165,7 +172,9 @@ class _OrganizationCardWidgetState extends State<OrganizationCardWidget>
                                 right: 1.w,
                                 child: Container(
                                   padding: EdgeInsets.symmetric(
-                                      horizontal: 1.5.w, vertical: 0.3.h),
+                                    horizontal: 1.5.w,
+                                    vertical: 0.3.h,
+                                  ),
                                   decoration: BoxDecoration(
                                     color: Colors.black.withValues(alpha: 0.75),
                                     borderRadius: BorderRadius.circular(8),
@@ -176,19 +185,23 @@ class _OrganizationCardWidgetState extends State<OrganizationCardWidget>
                                       CustomIconWidget(
                                         iconName: 'star',
                                         color: DonationAppTheme
-                                            .lightTheme.colorScheme.tertiary,
+                                            .lightTheme
+                                            .colorScheme
+                                            .tertiary,
                                         size: 12,
                                       ),
                                       SizedBox(width: 0.8.w),
                                       Text(
                                         rating.toStringAsFixed(1),
                                         style: DonationAppTheme
-                                            .lightTheme.textTheme.bodySmall
+                                            .lightTheme
+                                            .textTheme
+                                            .bodySmall
                                             ?.copyWith(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 11,
-                                        ),
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 11,
+                                            ),
                                       ),
                                     ],
                                   ),
@@ -216,13 +229,15 @@ class _OrganizationCardWidgetState extends State<OrganizationCardWidget>
                                   org["name"] as String? ??
                                       'Unknown Organization',
                                   style: DonationAppTheme
-                                      .lightTheme.textTheme.titleMedium
+                                      .lightTheme
+                                      .textTheme
+                                      .titleMedium
                                       ?.copyWith(
-                                    fontWeight: FontWeight.w700,
-                                    height: 1.2,
-                                    letterSpacing: -0.3,
-                                    fontSize: 18,
-                                  ),
+                                        fontWeight: FontWeight.w700,
+                                        height: 1.2,
+                                        letterSpacing: -0.3,
+                                        fontSize: 18,
+                                      ),
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -231,7 +246,9 @@ class _OrganizationCardWidgetState extends State<OrganizationCardWidget>
                               IconButton(
                                 padding: EdgeInsets.zero,
                                 constraints: const BoxConstraints(
-                                    minWidth: 28, minHeight: 28),
+                                  minWidth: 28,
+                                  minHeight: 28,
+                                ),
                                 visualDensity: VisualDensity.compact,
                                 splashRadius: 14,
                                 onPressed: _toggleFavorite,
@@ -240,10 +257,15 @@ class _OrganizationCardWidgetState extends State<OrganizationCardWidget>
                                       ? 'favorite'
                                       : 'favorite_border',
                                   color: isFavorited
-                                      ? DonationAppTheme.lightTheme.colorScheme.error
+                                      ? DonationAppTheme
+                                            .lightTheme
+                                            .colorScheme
+                                            .error
                                       : DonationAppTheme
-                                          .lightTheme.colorScheme.onSurface
-                                          .withValues(alpha: 0.5),
+                                            .lightTheme
+                                            .colorScheme
+                                            .onSurface
+                                            .withValues(alpha: 0.5),
                                   size: 20,
                                 ),
                               ),
@@ -258,20 +280,27 @@ class _OrganizationCardWidgetState extends State<OrganizationCardWidget>
                               if (distance.isNotEmpty) ...[
                                 CustomIconWidget(
                                   iconName: 'location_on',
-                                  color:
-                                      DonationAppTheme.lightTheme.colorScheme.primary,
+                                  color: DonationAppTheme
+                                      .lightTheme
+                                      .colorScheme
+                                      .primary,
                                   size: 12,
                                 ),
                                 SizedBox(width: 0.5.w),
                                 Text(
                                   distance,
-                                  style: DonationAppTheme.lightTheme.textTheme.bodySmall
+                                  style: DonationAppTheme
+                                      .lightTheme
+                                      .textTheme
+                                      .bodySmall
                                       ?.copyWith(
-                                    color:
-                                        DonationAppTheme.lightTheme.colorScheme.primary,
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 11,
-                                  ),
+                                        color: DonationAppTheme
+                                            .lightTheme
+                                            .colorScheme
+                                            .primary,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 11,
+                                      ),
                                 ),
                                 SizedBox(width: 10.w),
                               ],
@@ -305,23 +334,28 @@ class _OrganizationCardWidgetState extends State<OrganizationCardWidget>
                               GestureDetector(
                                 onTap: _toggleExpand,
                                 child: RotationTransition(
-                                  turns:
-                                      Tween<double>(begin: 0, end: 0.5).animate(
-                                    CurvedAnimation(
-                                        parent: _chevController,
-                                        curve: Curves.easeInOut),
-                                  ),
+                                  turns: Tween<double>(begin: 0, end: 0.5)
+                                      .animate(
+                                        CurvedAnimation(
+                                          parent: _chevController,
+                                          curve: Curves.easeInOut,
+                                        ),
+                                      ),
                                   child: Container(
                                     width: 7.w,
                                     height: 3.2.h,
                                     decoration: BoxDecoration(
                                       color: DonationAppTheme
-                                          .lightTheme.colorScheme.primary,
+                                          .lightTheme
+                                          .colorScheme
+                                          .primary,
                                       borderRadius: BorderRadius.circular(10),
                                       boxShadow: [
                                         BoxShadow(
                                           color: DonationAppTheme
-                                              .lightTheme.colorScheme.primary
+                                              .lightTheme
+                                              .colorScheme
+                                              .primary
                                               .withValues(alpha: 0.15),
                                           blurRadius: 3,
                                           offset: const Offset(0, 1),
@@ -332,7 +366,9 @@ class _OrganizationCardWidgetState extends State<OrganizationCardWidget>
                                       child: CustomIconWidget(
                                         iconName: 'keyboard_arrow_down',
                                         color: DonationAppTheme
-                                            .lightTheme.colorScheme.onPrimary,
+                                            .lightTheme
+                                            .colorScheme
+                                            .onPrimary,
                                         size: 16,
                                       ),
                                     ),
@@ -358,11 +394,17 @@ class _OrganizationCardWidgetState extends State<OrganizationCardWidget>
                         if (currentNeeds.isNotEmpty) ...[
                           Text(
                             'Current Needs',
-                            style: DonationAppTheme.lightTheme.textTheme.bodySmall
+                            style: DonationAppTheme
+                                .lightTheme
+                                .textTheme
+                                .bodySmall
                                 ?.copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: DonationAppTheme.lightTheme.colorScheme.primary,
-                            ),
+                                  fontWeight: FontWeight.w600,
+                                  color: DonationAppTheme
+                                      .lightTheme
+                                      .colorScheme
+                                      .primary,
+                                ),
                           ),
                           SizedBox(height: 1.h),
                           Wrap(
@@ -371,20 +413,30 @@ class _OrganizationCardWidgetState extends State<OrganizationCardWidget>
                             children: currentNeeds.take(6).map((need) {
                               return Container(
                                 padding: EdgeInsets.symmetric(
-                                    horizontal: 3.w, vertical: 0.8.h),
+                                  horizontal: 3.w,
+                                  vertical: 0.8.h,
+                                ),
                                 decoration: BoxDecoration(
-                                  color:
-                                      DonationAppTheme.lightTheme.colorScheme.surface,
+                                  color: DonationAppTheme
+                                      .lightTheme
+                                      .colorScheme
+                                      .surface,
                                   borderRadius: BorderRadius.circular(12),
                                   border: Border.all(
                                     color: DonationAppTheme
-                                        .lightTheme.colorScheme.onSurface
+                                        .lightTheme
+                                        .colorScheme
+                                        .onSurface
                                         .withValues(alpha: 0.06),
                                   ),
                                 ),
-                                child: Text(need,
-                                    style: DonationAppTheme
-                                        .lightTheme.textTheme.bodySmall),
+                                child: Text(
+                                  need,
+                                  style: DonationAppTheme
+                                      .lightTheme
+                                      .textTheme
+                                      .bodySmall,
+                                ),
                               );
                             }).toList(),
                           ),
@@ -396,14 +448,19 @@ class _OrganizationCardWidgetState extends State<OrganizationCardWidget>
                               child: OutlinedButton.icon(
                                 onPressed: widget.onCall,
                                 icon: CustomIconWidget(
-                                    iconName: 'phone',
-                                    color:
-                                        DonationAppTheme.lightTheme.colorScheme.primary,
-                                    size: 18),
+                                  iconName: 'phone',
+                                  color: DonationAppTheme
+                                      .lightTheme
+                                      .colorScheme
+                                      .primary,
+                                  size: 18,
+                                ),
                                 label: const Text('Call'),
                                 style: OutlinedButton.styleFrom(
-                                    padding:
-                                        EdgeInsets.symmetric(vertical: 1.2.h)),
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: 1.2.h,
+                                  ),
+                                ),
                               ),
                             ),
                             SizedBox(width: 3.w),
@@ -411,14 +468,19 @@ class _OrganizationCardWidgetState extends State<OrganizationCardWidget>
                               child: OutlinedButton.icon(
                                 onPressed: widget.onDirections,
                                 icon: CustomIconWidget(
-                                    iconName: 'directions',
-                                    color:
-                                        DonationAppTheme.lightTheme.colorScheme.primary,
-                                    size: 18),
+                                  iconName: 'directions',
+                                  color: DonationAppTheme
+                                      .lightTheme
+                                      .colorScheme
+                                      .primary,
+                                  size: 18,
+                                ),
                                 label: const Text('Directions'),
                                 style: OutlinedButton.styleFrom(
-                                    padding:
-                                        EdgeInsets.symmetric(vertical: 1.2.h)),
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: 1.2.h,
+                                  ),
+                                ),
                               ),
                             ),
                             SizedBox(width: 3.w),
@@ -427,17 +489,23 @@ class _OrganizationCardWidgetState extends State<OrganizationCardWidget>
                               child: Row(
                                 children: [
                                   CustomIconWidget(
-                                      iconName: 'public',
-                                      color: DonationAppTheme
-                                          .lightTheme.colorScheme.onSurface,
-                                      size: 16),
+                                    iconName: 'public',
+                                    color: DonationAppTheme
+                                        .lightTheme
+                                        .colorScheme
+                                        .onSurface,
+                                    size: 16,
+                                  ),
                                   SizedBox(width: 1.w),
                                   Text('Site'),
                                 ],
                               ),
                               style: OutlinedButton.styleFrom(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: 3.w, vertical: 1.h)),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 3.w,
+                                  vertical: 1.h,
+                                ),
+                              ),
                             ),
                           ],
                         ),
@@ -446,15 +514,23 @@ class _OrganizationCardWidgetState extends State<OrganizationCardWidget>
                           Row(
                             children: [
                               CustomIconWidget(
-                                  iconName: 'place',
-                                  color:
-                                      DonationAppTheme.lightTheme.colorScheme.onSurface,
-                                  size: 16),
+                                iconName: 'place',
+                                color: DonationAppTheme
+                                    .lightTheme
+                                    .colorScheme
+                                    .onSurface,
+                                size: 16,
+                              ),
                               SizedBox(width: 2.w),
                               Expanded(
-                                  child: Text(org['address'] as String? ?? '',
-                                      style: DonationAppTheme
-                                          .lightTheme.textTheme.bodySmall)),
+                                child: Text(
+                                  org['address'] as String? ?? '',
+                                  style: DonationAppTheme
+                                      .lightTheme
+                                      .textTheme
+                                      .bodySmall,
+                                ),
+                              ),
                             ],
                           ),
                       ],

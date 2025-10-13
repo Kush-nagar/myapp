@@ -20,12 +20,15 @@ class OrganizationInfoCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = DonationAppTheme.lightTheme;
-    final String name = organization['name'] as String? ?? 'Unknown Organization';
+    final String name =
+        organization['name'] as String? ?? 'Unknown Organization';
     final double rating = (organization['rating'] as num?)?.toDouble() ?? 0.0;
     final dynamic distanceRaw = organization['distance'];
     final String distanceLabel = distanceRaw == null
         ? ''
-        : (distanceRaw is String ? distanceRaw : '${distanceRaw.toString()} mi');
+        : (distanceRaw is String
+              ? distanceRaw
+              : '${distanceRaw.toString()} mi');
     final String typeKey = (organization['type'] as String?) ?? 'organization';
     final String currentNeeds =
         (organization['currentNeeds'] as String?)?.trim() ?? '';
@@ -159,7 +162,9 @@ class OrganizationInfoCard extends StatelessWidget {
                 child: Text(
                   organization['operatingHours'] as String? ?? '',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.8),
+                    color: theme.colorScheme.onSurfaceVariant.withValues(
+                      alpha: 0.8,
+                    ),
                   ),
                 ),
               ),
@@ -183,7 +188,9 @@ class OrganizationInfoCard extends StatelessWidget {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      side: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.2)),
+                      side: BorderSide(
+                        color: theme.colorScheme.outline.withValues(alpha: 0.2),
+                      ),
                     ),
                   ),
                 ),
@@ -199,8 +206,12 @@ class OrganizationInfoCard extends StatelessWidget {
                     label: Text('Directions'),
                     style: OutlinedButton.styleFrom(
                       padding: EdgeInsets.symmetric(vertical: 1.4.h),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                      side: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.2)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      side: BorderSide(
+                        color: theme.colorScheme.outline.withValues(alpha: 0.2),
+                      ),
                     ),
                   ),
                 ),
@@ -223,7 +234,9 @@ class OrganizationInfoCard extends StatelessWidget {
                     ),
                     style: ElevatedButton.styleFrom(
                       padding: EdgeInsets.symmetric(vertical: 1.3.h),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                     ),
                   ),
                 ),
@@ -242,7 +255,9 @@ class OrganizationInfoCard extends StatelessWidget {
         width: size,
         height: size,
         decoration: BoxDecoration(
-          color: DonationAppTheme.lightTheme.colorScheme.primary.withValues(alpha: 0.08),
+          color: DonationAppTheme.lightTheme.colorScheme.primary.withValues(
+            alpha: 0.08,
+          ),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Center(
@@ -260,10 +275,7 @@ class OrganizationInfoCard extends StatelessWidget {
       child: SizedBox(
         width: size,
         height: size,
-        child: CustomImageWidget(
-          imageUrl: imageUrl,
-          fit: BoxFit.cover,
-        ),
+        child: CustomImageWidget(imageUrl: imageUrl, fit: BoxFit.cover),
       ),
     );
   }
@@ -324,7 +336,8 @@ class _TypeChip extends StatelessWidget {
         return 'Restaurant';
       default:
         final cleaned = type.replaceAll('_', ' ');
-        return cleaned[0].toUpperCase() + (cleaned.length > 1 ? cleaned.substring(1) : '');
+        return cleaned[0].toUpperCase() +
+            (cleaned.length > 1 ? cleaned.substring(1) : '');
     }
   }
 }

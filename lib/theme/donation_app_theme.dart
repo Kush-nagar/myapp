@@ -17,8 +17,9 @@ class DonationAppTheme {
   static const Color errorLight = Color(0xFFD32F2F); // Standard red
   static const Color successLight = Color(0xFF388E3C); // Confirmation green
   static const Color warningLight = Color(0xFFF57C00); // Orange
-  static const Color textPrimaryLight =
-      Color(0xFF212121); // High contrast dark gray
+  static const Color textPrimaryLight = Color(
+    0xFF212121,
+  ); // High contrast dark gray
   static const Color textSecondaryLight = Color(0xFF757575); // Medium gray
   static const Color onPrimaryLight = Color(0xFFFFFFFF);
   static const Color onSecondaryLight = Color(0xFFFFFFFF);
@@ -109,9 +110,7 @@ class DonationAppTheme {
       color: cardLight,
       elevation: 2.0, // Material Design elevation level 2
       shadowColor: shadowLight,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8.0),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
       margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
     ),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
@@ -133,9 +132,7 @@ class DonationAppTheme {
       backgroundColor: accentLight,
       foregroundColor: Color(0xFF000000),
       elevation: 4.0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16.0),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
@@ -144,13 +141,8 @@ class DonationAppTheme {
         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         elevation: 2.0,
         shadowColor: shadowLight,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        textStyle: GoogleFonts.inter(
-          fontSize: 14,
-          fontWeight: FontWeight.w600,
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+        textStyle: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w600),
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
@@ -158,26 +150,16 @@ class DonationAppTheme {
         foregroundColor: primaryLight,
         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         side: BorderSide(color: primaryLight, width: 1.0),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        textStyle: GoogleFonts.inter(
-          fontSize: 14,
-          fontWeight: FontWeight.w600,
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+        textStyle: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w600),
       ),
     ),
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
         foregroundColor: primaryLight,
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        textStyle: GoogleFonts.inter(
-          fontSize: 14,
-          fontWeight: FontWeight.w600,
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+        textStyle: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w600),
       ),
     ),
     textTheme: _buildTextTheme(isLight: true),
@@ -244,9 +226,7 @@ class DonationAppTheme {
       }),
       checkColor: WidgetStateProperty.all(onPrimaryLight),
       side: BorderSide(color: dividerLight, width: 1.0),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(4.0),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
     ),
     radioTheme: RadioThemeData(
       fillColor: WidgetStateProperty.resolveWith((states) {
@@ -273,10 +253,7 @@ class DonationAppTheme {
       unselectedLabelColor: textSecondaryLight,
       indicatorColor: primaryLight,
       indicatorSize: TabBarIndicatorSize.label,
-      labelStyle: GoogleFonts.inter(
-        fontSize: 14,
-        fontWeight: FontWeight.w600,
-      ),
+      labelStyle: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w600),
       unselectedLabelStyle: GoogleFonts.inter(
         fontSize: 14,
         fontWeight: FontWeight.w400,
@@ -303,9 +280,7 @@ class DonationAppTheme {
       ),
       actionTextColor: accentLight,
       behavior: SnackBarBehavior.floating,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8.0),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
       elevation: 4.0,
     ),
     bottomSheetTheme: BottomSheetThemeData(
@@ -314,7 +289,8 @@ class DonationAppTheme {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
       ),
-    ), dialogTheme: DialogThemeData(backgroundColor: dialogLight),
+    ),
+    dialogTheme: DialogThemeData(backgroundColor: dialogLight),
   );
 
   /// Dark theme implementing Contemporary Civic Minimalism
@@ -367,9 +343,7 @@ class DonationAppTheme {
       color: cardDark,
       elevation: 2.0,
       shadowColor: shadowDark,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8.0),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
       margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
     ),
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
@@ -391,9 +365,7 @@ class DonationAppTheme {
       backgroundColor: accentDark,
       foregroundColor: Color(0xFF000000),
       elevation: 4.0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16.0),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
@@ -402,13 +374,8 @@ class DonationAppTheme {
         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         elevation: 2.0,
         shadowColor: shadowDark,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        textStyle: GoogleFonts.inter(
-          fontSize: 14,
-          fontWeight: FontWeight.w600,
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+        textStyle: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w600),
       ),
     ),
     outlinedButtonTheme: OutlinedButtonThemeData(
@@ -416,26 +383,16 @@ class DonationAppTheme {
         foregroundColor: primaryDark,
         padding: EdgeInsets.symmetric(horizontal: 24, vertical: 16),
         side: BorderSide(color: primaryDark, width: 1.0),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        textStyle: GoogleFonts.inter(
-          fontSize: 14,
-          fontWeight: FontWeight.w600,
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+        textStyle: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w600),
       ),
     ),
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
         foregroundColor: primaryDark,
         padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        textStyle: GoogleFonts.inter(
-          fontSize: 14,
-          fontWeight: FontWeight.w600,
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+        textStyle: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w600),
       ),
     ),
     textTheme: _buildTextTheme(isLight: false),
@@ -502,9 +459,7 @@ class DonationAppTheme {
       }),
       checkColor: WidgetStateProperty.all(onPrimaryDark),
       side: BorderSide(color: dividerDark, width: 1.0),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(4.0),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
     ),
     radioTheme: RadioThemeData(
       fillColor: WidgetStateProperty.resolveWith((states) {
@@ -531,10 +486,7 @@ class DonationAppTheme {
       unselectedLabelColor: textSecondaryDark,
       indicatorColor: primaryDark,
       indicatorSize: TabBarIndicatorSize.label,
-      labelStyle: GoogleFonts.inter(
-        fontSize: 14,
-        fontWeight: FontWeight.w600,
-      ),
+      labelStyle: GoogleFonts.inter(fontSize: 14, fontWeight: FontWeight.w600),
       unselectedLabelStyle: GoogleFonts.inter(
         fontSize: 14,
         fontWeight: FontWeight.w400,
@@ -561,9 +513,7 @@ class DonationAppTheme {
       ),
       actionTextColor: accentDark,
       behavior: SnackBarBehavior.floating,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8.0),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
       elevation: 4.0,
     ),
     bottomSheetTheme: BottomSheetThemeData(
@@ -572,15 +522,17 @@ class DonationAppTheme {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
       ),
-    ), dialogTheme: DialogThemeData(backgroundColor: dialogDark),
+    ),
+    dialogTheme: DialogThemeData(backgroundColor: dialogDark),
   );
 
   /// Helper method to build text theme based on brightness
   /// Implements typography standards: Inter for headings, Inter for body, Roboto for captions, JetBrains Mono for data
   static TextTheme _buildTextTheme({required bool isLight}) {
     final Color textPrimary = isLight ? textPrimaryLight : textPrimaryDark;
-    final Color textSecondary =
-        isLight ? textSecondaryLight : textSecondaryDark;
+    final Color textSecondary = isLight
+        ? textSecondaryLight
+        : textSecondaryDark;
 
     return TextTheme(
       // Display styles - Inter for headings

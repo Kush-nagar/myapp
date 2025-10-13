@@ -6,10 +6,7 @@ import '../../../../core/app_export.dart';
 class DietaryTagsWidget extends StatelessWidget {
   final List<String> tags;
 
-  const DietaryTagsWidget({
-    Key? key,
-    required this.tags,
-  }) : super(key: key);
+  const DietaryTagsWidget({Key? key, required this.tags}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -61,10 +58,7 @@ class DietaryTagsWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: tagColor,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: textColor.withValues(alpha: 0.3),
-          width: 1,
-        ),
+        border: Border.all(color: textColor.withValues(alpha: 0.3), width: 1),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

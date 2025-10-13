@@ -6,10 +6,8 @@ import '../../../core/app_export.dart';
 class DonationGuidelinesWidget extends StatefulWidget {
   final Map<String, dynamic> organization;
 
-  const DonationGuidelinesWidget({
-    Key? key,
-    required this.organization,
-  }) : super(key: key);
+  const DonationGuidelinesWidget({Key? key, required this.organization})
+    : super(key: key);
 
   @override
   State<DonationGuidelinesWidget> createState() =>
@@ -50,10 +48,8 @@ class _DonationGuidelinesWidgetState extends State<DonationGuidelinesWidget> {
                       SizedBox(width: 3.w),
                       Text(
                         'Donation Guidelines',
-                        style:
-                            DonationAppTheme.lightTheme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: DonationAppTheme.lightTheme.textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
@@ -98,24 +94,22 @@ class _DonationGuidelinesWidgetState extends State<DonationGuidelinesWidget> {
                       children: [
                         CustomIconWidget(
                           iconName: 'local_shipping',
-                          color: DonationAppTheme.lightTheme.colorScheme.primary,
+                          color:
+                              DonationAppTheme.lightTheme.colorScheme.primary,
                           size: 5.w,
                         ),
                         SizedBox(width: 2.w),
                         Text(
                           'Drop-off Procedures',
-                          style:
-                              DonationAppTheme.lightTheme.textTheme.bodyLarge?.copyWith(
-                            fontWeight: FontWeight.w600,
-                          ),
+                          style: DonationAppTheme.lightTheme.textTheme.bodyLarge
+                              ?.copyWith(fontWeight: FontWeight.w600),
                         ),
                       ],
                     ),
                     SizedBox(height: 1.h),
-                    ...(guidelines['procedures'] as List)
-                        .asMap()
-                        .entries
-                        .map((entry) {
+                    ...(guidelines['procedures'] as List).asMap().entries.map((
+                      entry,
+                    ) {
                       return Padding(
                         padding: EdgeInsets.only(bottom: 0.5.h),
                         child: Row(
@@ -123,15 +117,19 @@ class _DonationGuidelinesWidgetState extends State<DonationGuidelinesWidget> {
                           children: [
                             Text(
                               '${entry.key + 1}. ',
-                              style: DonationAppTheme.lightTheme.textTheme.bodyMedium
-                                  ?.copyWith(
-                                fontWeight: FontWeight.w600,
-                              ),
+                              style: DonationAppTheme
+                                  .lightTheme
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(fontWeight: FontWeight.w600),
                             ),
                             Expanded(
                               child: Text(
                                 entry.value as String,
-                                style: DonationAppTheme.lightTheme.textTheme.bodyMedium,
+                                style: DonationAppTheme
+                                    .lightTheme
+                                    .textTheme
+                                    .bodyMedium,
                               ),
                             ),
                           ],
@@ -149,7 +147,11 @@ class _DonationGuidelinesWidgetState extends State<DonationGuidelinesWidget> {
   }
 
   Widget _buildGuidelineSection(
-      String title, String iconName, Color color, List items) {
+    String title,
+    String iconName,
+    Color color,
+    List items,
+  ) {
     return Container(
       padding: EdgeInsets.all(3.w),
       decoration: BoxDecoration(
@@ -161,17 +163,12 @@ class _DonationGuidelinesWidgetState extends State<DonationGuidelinesWidget> {
         children: [
           Row(
             children: [
-              CustomIconWidget(
-                iconName: iconName,
-                color: color,
-                size: 5.w,
-              ),
+              CustomIconWidget(iconName: iconName, color: color, size: 5.w),
               SizedBox(width: 2.w),
               Text(
                 title,
-                style: DonationAppTheme.lightTheme.textTheme.bodyLarge?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+                style: DonationAppTheme.lightTheme.textTheme.bodyLarge
+                    ?.copyWith(fontWeight: FontWeight.w600),
               ),
             ],
           ),
@@ -188,10 +185,8 @@ class _DonationGuidelinesWidgetState extends State<DonationGuidelinesWidget> {
                 ),
                 child: Text(
                   item as String,
-                  style: DonationAppTheme.lightTheme.textTheme.bodySmall?.copyWith(
-                    color: color,
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: DonationAppTheme.lightTheme.textTheme.bodySmall
+                      ?.copyWith(color: color, fontWeight: FontWeight.w500),
                 ),
               );
             }).toList(),

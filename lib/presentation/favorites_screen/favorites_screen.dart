@@ -93,32 +93,38 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
   List<Map<String, dynamic>> get _filteredOrganizations {
     var filtered = _favoriteOrganizations.where((org) {
       if (_searchQuery.isEmpty) return true;
-      return (org['name'] as String)
-              .toLowerCase()
-              .contains(_searchQuery.toLowerCase()) ||
-          (org['donationType'] as String)
-              .toLowerCase()
-              .contains(_searchQuery.toLowerCase());
+      return (org['name'] as String).toLowerCase().contains(
+            _searchQuery.toLowerCase(),
+          ) ||
+          (org['donationType'] as String).toLowerCase().contains(
+            _searchQuery.toLowerCase(),
+          );
     }).toList();
 
     // Sort based on current sort option
     switch (_currentSort) {
       case 'recent':
-        filtered.sort((a, b) =>
-            (b['addedDate'] as DateTime).compareTo(a['addedDate'] as DateTime));
+        filtered.sort(
+          (a, b) => (b['addedDate'] as DateTime).compareTo(
+            a['addedDate'] as DateTime,
+          ),
+        );
         break;
       case 'distance':
         filtered.sort((a, b) {
-          double distanceA =
-              double.parse((a['distance'] as String).split(' ')[0]);
-          double distanceB =
-              double.parse((b['distance'] as String).split(' ')[0]);
+          double distanceA = double.parse(
+            (a['distance'] as String).split(' ')[0],
+          );
+          double distanceB = double.parse(
+            (b['distance'] as String).split(' ')[0],
+          );
           return distanceA.compareTo(distanceB);
         });
         break;
       case 'alphabetical':
         filtered.sort(
-            (a, b) => (a['name'] as String).compareTo(b['name'] as String));
+          (a, b) => (a['name'] as String).compareTo(b['name'] as String),
+        );
         break;
       case 'last_visited':
         filtered.sort((a, b) {
@@ -241,8 +247,9 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
 
   void _removeSelectedItems() {
     setState(() {
-      _favoriteOrganizations
-          .removeWhere((org) => _selectedItems.contains(org['id']));
+      _favoriteOrganizations.removeWhere(
+        (org) => _selectedItems.contains(org['id']),
+      );
       _selectedItems.clear();
       _isMultiSelectMode = false;
     });
@@ -288,9 +295,9 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
           _isMultiSelectMode
               ? '${_selectedItems.length} selected'
               : 'Favorites',
-          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+          style: Theme.of(
+            context,
+          ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
         ),
         centerTitle: true,
         elevation: 0,
@@ -417,12 +424,10 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                     child: Text(
                       'Last updated: ${_lastUpdated.hour.toString().padLeft(2, '0')}:${_lastUpdated.minute.toString().padLeft(2, '0')}',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context)
-                                .textTheme
-                                .bodySmall
-                                ?.color
-                                ?.withValues(alpha: 0.7),
-                          ),
+                        color: Theme.of(
+                          context,
+                        ).textTheme.bodySmall?.color?.withValues(alpha: 0.7),
+                      ),
                       textAlign: TextAlign.center,
                     ),
                   ),

@@ -26,7 +26,8 @@ class RecipeHeroSection extends StatelessWidget {
           width: double.infinity,
           height: 35.h,
           child: CustomImageWidget(
-            imageUrl: recipe['image'] ??
+            imageUrl:
+                recipe['image'] ??
                 'https://images.unsplash.com/photo-1546548970-71785318a17b?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3',
             width: double.infinity,
             height: 35.h,
@@ -150,11 +151,7 @@ class RecipeHeroSection extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          CustomIconWidget(
-            iconName: icon,
-            color: Colors.white,
-            size: 14,
-          ),
+          CustomIconWidget(iconName: icon, color: Colors.white, size: 14),
           SizedBox(width: 1.w),
           Text(
             text,

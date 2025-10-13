@@ -6,10 +6,8 @@ import '../../../core/app_export.dart';
 class ReviewsSectionWidget extends StatefulWidget {
   final Map<String, dynamic> organization;
 
-  const ReviewsSectionWidget({
-    Key? key,
-    required this.organization,
-  }) : super(key: key);
+  const ReviewsSectionWidget({Key? key, required this.organization})
+    : super(key: key);
 
   @override
   State<ReviewsSectionWidget> createState() => _ReviewsSectionWidgetState();
@@ -48,10 +46,8 @@ class _ReviewsSectionWidgetState extends State<ReviewsSectionWidget> {
                       SizedBox(width: 3.w),
                       Text(
                         'Reviews (${reviews.length})',
-                        style:
-                            DonationAppTheme.lightTheme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: DonationAppTheme.lightTheme.textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
@@ -75,9 +71,8 @@ class _ReviewsSectionWidgetState extends State<ReviewsSectionWidget> {
                 SizedBox(width: 2.w),
                 Text(
                   '${widget.organization['rating']}',
-                  style: DonationAppTheme.lightTheme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: DonationAppTheme.lightTheme.textTheme.titleMedium
+                      ?.copyWith(fontWeight: FontWeight.bold),
                 ),
                 SizedBox(width: 2.w),
                 Text(
@@ -107,10 +102,12 @@ class _ReviewsSectionWidgetState extends State<ReviewsSectionWidget> {
                     },
                     child: Text(
                       'View All Reviews',
-                      style: DonationAppTheme.lightTheme.textTheme.bodyMedium?.copyWith(
-                        color: DonationAppTheme.lightTheme.colorScheme.primary,
-                        fontWeight: FontWeight.w600,
-                      ),
+                      style: DonationAppTheme.lightTheme.textTheme.bodyMedium
+                          ?.copyWith(
+                            color:
+                                DonationAppTheme.lightTheme.colorScheme.primary,
+                            fontWeight: FontWeight.w600,
+                          ),
                     ),
                   ),
                 ),
@@ -134,10 +131,11 @@ class _ReviewsSectionWidgetState extends State<ReviewsSectionWidget> {
                   .withValues(alpha: 0.1),
               child: Text(
                 (review['userName'] as String).substring(0, 1).toUpperCase(),
-                style: DonationAppTheme.lightTheme.textTheme.bodyMedium?.copyWith(
-                  color: DonationAppTheme.lightTheme.colorScheme.primary,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: DonationAppTheme.lightTheme.textTheme.bodyMedium
+                    ?.copyWith(
+                      color: DonationAppTheme.lightTheme.colorScheme.primary,
+                      fontWeight: FontWeight.bold,
+                    ),
               ),
             ),
             SizedBox(width: 3.w),
@@ -147,9 +145,8 @@ class _ReviewsSectionWidgetState extends State<ReviewsSectionWidget> {
                 children: [
                   Text(
                     review['userName'] as String,
-                    style: DonationAppTheme.lightTheme.textTheme.bodyMedium?.copyWith(
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: DonationAppTheme.lightTheme.textTheme.bodyMedium
+                        ?.copyWith(fontWeight: FontWeight.w600),
                   ),
                   Row(
                     children: [

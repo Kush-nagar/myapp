@@ -25,8 +25,10 @@ class _IngredientsSectionState extends State<IngredientsSection> {
   @override
   void initState() {
     super.initState();
-    checkedIngredients =
-        List.generate(widget.ingredients.length, (index) => false);
+    checkedIngredients = List.generate(
+      widget.ingredients.length,
+      (index) => false,
+    );
   }
 
   @override
@@ -101,8 +103,9 @@ class _IngredientsSectionState extends State<IngredientsSection> {
           border: Border.all(
             color: isMissing
                 ? Colors.red.withValues(alpha: 0.3)
-                : AppTheme.lightTheme.colorScheme.outline
-                    .withValues(alpha: 0.2),
+                : AppTheme.lightTheme.colorScheme.outline.withValues(
+                    alpha: 0.2,
+                  ),
             width: 1,
           ),
         ),
@@ -148,8 +151,8 @@ class _IngredientsSectionState extends State<IngredientsSection> {
                       color: isChecked
                           ? AppTheme.lightTheme.colorScheme.onSurfaceVariant
                           : isMissing
-                              ? Colors.red.shade700
-                              : AppTheme.lightTheme.colorScheme.onSurface,
+                          ? Colors.red.shade700
+                          : AppTheme.lightTheme.colorScheme.onSurface,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -159,8 +162,9 @@ class _IngredientsSectionState extends State<IngredientsSection> {
                       ingredient['amount'],
                       style: AppTheme.lightTheme.textTheme.bodyMedium?.copyWith(
                         color: AppTheme.lightTheme.colorScheme.onSurfaceVariant,
-                        decoration:
-                            isChecked ? TextDecoration.lineThrough : null,
+                        decoration: isChecked
+                            ? TextDecoration.lineThrough
+                            : null,
                       ),
                     ),
                   ],
@@ -175,15 +179,14 @@ class _IngredientsSectionState extends State<IngredientsSection> {
                 onTap: () =>
                     widget.onAddToShoppingList(ingredient['name'] ?? ''),
                 child: Container(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 2.w, vertical: 0.5.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 2.w,
+                    vertical: 0.5.h,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.red.shade50,
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: Colors.red.shade200,
-                      width: 1,
-                    ),
+                    border: Border.all(color: Colors.red.shade200, width: 1),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,

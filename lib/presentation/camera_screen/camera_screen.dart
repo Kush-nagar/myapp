@@ -29,7 +29,7 @@ class _CameraScreenState extends State<CameraScreen>
   bool _isCameraInitialized = false;
   bool _isLoading = false;
   FlashMode _currentFlashMode = FlashMode.auto;
-  int _selectedCameraIndex = 0; 
+  int _selectedCameraIndex = 0;
 
   late GeminiService _geminiService;
 
@@ -224,7 +224,7 @@ class _CameraScreenState extends State<CameraScreen>
       setState(() => _recentPhoto = image);
 
       final rawResults = await _geminiService.detectFoods(image.path);
-      final results = rawResults.map((r) {  
+      final results = rawResults.map((r) {
         final name = (r['name'] ?? '') as String;
         return {
           'id': DateTime.now().millisecondsSinceEpoch ^ name.hashCode,

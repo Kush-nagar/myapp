@@ -45,9 +45,9 @@ class SortOptionsBottomSheet extends StatelessWidget {
               children: [
                 Text(
                   'Sort by',
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600),
                 ),
                 Spacer(),
                 GestureDetector(
@@ -69,13 +69,15 @@ class SortOptionsBottomSheet extends StatelessWidget {
             ),
           ),
           SizedBox(height: 2.h),
-          ...sortOptions.map((option) => _buildSortOption(
-                context: context,
-                key: option['key'] as String,
-                title: option['title'] as String,
-                icon: option['icon'] as String,
-                isSelected: currentSort == option['key'],
-              )),
+          ...sortOptions.map(
+            (option) => _buildSortOption(
+              context: context,
+              key: option['key'] as String,
+              title: option['title'] as String,
+              icon: option['icon'] as String,
+              isSelected: currentSort == option['key'],
+            ),
+          ),
           SizedBox(height: 4.h),
         ],
       ),
@@ -103,7 +105,10 @@ class SortOptionsBottomSheet extends StatelessWidget {
               : Colors.transparent,
           borderRadius: BorderRadius.circular(12),
           border: isSelected
-              ? Border.all(color: DonationAppTheme.lightTheme.primaryColor, width: 1)
+              ? Border.all(
+                  color: DonationAppTheme.lightTheme.primaryColor,
+                  width: 1,
+                )
               : null,
         ),
         child: Row(
@@ -120,12 +125,11 @@ class SortOptionsBottomSheet extends StatelessWidget {
               child: Text(
                 title,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: isSelected
-                          ? DonationAppTheme.lightTheme.primaryColor
-                          : Theme.of(context).textTheme.bodyMedium?.color,
-                      fontWeight:
-                          isSelected ? FontWeight.w600 : FontWeight.w400,
-                    ),
+                  color: isSelected
+                      ? DonationAppTheme.lightTheme.primaryColor
+                      : Theme.of(context).textTheme.bodyMedium?.color,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                ),
               ),
             ),
             if (isSelected)

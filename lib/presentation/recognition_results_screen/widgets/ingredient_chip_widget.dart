@@ -20,10 +20,14 @@ class IngredientChipWidget extends StatelessWidget {
   Color _getConfidenceColor() {
     if (confidence >= 0.8) {
       return AppTheme
-          .lightTheme.colorScheme.tertiary; // Green for high confidence
+          .lightTheme
+          .colorScheme
+          .tertiary; // Green for high confidence
     } else if (confidence >= 0.5) {
       return AppTheme
-          .lightTheme.colorScheme.secondary; // Amber for medium confidence
+          .lightTheme
+          .colorScheme
+          .secondary; // Amber for medium confidence
     } else {
       return AppTheme.lightTheme.colorScheme.error; // Red for low confidence
     }
@@ -39,10 +43,7 @@ class IngredientChipWidget extends StatelessWidget {
         decoration: BoxDecoration(
           color: _getConfidenceColor().withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(25),
-          border: Border.all(
-            color: _getConfidenceColor(),
-            width: 1.5,
-          ),
+          border: Border.all(color: _getConfidenceColor(), width: 1.5),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,

@@ -59,11 +59,11 @@ class OnboardingPageWidget extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style:
-                        AppTheme.lightTheme.textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: AppTheme.lightTheme.colorScheme.onSurface,
-                    ),
+                    style: AppTheme.lightTheme.textTheme.headlineMedium
+                        ?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.lightTheme.colorScheme.onSurface,
+                        ),
                     textAlign: TextAlign.center,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -100,9 +100,10 @@ class OnboardingPageWidget extends StatelessWidget {
                           'Get Started',
                           style: AppTheme.lightTheme.textTheme.titleMedium
                               ?.copyWith(
-                            color: AppTheme.lightTheme.colorScheme.onPrimary,
-                            fontWeight: FontWeight.w600,
-                          ),
+                                color:
+                                    AppTheme.lightTheme.colorScheme.onPrimary,
+                                fontWeight: FontWeight.w600,
+                              ),
                         ),
                       ),
                     ),

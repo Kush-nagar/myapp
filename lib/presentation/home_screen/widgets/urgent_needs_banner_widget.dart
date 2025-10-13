@@ -15,22 +15,22 @@ class UrgentNeedsBannerWidget extends StatelessWidget {
         "organization": "Downtown Food Bank",
         "need": "Fresh produce needed urgently",
         "timeLeft": "2 hours",
-        "priority": "high"
+        "priority": "high",
       },
       {
         "id": 2,
         "organization": "Community Kitchen",
         "need": "Canned goods for weekend meals",
         "timeLeft": "6 hours",
-        "priority": "medium"
+        "priority": "medium",
       },
       {
         "id": 3,
         "organization": "Shelter Hope",
         "need": "Baby formula and diapers",
         "timeLeft": "4 hours",
-        "priority": "high"
-      }
+        "priority": "high",
+      },
     ];
 
     return Container(
@@ -49,9 +49,12 @@ class UrgentNeedsBannerWidget extends StatelessWidget {
             padding: EdgeInsets.all(3.w),
             decoration: BoxDecoration(
               color: isHighPriority
-                  ? DonationAppTheme.lightTheme.colorScheme.error.withValues(alpha: 0.1)
-                  : DonationAppTheme.lightTheme.colorScheme.tertiary
-                      .withValues(alpha: 0.1),
+                  ? DonationAppTheme.lightTheme.colorScheme.error.withValues(
+                      alpha: 0.1,
+                    )
+                  : DonationAppTheme.lightTheme.colorScheme.tertiary.withValues(
+                      alpha: 0.1,
+                    ),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: isHighPriority
@@ -80,21 +83,23 @@ class UrgentNeedsBannerWidget extends StatelessWidget {
                     Expanded(
                       child: Text(
                         need["organization"] as String,
-                        style:
-                            DonationAppTheme.lightTheme.textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
+                        style: DonationAppTheme.lightTheme.textTheme.titleSmall
+                            ?.copyWith(fontWeight: FontWeight.w600),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
                     Text(
                       need["timeLeft"] as String,
-                      style: DonationAppTheme.lightTheme.textTheme.bodySmall?.copyWith(
-                        color: isHighPriority
-                            ? DonationAppTheme.lightTheme.colorScheme.error
-                            : DonationAppTheme.lightTheme.colorScheme.tertiary,
-                        fontWeight: FontWeight.w500,
-                      ),
+                      style: DonationAppTheme.lightTheme.textTheme.bodySmall
+                          ?.copyWith(
+                            color: isHighPriority
+                                ? DonationAppTheme.lightTheme.colorScheme.error
+                                : DonationAppTheme
+                                      .lightTheme
+                                      .colorScheme
+                                      .tertiary,
+                            fontWeight: FontWeight.w500,
+                          ),
                     ),
                   ],
                 ),

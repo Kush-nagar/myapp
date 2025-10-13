@@ -28,8 +28,9 @@ class PageIndicatorWidget extends StatelessWidget {
           decoration: BoxDecoration(
             color: currentPage == index
                 ? AppTheme.lightTheme.colorScheme.primary
-                : AppTheme.lightTheme.colorScheme.primary
-                    .withValues(alpha: 0.3),
+                : AppTheme.lightTheme.colorScheme.primary.withValues(
+                    alpha: 0.3,
+                  ),
             borderRadius: BorderRadius.circular(4),
           ),
         ),

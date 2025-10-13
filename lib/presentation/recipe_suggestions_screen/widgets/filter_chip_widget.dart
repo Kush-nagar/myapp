@@ -38,11 +38,11 @@ class FilterChipWidget extends StatelessWidget {
         child: Text(
           label,
           style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                color: isSelected
-                    ? AppTheme.lightTheme.colorScheme.onPrimary
-                    : AppTheme.lightTheme.colorScheme.onSurface,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-              ),
+            color: isSelected
+                ? AppTheme.lightTheme.colorScheme.onPrimary
+                : AppTheme.lightTheme.colorScheme.onSurface,
+            fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+          ),
         ),
       ),
     );

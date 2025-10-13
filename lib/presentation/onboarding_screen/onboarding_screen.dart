@@ -32,21 +32,20 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       vsync: this,
     );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
+      ),
+    );
 
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: const Interval(0.3, 1.0, curve: Curves.easeOutCubic),
-    ));
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _animationController,
+            curve: const Interval(0.3, 1.0, curve: Curves.easeOutCubic),
+          ),
+        );
 
     _animationController.forward();
   }
@@ -151,9 +150,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
         onPressed: _handleSkip,
         style: TextButton.styleFrom(
           padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.h),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         ),
         child: Text(
           'Skip',
@@ -276,8 +273,9 @@ class _OnboardingScreenState extends State<OnboardingScreen>
           backgroundColor: AppTheme.lightTheme.colorScheme.primary,
           foregroundColor: Colors.white,
           elevation: 4,
-          shadowColor:
-              AppTheme.lightTheme.colorScheme.primary.withValues(alpha: 0.3),
+          shadowColor: AppTheme.lightTheme.colorScheme.primary.withValues(
+            alpha: 0.3,
+          ),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),

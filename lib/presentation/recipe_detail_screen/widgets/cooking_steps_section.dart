@@ -46,8 +46,9 @@ class _CookingStepsSectionState extends State<CookingStepsSection> {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 0.5.h),
                 decoration: BoxDecoration(
-                  color:
-                      AppTheme.lightTheme.primaryColor.withValues(alpha: 0.1),
+                  color: AppTheme.lightTheme.primaryColor.withValues(
+                    alpha: 0.1,
+                  ),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -105,8 +106,9 @@ class _CookingStepsSectionState extends State<CookingStepsSection> {
           border: Border.all(
             color: isCompleted
                 ? AppTheme.lightTheme.primaryColor.withValues(alpha: 0.3)
-                : AppTheme.lightTheme.colorScheme.outline
-                    .withValues(alpha: 0.2),
+                : AppTheme.lightTheme.colorScheme.outline.withValues(
+                    alpha: 0.2,
+                  ),
             width: 1,
           ),
         ),
@@ -156,8 +158,9 @@ class _CookingStepsSectionState extends State<CookingStepsSection> {
                   Text(
                     step['instruction'] ?? 'Step instruction',
                     style: AppTheme.lightTheme.textTheme.bodyLarge?.copyWith(
-                      decoration:
-                          isCompleted ? TextDecoration.lineThrough : null,
+                      decoration: isCompleted
+                          ? TextDecoration.lineThrough
+                          : null,
                       color: isCompleted
                           ? AppTheme.lightTheme.colorScheme.onSurfaceVariant
                           : AppTheme.lightTheme.colorScheme.onSurface,
@@ -177,13 +180,16 @@ class _CookingStepsSectionState extends State<CookingStepsSection> {
                         SizedBox(width: 1.w),
                         Text(
                           '${step['duration']} minutes',
-                          style:
-                              AppTheme.lightTheme.textTheme.bodySmall?.copyWith(
-                            color: AppTheme
-                                .lightTheme.colorScheme.onSurfaceVariant,
-                            decoration:
-                                isCompleted ? TextDecoration.lineThrough : null,
-                          ),
+                          style: AppTheme.lightTheme.textTheme.bodySmall
+                              ?.copyWith(
+                                color: AppTheme
+                                    .lightTheme
+                                    .colorScheme
+                                    .onSurfaceVariant,
+                                decoration: isCompleted
+                                    ? TextDecoration.lineThrough
+                                    : null,
+                              ),
                         ),
                       ],
                     ),

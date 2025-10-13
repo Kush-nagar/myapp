@@ -37,7 +37,7 @@ class _OrganizationDetailScreenState extends State<OrganizationDetailScreen> {
   static const List<String> _statusOptions = [
     'Not started',
     'Started',
-    'Finished'
+    'Finished',
   ];
   static const Map<String, Color> _statusColors = {
     'Not started': Colors.grey,
@@ -131,7 +131,7 @@ class _OrganizationDetailScreenState extends State<OrganizationDetailScreen> {
       'hours',
       'reviews',
       'phone',
-      'website' // keep website here for direct override
+      'website', // keep website here for direct override
     ];
 
     for (final k in copyKeys) {
@@ -291,8 +291,9 @@ class _OrganizationDetailScreenState extends State<OrganizationDetailScreen> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content:
-            Text(_isFavorite ? 'Added to favorites' : 'Removed from favorites'),
+        content: Text(
+          _isFavorite ? 'Added to favorites' : 'Removed from favorites',
+        ),
         duration: const Duration(seconds: 2),
       ),
     );
@@ -302,7 +303,8 @@ class _OrganizationDetailScreenState extends State<OrganizationDetailScreen> {
     final organization = _organizationData!;
     final contact = (organization['contact'] as Map<String, dynamic>?) ?? {};
 
-    final shareText = '''
+    final shareText =
+        '''
 Check out ${organization['name']}! ${organization['rating'] != null ? 'Rating: ${organization['rating']}/5 ⭐\n' : ''}
 ${organization['distance'] != null ? 'Distance: ${organization['distance']}\n' : ''}
 Contact: ${contact['phone'] ?? '—'}
@@ -310,7 +312,7 @@ Address: ${contact['address'] ?? '—'}
 ${contact['website'] != null ? '\nWebsite: ${contact['website']}' : ''}
 Shared via FoodBridge App
 '''
-        .trim();
+            .trim();
 
     await Clipboard.setData(ClipboardData(text: shareText));
 
@@ -372,7 +374,10 @@ Shared via FoodBridge App
                     width: 12.w,
                     height: 4.h,
                     decoration: BoxDecoration(
-                      color: DonationAppTheme.lightTheme.colorScheme.onSurfaceVariant
+                      color: DonationAppTheme
+                          .lightTheme
+                          .colorScheme
+                          .onSurfaceVariant
                           .withOpacity(0.12),
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -396,7 +401,7 @@ Shared via FoodBridge App
                         color: Colors.black.withOpacity(0.03),
                         blurRadius: 6,
                         offset: const Offset(0, 2),
-                      )
+                      ),
                     ],
                   ),
                   height: 18.h,
@@ -438,9 +443,8 @@ Shared via FoodBridge App
               SizedBox(height: 3.h),
               Text(
                 'Couldn’t load details',
-                style: DonationAppTheme.lightTheme.textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.w700,
-                ),
+                style: DonationAppTheme.lightTheme.textTheme.headlineSmall
+                    ?.copyWith(fontWeight: FontWeight.w700),
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: 1.h),
@@ -477,9 +481,9 @@ Shared via FoodBridge App
                       size: 16,
                     ),
                     label: const Text('Back'),
-                  )
+                  ),
                 ],
-              )
+              ),
             ],
           ),
         ),
@@ -518,10 +522,7 @@ Shared via FoodBridge App
               color: Colors.white.withOpacity(0.95),
               shape: BoxShape.circle,
               boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.06),
-                  blurRadius: 6,
-                )
+                BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 6),
               ],
             ),
             child: CustomIconWidget(
@@ -542,10 +543,7 @@ Shared via FoodBridge App
               color: Colors.white.withOpacity(0.95),
               shape: BoxShape.circle,
               boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.06),
-                  blurRadius: 6,
-                )
+                BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 6),
               ],
             ),
             child: CustomIconWidget(
@@ -596,8 +594,8 @@ Shared via FoodBridge App
               )
             else
               Container(
-                color:
-                    DonationAppTheme.lightTheme.colorScheme.onSurface.withOpacity(0.06),
+                color: DonationAppTheme.lightTheme.colorScheme.onSurface
+                    .withOpacity(0.06),
               ),
 
             // Gradient overlay
@@ -606,7 +604,7 @@ Shared via FoodBridge App
                 gradient: LinearGradient(
                   colors: [
                     Colors.black.withOpacity(0.35),
-                    Colors.black.withOpacity(0.05)
+                    Colors.black.withOpacity(0.05),
                   ],
                   begin: Alignment.bottomCenter,
                   end: Alignment.topCenter,
@@ -629,11 +627,14 @@ Shared via FoodBridge App
                       children: [
                         Text(
                           name,
-                          style: DonationAppTheme.lightTheme.textTheme.headlineSmall
+                          style: DonationAppTheme
+                              .lightTheme
+                              .textTheme
+                              .headlineSmall
                               ?.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w700,
-                          ),
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
+                              ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -641,7 +642,10 @@ Shared via FoodBridge App
                           SizedBox(height: 0.5.h),
                           Text(
                             address,
-                            style: DonationAppTheme.lightTheme.textTheme.bodySmall
+                            style: DonationAppTheme
+                                .lightTheme
+                                .textTheme
+                                .bodySmall
                                 ?.copyWith(color: Colors.white70),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -658,7 +662,9 @@ Shared via FoodBridge App
                       if (rating != null)
                         Container(
                           padding: EdgeInsets.symmetric(
-                              horizontal: 3.w, vertical: 0.8.h),
+                            horizontal: 3.w,
+                            vertical: 0.8.h,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.white.withOpacity(0.95),
                             borderRadius: BorderRadius.circular(12),
@@ -676,7 +682,10 @@ Shared via FoodBridge App
                                 (rating is double)
                                     ? rating.toStringAsFixed(1)
                                     : rating.toString(),
-                                style: DonationAppTheme.lightTheme.textTheme.bodySmall
+                                style: DonationAppTheme
+                                    .lightTheme
+                                    .textTheme
+                                    .bodySmall
                                     ?.copyWith(fontWeight: FontWeight.w600),
                               ),
                             ],
@@ -686,22 +695,28 @@ Shared via FoodBridge App
                       if (distance != null)
                         Container(
                           padding: EdgeInsets.symmetric(
-                              horizontal: 3.w, vertical: 0.8.h),
+                            horizontal: 3.w,
+                            vertical: 0.8.h,
+                          ),
                           decoration: BoxDecoration(
-                            color: DonationAppTheme.lightTheme.colorScheme.surface
+                            color: DonationAppTheme
+                                .lightTheme
+                                .colorScheme
+                                .surface
                                 .withOpacity(0.9),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
                             distance.toString(),
-                            style: DonationAppTheme.lightTheme.textTheme.bodySmall
-                                ?.copyWith(
-                              fontWeight: FontWeight.w600,
-                            ),
+                            style: DonationAppTheme
+                                .lightTheme
+                                .textTheme
+                                .bodySmall
+                                ?.copyWith(fontWeight: FontWeight.w600),
                           ),
                         ),
                     ],
-                  )
+                  ),
                 ],
               ),
             ),
@@ -725,10 +740,7 @@ Shared via FoodBridge App
           ),
         ],
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: child,
-      ),
+      child: ClipRRect(borderRadius: BorderRadius.circular(12), child: child),
     );
   }
 
@@ -742,33 +754,32 @@ Shared via FoodBridge App
         Container(
           width: 12,
           height: 12,
-          decoration: BoxDecoration(
-            color: color,
-            shape: BoxShape.circle,
-          ),
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
         ),
         SizedBox(width: 3.w),
         Expanded(
           child: DropdownButtonFormField<String>(
             value: _orgStatus,
             items: _statusOptions
-                .map((s) => DropdownMenuItem(
-                      value: s,
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 10,
-                            height: 10,
-                            decoration: BoxDecoration(
-                              color: _statusColors[s] ?? Colors.grey,
-                              shape: BoxShape.circle,
-                            ),
+                .map(
+                  (s) => DropdownMenuItem(
+                    value: s,
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 10,
+                          height: 10,
+                          decoration: BoxDecoration(
+                            color: _statusColors[s] ?? Colors.grey,
+                            shape: BoxShape.circle,
                           ),
-                          SizedBox(width: 2.w),
-                          Text(s),
-                        ],
-                      ),
-                    ))
+                        ),
+                        SizedBox(width: 2.w),
+                        Text(s),
+                      ],
+                    ),
+                  ),
+                )
                 .toList(),
             onChanged: (val) {
               if (val == null) return;
@@ -777,8 +788,10 @@ Shared via FoodBridge App
             decoration: InputDecoration(
               labelText: 'Organization status',
               isDense: true,
-              contentPadding:
-                  EdgeInsets.symmetric(horizontal: 3.w, vertical: 1.h),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 3.w,
+                vertical: 1.h,
+              ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
                 borderSide: BorderSide.none,
@@ -827,7 +840,8 @@ Shared via FoodBridge App
                         child: Padding(
                           padding: EdgeInsets.all(4.w),
                           child: AboutSectionWidget(
-                              organization: _organizationData!),
+                            organization: _organizationData!,
+                          ),
                         ),
                       ),
 
@@ -836,7 +850,8 @@ Shared via FoodBridge App
                         child: Padding(
                           padding: EdgeInsets.all(4.w),
                           child: CurrentNeedsWidget(
-                              organization: _organizationData!),
+                            organization: _organizationData!,
+                          ),
                         ),
                       ),
 
@@ -845,7 +860,8 @@ Shared via FoodBridge App
                         child: Padding(
                           padding: EdgeInsets.all(4.w),
                           child: DonationGuidelinesWidget(
-                              organization: _organizationData!),
+                            organization: _organizationData!,
+                          ),
                         ),
                       ),
 
@@ -854,7 +870,8 @@ Shared via FoodBridge App
                         child: Padding(
                           padding: EdgeInsets.all(4.w),
                           child: HoursContactWidget(
-                              organization: _organizationData!),
+                            organization: _organizationData!,
+                          ),
                         ),
                       ),
 
@@ -863,7 +880,8 @@ Shared via FoodBridge App
                         child: Padding(
                           padding: EdgeInsets.all(4.w),
                           child: ReviewsSectionWidget(
-                              organization: _organizationData!),
+                            organization: _organizationData!,
+                          ),
                         ),
                       ),
 

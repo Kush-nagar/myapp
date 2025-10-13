@@ -84,9 +84,8 @@ class _FilterModalWidgetState extends State<FilterModalWidget> {
               children: [
                 Text(
                   'Filters',
-                  style: DonationAppTheme.lightTheme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: DonationAppTheme.lightTheme.textTheme.titleLarge
+                      ?.copyWith(fontWeight: FontWeight.w600),
                 ),
                 Row(
                   children: [
@@ -99,17 +98,20 @@ class _FilterModalWidgetState extends State<FilterModalWidget> {
                       },
                       child: Text(
                         'Clear All',
-                        style:
-                            DonationAppTheme.lightTheme.textTheme.bodyMedium?.copyWith(
-                          color: DonationAppTheme.lightTheme.primaryColor,
-                        ),
+                        style: DonationAppTheme.lightTheme.textTheme.bodyMedium
+                            ?.copyWith(
+                              color: DonationAppTheme.lightTheme.primaryColor,
+                            ),
                       ),
                     ),
                     IconButton(
                       onPressed: () => Navigator.pop(context),
                       icon: CustomIconWidget(
                         iconName: 'close',
-                        color: DonationAppTheme.lightTheme.colorScheme.onSurfaceVariant,
+                        color: DonationAppTheme
+                            .lightTheme
+                            .colorScheme
+                            .onSurfaceVariant,
                         size: 6.w,
                       ),
                     ),
@@ -164,10 +166,11 @@ class _FilterModalWidgetState extends State<FilterModalWidget> {
                 ),
                 child: Text(
                   'Show $_resultCount Results',
-                  style: DonationAppTheme.lightTheme.textTheme.bodyLarge?.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: DonationAppTheme.lightTheme.textTheme.bodyLarge
+                      ?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
                 ),
               ),
             ),
@@ -182,7 +185,7 @@ class _FilterModalWidgetState extends State<FilterModalWidget> {
       'Food Bank',
       'Shelter',
       'Restaurant',
-      'Community Center'
+      'Community Center',
     ];
     final List<String> selectedTypes =
         (_tempFilters['organizationType'] as List?)?.cast<String>() ?? [];
@@ -225,18 +228,24 @@ class _FilterModalWidgetState extends State<FilterModalWidget> {
                     color: isSelected
                         ? DonationAppTheme.lightTheme.primaryColor
                         : DonationAppTheme.lightTheme.colorScheme.outline
-                            .withValues(alpha: 0.3),
+                              .withValues(alpha: 0.3),
                     width: 1,
                   ),
                 ),
                 child: Text(
                   type,
-                  style: DonationAppTheme.lightTheme.textTheme.bodyMedium?.copyWith(
-                    color: isSelected
-                        ? Colors.white
-                        : DonationAppTheme.lightTheme.colorScheme.onSurfaceVariant,
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                  ),
+                  style: DonationAppTheme.lightTheme.textTheme.bodyMedium
+                      ?.copyWith(
+                        color: isSelected
+                            ? Colors.white
+                            : DonationAppTheme
+                                  .lightTheme
+                                  .colorScheme
+                                  .onSurfaceVariant,
+                        fontWeight: isSelected
+                            ? FontWeight.w600
+                            : FontWeight.w400,
+                      ),
                 ),
               ),
             );
@@ -252,7 +261,7 @@ class _FilterModalWidgetState extends State<FilterModalWidget> {
       'Fresh Produce',
       'Prepared Meals',
       'Dairy Products',
-      'Baked Goods'
+      'Baked Goods',
     ];
     final List<String> selectedTypes =
         (_tempFilters['donationTypes'] as List?)?.cast<String>() ?? [];
@@ -295,18 +304,24 @@ class _FilterModalWidgetState extends State<FilterModalWidget> {
                     color: isSelected
                         ? DonationAppTheme.lightTheme.primaryColor
                         : DonationAppTheme.lightTheme.colorScheme.outline
-                            .withValues(alpha: 0.3),
+                              .withValues(alpha: 0.3),
                     width: 1,
                   ),
                 ),
                 child: Text(
                   type,
-                  style: DonationAppTheme.lightTheme.textTheme.bodyMedium?.copyWith(
-                    color: isSelected
-                        ? Colors.white
-                        : DonationAppTheme.lightTheme.colorScheme.onSurfaceVariant,
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                  ),
+                  style: DonationAppTheme.lightTheme.textTheme.bodyMedium
+                      ?.copyWith(
+                        color: isSelected
+                            ? Colors.white
+                            : DonationAppTheme
+                                  .lightTheme
+                                  .colorScheme
+                                  .onSurfaceVariant,
+                        fontWeight: isSelected
+                            ? FontWeight.w600
+                            : FontWeight.w400,
+                      ),
                 ),
               ),
             );
@@ -353,18 +368,24 @@ class _FilterModalWidgetState extends State<FilterModalWidget> {
                     color: isSelected
                         ? DonationAppTheme.lightTheme.primaryColor
                         : DonationAppTheme.lightTheme.colorScheme.outline
-                            .withValues(alpha: 0.3),
+                              .withValues(alpha: 0.3),
                     width: 1,
                   ),
                 ),
                 child: Text(
                   '${distance.toInt()} mile${distance > 1 ? 's' : ''}',
-                  style: DonationAppTheme.lightTheme.textTheme.bodyMedium?.copyWith(
-                    color: isSelected
-                        ? Colors.white
-                        : DonationAppTheme.lightTheme.colorScheme.onSurfaceVariant,
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-                  ),
+                  style: DonationAppTheme.lightTheme.textTheme.bodyMedium
+                      ?.copyWith(
+                        color: isSelected
+                            ? Colors.white
+                            : DonationAppTheme
+                                  .lightTheme
+                                  .colorScheme
+                                  .onSurfaceVariant,
+                        fontWeight: isSelected
+                            ? FontWeight.w600
+                            : FontWeight.w400,
+                      ),
                 ),
               ),
             );
@@ -390,26 +411,18 @@ class _FilterModalWidgetState extends State<FilterModalWidget> {
         SizedBox(height: 1.h),
         Column(
           children: [
-            _buildSwitchTile(
-              'Open Now',
-              openNow,
-              (value) {
-                setState(() {
-                  _tempFilters['openNow'] = value;
-                  _calculateResultCount();
-                });
-              },
-            ),
-            _buildSwitchTile(
-              'Weekend Hours',
-              weekendHours,
-              (value) {
-                setState(() {
-                  _tempFilters['weekendHours'] = value;
-                  _calculateResultCount();
-                });
-              },
-            ),
+            _buildSwitchTile('Open Now', openNow, (value) {
+              setState(() {
+                _tempFilters['openNow'] = value;
+                _calculateResultCount();
+              });
+            }),
+            _buildSwitchTile('Weekend Hours', weekendHours, (value) {
+              setState(() {
+                _tempFilters['weekendHours'] = value;
+                _calculateResultCount();
+              });
+            }),
           ],
         ),
       ],
@@ -429,16 +442,12 @@ class _FilterModalWidgetState extends State<FilterModalWidget> {
           ),
         ),
         SizedBox(height: 1.h),
-        _buildSwitchTile(
-          '4+ Stars',
-          highRating,
-          (value) {
-            setState(() {
-              _tempFilters['highRating'] = value;
-              _calculateResultCount();
-            });
-          },
-        ),
+        _buildSwitchTile('4+ Stars', highRating, (value) {
+          setState(() {
+            _tempFilters['highRating'] = value;
+            _calculateResultCount();
+          });
+        }),
       ],
     );
   }
@@ -449,10 +458,7 @@ class _FilterModalWidgetState extends State<FilterModalWidget> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            title,
-            style: DonationAppTheme.lightTheme.textTheme.bodyMedium,
-          ),
+          Text(title, style: DonationAppTheme.lightTheme.textTheme.bodyMedium),
           Switch(
             value: value,
             onChanged: onChanged,

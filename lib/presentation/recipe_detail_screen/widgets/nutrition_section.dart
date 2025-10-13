@@ -6,10 +6,7 @@ import '../../../../core/app_export.dart';
 class NutritionSection extends StatefulWidget {
   final Map<String, dynamic> nutrition;
 
-  const NutritionSection({
-    Key? key,
-    required this.nutrition,
-  }) : super(key: key);
+  const NutritionSection({Key? key, required this.nutrition}) : super(key: key);
 
   @override
   State<NutritionSection> createState() => _NutritionSectionState();
@@ -55,10 +52,8 @@ class _NutritionSectionState extends State<NutritionSection> {
                       SizedBox(width: 3.w),
                       Text(
                         'Nutrition Information',
-                        style:
-                            AppTheme.lightTheme.textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: AppTheme.lightTheme.textTheme.titleLarge
+                            ?.copyWith(fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
@@ -75,8 +70,9 @@ class _NutritionSectionState extends State<NutritionSection> {
           // Nutrition Content
           if (isExpanded) ...[
             Divider(
-              color: AppTheme.lightTheme.colorScheme.outline
-                  .withValues(alpha: 0.2),
+              color: AppTheme.lightTheme.colorScheme.outline.withValues(
+                alpha: 0.2,
+              ),
               height: 1,
             ),
             Container(
@@ -88,8 +84,9 @@ class _NutritionSectionState extends State<NutritionSection> {
                     width: double.infinity,
                     padding: EdgeInsets.all(4.w),
                     decoration: BoxDecoration(
-                      color: AppTheme.lightTheme.primaryColor
-                          .withValues(alpha: 0.05),
+                      color: AppTheme.lightTheme.primaryColor.withValues(
+                        alpha: 0.05,
+                      ),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Row(
@@ -105,18 +102,20 @@ class _NutritionSectionState extends State<NutritionSection> {
                           '${widget.nutrition['calories'] ?? 0}',
                           style: AppTheme.lightTheme.textTheme.headlineMedium
                               ?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: AppTheme.lightTheme.primaryColor,
-                          ),
+                                fontWeight: FontWeight.bold,
+                                color: AppTheme.lightTheme.primaryColor,
+                              ),
                         ),
                         SizedBox(width: 1.w),
                         Text(
                           'calories',
-                          style:
-                              AppTheme.lightTheme.textTheme.bodyLarge?.copyWith(
-                            color: AppTheme
-                                .lightTheme.colorScheme.onSurfaceVariant,
-                          ),
+                          style: AppTheme.lightTheme.textTheme.bodyLarge
+                              ?.copyWith(
+                                color: AppTheme
+                                    .lightTheme
+                                    .colorScheme
+                                    .onSurfaceVariant,
+                              ),
                         ),
                       ],
                     ),
@@ -198,8 +197,9 @@ class _NutritionSectionState extends State<NutritionSection> {
     Color color,
     int dailyValue,
   ) {
-    final numValue =
-        (value is String) ? double.tryParse(value) ?? 0.0 : value.toDouble();
+    final numValue = (value is String)
+        ? double.tryParse(value) ?? 0.0
+        : value.toDouble();
     final percentage = (numValue / dailyValue * 100).clamp(0.0, 100.0);
 
     return Column(

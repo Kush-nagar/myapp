@@ -9,16 +9,19 @@ class AppTheme {
 
   // Color Specifications - Warm Neutral Foundation
   static const Color primaryLight = Color(0xFF2E7D32); // Deep forest green
-  static const Color primaryDark =
-      Color(0xFF4CAF50); // Lighter green for dark mode
+  static const Color primaryDark = Color(
+    0xFF4CAF50,
+  ); // Lighter green for dark mode
   static const Color secondaryLight = Color(0xFFFF8F00); // Warm amber
-  static const Color secondaryDark =
-      Color(0xFFFFB74D); // Lighter amber for dark mode
+  static const Color secondaryDark = Color(
+    0xFFFFB74D,
+  ); // Lighter amber for dark mode
 
   // Background colors optimized for food photography
   static const Color backgroundLight = Color(0xFFFAFAFA); // Soft off-white
-  static const Color backgroundDark =
-      Color(0xFF121212); // Material dark background
+  static const Color backgroundDark = Color(
+    0xFF121212,
+  ); // Material dark background
   static const Color surfaceLight = Color(0xFFFFFFFF); // Pure white
   static const Color surfaceDark = Color(0xFF1E1E1E); // Dark surface
 
@@ -26,16 +29,19 @@ class AppTheme {
   static const Color errorLight = Color(0xFFD32F2F); // Clear red
   static const Color errorDark = Color(0xFFEF5350); // Lighter red for dark mode
   static const Color successLight = Color(0xFF388E3C); // Confirmation green
-  static const Color successDark =
-      Color(0xFF66BB6A); // Lighter success for dark mode
+  static const Color successDark = Color(
+    0xFF66BB6A,
+  ); // Lighter success for dark mode
 
   // Text colors with high contrast for mobile readability
-  static const Color textPrimaryLight =
-      Color(0xFF212121); // High-contrast dark gray
+  static const Color textPrimaryLight = Color(
+    0xFF212121,
+  ); // High-contrast dark gray
   static const Color textSecondaryLight = Color(0xFF757575); // Medium gray
   static const Color textPrimaryDark = Color(0xFFFFFFFF); // White for dark mode
-  static const Color textSecondaryDark =
-      Color(0xFFBDBDBD); // Light gray for dark mode
+  static const Color textSecondaryDark = Color(
+    0xFFBDBDBD,
+  ); // Light gray for dark mode
 
   // Divider and overlay colors
   static const Color dividerLight = Color(0xFFE0E0E0); // Subtle gray
@@ -101,9 +107,7 @@ class AppTheme {
       color: cardLight,
       elevation: 2.0,
       shadowColor: Colors.black.withValues(alpha: 0.1),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12.0),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
     ),
 
@@ -129,9 +133,7 @@ class AppTheme {
       backgroundColor: primaryLight,
       foregroundColor: Colors.white,
       elevation: 4.0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16.0),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
     ),
 
     // Button themes with adaptive sizing
@@ -144,10 +146,7 @@ class AppTheme {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12.0),
         ),
-        textStyle: GoogleFonts.inter(
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-        ),
+        textStyle: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w500),
       ),
     ),
 
@@ -159,10 +158,7 @@ class AppTheme {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12.0),
         ),
-        textStyle: GoogleFonts.inter(
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-        ),
+        textStyle: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w500),
       ),
     ),
 
@@ -170,13 +166,8 @@ class AppTheme {
       style: TextButton.styleFrom(
         foregroundColor: primaryLight,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        textStyle: GoogleFonts.inter(
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+        textStyle: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w500),
       ),
     ),
 
@@ -246,9 +237,7 @@ class AppTheme {
       }),
       checkColor: WidgetStateProperty.all(Colors.white),
       side: BorderSide(color: dividerLight, width: 2.0),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(4.0),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
     ),
 
     // Radio theme for recipe preferences
@@ -283,10 +272,7 @@ class AppTheme {
       unselectedLabelColor: textSecondaryLight,
       indicatorColor: primaryLight,
       indicatorSize: TabBarIndicatorSize.label,
-      labelStyle: GoogleFonts.inter(
-        fontSize: 16,
-        fontWeight: FontWeight.w600,
-      ),
+      labelStyle: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w600),
       unselectedLabelStyle: GoogleFonts.inter(
         fontSize: 16,
         fontWeight: FontWeight.w400,
@@ -317,9 +303,7 @@ class AppTheme {
       ),
       actionTextColor: secondaryLight,
       behavior: SnackBarBehavior.floating,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12.0),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
     ),
 
     // Chip theme for ingredient confidence indicators
@@ -337,10 +321,9 @@ class AppTheme {
         color: Colors.white,
       ),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20.0),
-      ),
-    ), dialogTheme: DialogThemeData(backgroundColor: surfaceLight),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+    ),
+    dialogTheme: DialogThemeData(backgroundColor: surfaceLight),
   );
 
   /// Dark theme optimized for evening cooking sessions
@@ -398,9 +381,7 @@ class AppTheme {
       color: cardDark,
       elevation: 4.0,
       shadowColor: Colors.black.withValues(alpha: 0.3),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12.0),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
     ),
 
@@ -426,9 +407,7 @@ class AppTheme {
       backgroundColor: primaryDark,
       foregroundColor: Colors.black,
       elevation: 6.0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16.0),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.0)),
     ),
 
     // Button themes for dark mode
@@ -441,10 +420,7 @@ class AppTheme {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12.0),
         ),
-        textStyle: GoogleFonts.inter(
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-        ),
+        textStyle: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w500),
       ),
     ),
 
@@ -456,10 +432,7 @@ class AppTheme {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12.0),
         ),
-        textStyle: GoogleFonts.inter(
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-        ),
+        textStyle: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w500),
       ),
     ),
 
@@ -467,13 +440,8 @@ class AppTheme {
       style: TextButton.styleFrom(
         foregroundColor: primaryDark,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        textStyle: GoogleFonts.inter(
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+        textStyle: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w500),
       ),
     ),
 
@@ -543,9 +511,7 @@ class AppTheme {
       }),
       checkColor: WidgetStateProperty.all(Colors.black),
       side: BorderSide(color: dividerDark, width: 2.0),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(4.0),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4.0)),
     ),
 
     // Radio theme for dark mode
@@ -580,10 +546,7 @@ class AppTheme {
       unselectedLabelColor: textSecondaryDark,
       indicatorColor: primaryDark,
       indicatorSize: TabBarIndicatorSize.label,
-      labelStyle: GoogleFonts.inter(
-        fontSize: 16,
-        fontWeight: FontWeight.w600,
-      ),
+      labelStyle: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w600),
       unselectedLabelStyle: GoogleFonts.inter(
         fontSize: 16,
         fontWeight: FontWeight.w400,
@@ -614,9 +577,7 @@ class AppTheme {
       ),
       actionTextColor: secondaryDark,
       behavior: SnackBarBehavior.floating,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12.0),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
     ),
 
     // Chip theme for dark mode
@@ -634,18 +595,18 @@ class AppTheme {
         color: Colors.black,
       ),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20.0),
-      ),
-    ), dialogTheme: DialogThemeData(backgroundColor: surfaceDark),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+    ),
+    dialogTheme: DialogThemeData(backgroundColor: surfaceDark),
   );
 
   /// Helper method to build text theme using Inter font family
   /// Optimized for mobile screen clarity and contemporary app aesthetics
   static TextTheme _buildTextTheme({required bool isLight}) {
     final Color textPrimary = isLight ? textPrimaryLight : textPrimaryDark;
-    final Color textSecondary =
-        isLight ? textSecondaryLight : textSecondaryDark;
+    final Color textSecondary = isLight
+        ? textSecondaryLight
+        : textSecondaryDark;
 
     return TextTheme(
       // Display styles for large headings

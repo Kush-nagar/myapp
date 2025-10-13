@@ -6,10 +6,8 @@ import '../../../core/app_export.dart';
 class ManualEntryDialogWidget extends StatefulWidget {
   final Function(List<String>) onIngredientsEntered;
 
-  const ManualEntryDialogWidget({
-    Key? key,
-    required this.onIngredientsEntered,
-  }) : super(key: key);
+  const ManualEntryDialogWidget({Key? key, required this.onIngredientsEntered})
+    : super(key: key);
 
   @override
   State<ManualEntryDialogWidget> createState() =>
@@ -45,9 +43,7 @@ class _ManualEntryDialogWidgetState extends State<ManualEntryDialogWidget> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Container(
         padding: EdgeInsets.all(6.w),
         decoration: BoxDecoration(

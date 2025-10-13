@@ -21,8 +21,8 @@ class IngredientChipWidget extends StatelessWidget {
         label: Text(
           ingredient,
           style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                color: AppTheme.lightTheme.colorScheme.onPrimaryContainer,
-              ),
+            color: AppTheme.lightTheme.colorScheme.onPrimaryContainer,
+          ),
         ),
         backgroundColor: AppTheme.lightTheme.colorScheme.primaryContainer,
         deleteIcon: CustomIconWidget(
@@ -31,9 +31,7 @@ class IngredientChipWidget extends StatelessWidget {
           size: 4.w,
         ),
         onDeleted: onRemove,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
       ),
     );

@@ -8,10 +8,8 @@ import '../../../core/app_export.dart';
 class CurrentNeedsWidget extends StatefulWidget {
   final Map<String, dynamic> organization;
 
-  const CurrentNeedsWidget({
-    Key? key,
-    required this.organization,
-  }) : super(key: key);
+  const CurrentNeedsWidget({Key? key, required this.organization})
+    : super(key: key);
 
   @override
   State<CurrentNeedsWidget> createState() => _CurrentNeedsWidgetState();
@@ -35,7 +33,7 @@ class _CurrentNeedsWidgetState extends State<CurrentNeedsWidget> {
           'item': e?.toString() ?? 'Unknown Item',
           'priority': 'medium',
           'description': '',
-          'quantity': ''
+          'quantity': '',
         };
       }).toList();
     } else {
@@ -79,9 +77,8 @@ class _CurrentNeedsWidgetState extends State<CurrentNeedsWidget> {
           children: [
             Text(
               'Current Needs',
-              style: DonationAppTheme.lightTheme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+              style: DonationAppTheme.lightTheme.textTheme.titleMedium
+                  ?.copyWith(fontWeight: FontWeight.w600),
             ),
             SizedBox(height: 1.h),
             Text(
@@ -108,15 +105,18 @@ class _CurrentNeedsWidgetState extends State<CurrentNeedsWidget> {
               children: [
                 Text(
                   'Current Needs',
-                  style: DonationAppTheme.lightTheme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: DonationAppTheme.lightTheme.textTheme.titleMedium
+                      ?.copyWith(fontWeight: FontWeight.w600),
                 ),
                 Text(
                   '${_needs.length} item${_needs.length > 1 ? 's' : ''}',
-                  style: DonationAppTheme.lightTheme.textTheme.bodySmall?.copyWith(
-                    color: DonationAppTheme.lightTheme.colorScheme.onSurfaceVariant,
-                  ),
+                  style: DonationAppTheme.lightTheme.textTheme.bodySmall
+                      ?.copyWith(
+                        color: DonationAppTheme
+                            .lightTheme
+                            .colorScheme
+                            .onSurfaceVariant,
+                      ),
                 ),
               ],
             ),
@@ -162,26 +162,32 @@ class _CurrentNeedsWidgetState extends State<CurrentNeedsWidget> {
                         });
                       },
                       tilePadding: EdgeInsets.symmetric(
-                          horizontal: 3.w, vertical: 1.2.h),
+                        horizontal: 3.w,
+                        vertical: 1.2.h,
+                      ),
                       collapsedShape: RoundedRectangleBorder(),
-                      childrenPadding:
-                          EdgeInsets.symmetric(horizontal: 3.w, vertical: 1.h),
+                      childrenPadding: EdgeInsets.symmetric(
+                        horizontal: 3.w,
+                        vertical: 1.h,
+                      ),
                       leading: Container(
                         constraints: BoxConstraints(minWidth: 16.w),
                         padding: EdgeInsets.symmetric(
-                            horizontal: 2.w, vertical: 0.8.h),
+                          horizontal: 2.w,
+                          vertical: 0.8.h,
+                        ),
                         decoration: BoxDecoration(
                           color: _priorityColor(priority).withOpacity(0.12),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
                           _priorityLabel(priority).toUpperCase(),
-                          style:
-                              DonationAppTheme.lightTheme.textTheme.bodySmall?.copyWith(
-                            color: _priorityColor(priority),
-                            fontWeight: FontWeight.w700,
-                            fontSize: 9.sp,
-                          ),
+                          style: DonationAppTheme.lightTheme.textTheme.bodySmall
+                              ?.copyWith(
+                                color: _priorityColor(priority),
+                                fontWeight: FontWeight.w700,
+                                fontSize: 9.sp,
+                              ),
                           textAlign: TextAlign.center,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -193,10 +199,11 @@ class _CurrentNeedsWidgetState extends State<CurrentNeedsWidget> {
                             flex: 3,
                             child: Text(
                               item,
-                              style: DonationAppTheme.lightTheme.textTheme.bodyMedium
-                                  ?.copyWith(
-                                fontWeight: FontWeight.w600,
-                              ),
+                              style: DonationAppTheme
+                                  .lightTheme
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(fontWeight: FontWeight.w600),
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -207,21 +214,31 @@ class _CurrentNeedsWidgetState extends State<CurrentNeedsWidget> {
                               child: Container(
                                 constraints: BoxConstraints(maxWidth: 25.w),
                                 padding: EdgeInsets.symmetric(
-                                    horizontal: 2.5.w, vertical: 0.6.h),
+                                  horizontal: 2.5.w,
+                                  vertical: 0.6.h,
+                                ),
                                 decoration: BoxDecoration(
-                                  color: DonationAppTheme.lightTheme.colorScheme.primary
+                                  color: DonationAppTheme
+                                      .lightTheme
+                                      .colorScheme
+                                      .primary
                                       .withOpacity(0.08),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Text(
                                   quantity,
-                                  style: DonationAppTheme.lightTheme.textTheme.bodySmall
+                                  style: DonationAppTheme
+                                      .lightTheme
+                                      .textTheme
+                                      .bodySmall
                                       ?.copyWith(
-                                    color:
-                                        DonationAppTheme.lightTheme.colorScheme.primary,
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 10.sp,
-                                  ),
+                                        color: DonationAppTheme
+                                            .lightTheme
+                                            .colorScheme
+                                            .primary,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 10.sp,
+                                      ),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   textAlign: TextAlign.center,
@@ -238,18 +255,25 @@ class _CurrentNeedsWidgetState extends State<CurrentNeedsWidget> {
                             padding: EdgeInsets.all(2.w),
                             decoration: BoxDecoration(
                               color: DonationAppTheme
-                                  .lightTheme.colorScheme.surfaceVariant
+                                  .lightTheme
+                                  .colorScheme
+                                  .surfaceVariant
                                   .withOpacity(0.3),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
                               description,
-                              style: DonationAppTheme.lightTheme.textTheme.bodySmall
+                              style: DonationAppTheme
+                                  .lightTheme
+                                  .textTheme
+                                  .bodySmall
                                   ?.copyWith(
-                                color: DonationAppTheme
-                                    .lightTheme.colorScheme.onSurfaceVariant,
-                                height: 1.4,
-                              ),
+                                    color: DonationAppTheme
+                                        .lightTheme
+                                        .colorScheme
+                                        .onSurfaceVariant,
+                                    height: 1.4,
+                                  ),
                               textAlign: TextAlign.left,
                             ),
                           ),
@@ -261,8 +285,9 @@ class _CurrentNeedsWidgetState extends State<CurrentNeedsWidget> {
                             TextButton.icon(
                               onPressed: () {
                                 // Optional: navigate to donation flow / contact
-                                final contact = widget.organization['contact']
-                                    as Map<String, dynamic>?;
+                                final contact =
+                                    widget.organization['contact']
+                                        as Map<String, dynamic>?;
                                 final phone = contact?['phone']?.toString();
                                 if (phone != null && phone.isNotEmpty) {
                                   // Try to launch call from parent code; here we just show a snack
@@ -284,21 +309,29 @@ class _CurrentNeedsWidgetState extends State<CurrentNeedsWidget> {
                               icon: CustomIconWidget(
                                 iconName:
                                     'volunteer_activism', // change to an icon name you use
-                                color: DonationAppTheme.lightTheme.colorScheme.primary,
+                                color: DonationAppTheme
+                                    .lightTheme
+                                    .colorScheme
+                                    .primary,
                                 size: 16,
                               ),
                               label: Text(
                                 'Help / Donate',
-                                style: DonationAppTheme.lightTheme.textTheme.bodySmall
+                                style: DonationAppTheme
+                                    .lightTheme
+                                    .textTheme
+                                    .bodySmall
                                     ?.copyWith(
-                                  color:
-                                      DonationAppTheme.lightTheme.colorScheme.primary,
-                                  fontWeight: FontWeight.w600,
-                                ),
+                                      color: DonationAppTheme
+                                          .lightTheme
+                                          .colorScheme
+                                          .primary,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                               ),
                             ),
                           ],
-                        )
+                        ),
                       ],
                     ),
                   ),

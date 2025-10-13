@@ -6,10 +6,8 @@ import '../../../core/app_export.dart';
 class AboutSectionWidget extends StatefulWidget {
   final Map<String, dynamic> organization;
 
-  const AboutSectionWidget({
-    Key? key,
-    required this.organization,
-  }) : super(key: key);
+  const AboutSectionWidget({Key? key, required this.organization})
+    : super(key: key);
 
   @override
   State<AboutSectionWidget> createState() => _AboutSectionWidgetState();
@@ -40,9 +38,8 @@ class _AboutSectionWidgetState extends State<AboutSectionWidget> {
                 SizedBox(width: 3.w),
                 Text(
                   'About',
-                  style: DonationAppTheme.lightTheme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: DonationAppTheme.lightTheme.textTheme.titleMedium
+                      ?.copyWith(fontWeight: FontWeight.bold),
                 ),
               ],
             ),
@@ -64,10 +61,11 @@ class _AboutSectionWidgetState extends State<AboutSectionWidget> {
                 },
                 child: Text(
                   isExpanded ? 'Show Less' : 'Read More',
-                  style: DonationAppTheme.lightTheme.textTheme.bodyMedium?.copyWith(
-                    color: DonationAppTheme.lightTheme.colorScheme.primary,
-                    fontWeight: FontWeight.w600,
-                  ),
+                  style: DonationAppTheme.lightTheme.textTheme.bodyMedium
+                      ?.copyWith(
+                        color: DonationAppTheme.lightTheme.colorScheme.primary,
+                        fontWeight: FontWeight.w600,
+                      ),
                 ),
               ),
             ],
@@ -75,8 +73,9 @@ class _AboutSectionWidgetState extends State<AboutSectionWidget> {
             Wrap(
               spacing: 2.w,
               runSpacing: 1.h,
-              children:
-                  (widget.organization['services'] as List).map((service) {
+              children: (widget.organization['services'] as List).map((
+                service,
+              ) {
                 return Container(
                   padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 1.h),
                   decoration: BoxDecoration(
@@ -86,10 +85,12 @@ class _AboutSectionWidgetState extends State<AboutSectionWidget> {
                   ),
                   child: Text(
                     service as String,
-                    style: DonationAppTheme.lightTheme.textTheme.bodySmall?.copyWith(
-                      color: DonationAppTheme.lightTheme.colorScheme.primary,
-                      fontWeight: FontWeight.w500,
-                    ),
+                    style: DonationAppTheme.lightTheme.textTheme.bodySmall
+                        ?.copyWith(
+                          color:
+                              DonationAppTheme.lightTheme.colorScheme.primary,
+                          fontWeight: FontWeight.w500,
+                        ),
                   ),
                 );
               }).toList(),

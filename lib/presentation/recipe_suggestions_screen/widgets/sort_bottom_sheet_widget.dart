@@ -41,43 +41,45 @@ class SortBottomSheetWidget extends StatelessWidget {
           SizedBox(height: 2.h),
           Text(
             'Sort By',
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+            style: Theme.of(
+              context,
+            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
           ),
           SizedBox(height: 2.h),
           ...sortOptions
-              .map((option) => ListTile(
-                    leading: CustomIconWidget(
-                      iconName: option['icon'] as String,
+              .map(
+                (option) => ListTile(
+                  leading: CustomIconWidget(
+                    iconName: option['icon'] as String,
+                    color: selectedSort == option['key']
+                        ? AppTheme.lightTheme.colorScheme.primary
+                        : AppTheme.lightTheme.colorScheme.onSurfaceVariant,
+                    size: 6.w,
+                  ),
+                  title: Text(
+                    option['label'] as String,
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       color: selectedSort == option['key']
                           ? AppTheme.lightTheme.colorScheme.primary
-                          : AppTheme.lightTheme.colorScheme.onSurfaceVariant,
-                      size: 6.w,
+                          : AppTheme.lightTheme.colorScheme.onSurface,
+                      fontWeight: selectedSort == option['key']
+                          ? FontWeight.w600
+                          : FontWeight.w400,
                     ),
-                    title: Text(
-                      option['label'] as String,
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: selectedSort == option['key']
-                                ? AppTheme.lightTheme.colorScheme.primary
-                                : AppTheme.lightTheme.colorScheme.onSurface,
-                            fontWeight: selectedSort == option['key']
-                                ? FontWeight.w600
-                                : FontWeight.w400,
-                          ),
-                    ),
-                    trailing: selectedSort == option['key']
-                        ? CustomIconWidget(
-                            iconName: 'check',
-                            color: AppTheme.lightTheme.colorScheme.primary,
-                            size: 5.w,
-                          )
-                        : null,
-                    onTap: () {
-                      onSortSelected(option['key'] as String);
-                      Navigator.pop(context);
-                    },
-                  ))
+                  ),
+                  trailing: selectedSort == option['key']
+                      ? CustomIconWidget(
+                          iconName: 'check',
+                          color: AppTheme.lightTheme.colorScheme.primary,
+                          size: 5.w,
+                        )
+                      : null,
+                  onTap: () {
+                    onSortSelected(option['key'] as String);
+                    Navigator.pop(context);
+                  },
+                ),
+              )
               .toList(),
           SizedBox(height: 2.h),
         ],

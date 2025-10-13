@@ -20,9 +20,7 @@ class QuickActionsDialogWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Container(
         padding: EdgeInsets.all(4.w),
         child: Column(
@@ -46,10 +44,8 @@ class QuickActionsDialogWidget extends StatelessWidget {
                     children: [
                       Text(
                         recipe['title'] as String,
-                        style:
-                            Theme.of(context).textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.w600,
-                                ),
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.w600),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -57,9 +53,9 @@ class QuickActionsDialogWidget extends StatelessWidget {
                       Text(
                         '${recipe['matchPercentage']}% Match',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: AppTheme.lightTheme.colorScheme.primary,
-                              fontWeight: FontWeight.w500,
-                            ),
+                          color: AppTheme.lightTheme.colorScheme.primary,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ],
                   ),

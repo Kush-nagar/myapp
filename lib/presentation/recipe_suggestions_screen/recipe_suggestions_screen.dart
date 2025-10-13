@@ -11,7 +11,7 @@ import '../../core/app_export.dart';
 import '../../services/gemini_service.dart';
 import './widgets/empty_state_widget.dart';
 import './widgets/filter_chip_widget.dart';
-import './widgets/ingredient_chip_widget.dart';   
+import './widgets/ingredient_chip_widget.dart';
 import './widgets/quick_actions_dialog_widget.dart';
 import './widgets/recipe_card_widget.dart';
 import './widgets/sort_bottom_sheet_widget.dart';
@@ -388,13 +388,16 @@ class _RecipeSuggestionsScreenState extends State<RecipeSuggestionsScreen> {
       for (final r in raw) {
         final recipeIngredients = _normalizeIngredientList(r['ingredients']);
         final availableIngredients = recipeIngredients
-            .where((ing) => selectedIngredients.any(
-                  (s) => s.toLowerCase() == ing.toLowerCase(),
-                ))
+            .where(
+              (ing) => selectedIngredients.any(
+                (s) => s.toLowerCase() == ing.toLowerCase(),
+              ),
+            )
             .length;
 
-        final totalIngredients =
-            recipeIngredients.isEmpty ? 1 : recipeIngredients.length;
+        final totalIngredients = recipeIngredients.isEmpty
+            ? 1
+            : recipeIngredients.length;
 
         final matchPercentage =
             ((availableIngredients / totalIngredients) * 100).round();
@@ -429,16 +432,15 @@ class _RecipeSuggestionsScreenState extends State<RecipeSuggestionsScreen> {
           ..addAll(normalized);
       });
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to fetch recipes: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to fetch recipes: $e')));
     } finally {
       setState(() {
         isLoading = false;
       });
     }
   }
-
 
   List<String> _normalizeIngredientList(dynamic raw) {
     try {

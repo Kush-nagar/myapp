@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sizer/sizer.dart';
+import 'dart:math' as math;
 
 import '../../core/app_export.dart';
 import './widgets/loading_storage_tips_widget.dart';
-import './widgets/storage_tip_card_widget.dart';
-import './widgets/category_tips_widget.dart';
-import './widgets/environmental_factors_widget.dart';
-import './widgets/quick_tips_widget.dart';
 
 class StoreItScreen extends StatefulWidget {
   const StoreItScreen({Key? key}) : super(key: key);
@@ -16,34 +13,26 @@ class StoreItScreen extends StatefulWidget {
   State<StoreItScreen> createState() => _StoreItScreenState();
 }
 
-class _StoreItScreenState extends State<StoreItScreen>
-    with TickerProviderStateMixin {
+class _StoreItScreenState extends State<StoreItScreen> {
   bool _isLoading = true;
   List<String> _ingredients = [];
   Map<String, dynamic>? _storageTips;
   String? _errorMessage;
 
-  late TabController _tabController;
   late StorageTipsService _storageTipsService;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
     _initializeService();
-  }
-
-  @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
   }
 
   void _initializeService() {
     // Initialize the storage tips service with Gemini API
     // TODO: Replace with your actual Gemini API key
     // You can get it from: https://makersuite.google.com/app/apikey
-    const apiKey = 'AIzaSyBHaPa5KHVpklOP9d_I6B1q4W-4d09FfsQ'; // Replace with actual API key
+    const apiKey =
+        'AIzaSyBHaPa5KHVpklOP9d_I6B1q4W-4d09FfsQ'; // Replace with actual API key
     _storageTipsService = StorageTipsService(apiKey: apiKey);
     _loadArguments();
   }
@@ -102,7 +91,6 @@ class _StoreItScreenState extends State<StoreItScreen>
     if (_storageTips == null) return;
 
     HapticFeedback.lightImpact();
-    // Implementation for sharing storage tips
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Storage tips copied to clipboard'),
@@ -115,7 +103,6 @@ class _StoreItScreenState extends State<StoreItScreen>
     if (_storageTips == null) return;
 
     HapticFeedback.lightImpact();
-    // Implementation for saving to favorites
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Storage tips saved to favorites'),
@@ -184,27 +171,36 @@ class _StoreItScreenState extends State<StoreItScreen>
       return _buildEmptyState();
     }
 
-    return Column(
-      children: [
-        // Header with ingredients
-        _buildIngredientsHeader(),
+    return _buildMainContent();
+  }
 
-        // Tab bar
-        _buildTabBar(),
+  Widget _buildMainContent() {
+    return SingleChildScrollView(
+      padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header with ingredients
+          _buildIngredientsHeader(),
 
-        // Tab content
-        Expanded(
-          child: TabBarView(
-            controller: _tabController,
-            children: [
-              _buildOverviewTab(),
-              _buildDetailedTipsTab(),
-              _buildCategoryTipsTab(),
-              _buildAdvancedTab(),
-            ],
-          ),
-        ),
-      ],
+          SizedBox(height: 3.h),
+
+          // Quick Actions Grid
+          _buildQuickActionsGrid(),
+
+          SizedBox(height: 3.h),
+
+          // Storage Tips Cards
+          _buildStorageTipsSection(),
+
+          SizedBox(height: 3.h),
+
+          // Environmental Factors
+          _buildEnvironmentalSection(),
+
+          SizedBox(height: 10.h), // Bottom padding
+        ],
+      ),
     );
   }
 
@@ -212,326 +208,752 @@ class _StoreItScreenState extends State<StoreItScreen>
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(4.w),
-      margin: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
       decoration: BoxDecoration(
-        color: AppTheme.lightTheme.colorScheme.primaryContainer,
-        borderRadius: BorderRadius.circular(16),
+        gradient: LinearGradient(
+          colors: [
+            AppTheme.lightTheme.colorScheme.primary.withOpacity(0.1),
+            AppTheme.lightTheme.colorScheme.secondary.withOpacity(0.05),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: AppTheme.lightTheme.colorScheme.primary.withOpacity(0.2),
+          width: 1,
+        ),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Icon and title
           Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CustomIconWidget(
-                iconName: 'inventory',
-                color: AppTheme.lightTheme.colorScheme.primary,
-                size: 6.w,
+              Container(
+                padding: EdgeInsets.all(3.w),
+                decoration: BoxDecoration(
+                  color: AppTheme.lightTheme.colorScheme.primary,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppTheme.lightTheme.colorScheme.primary
+                          .withOpacity(0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: CustomIconWidget(
+                  iconName: 'inventory',
+                  color: Colors.white,
+                  size: 7.w,
+                ),
               ),
               SizedBox(width: 3.w),
               Text(
-                'Storage Guide for',
-                style: AppTheme.lightTheme.textTheme.titleMedium?.copyWith(
+                'Storage Guide',
+                style: AppTheme.lightTheme.textTheme.headlineSmall?.copyWith(
                   color: AppTheme.lightTheme.colorScheme.primary,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
             ],
           ),
-          SizedBox(height: 1.h),
-          Wrap(
-            spacing: 2.w,
-            runSpacing: 1.h,
-            children: _ingredients.map((ingredient) {
-              return Container(
-                padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 0.8.h),
+
+          SizedBox(height: 2.h),
+
+          // Ingredients count
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.h),
+            decoration: BoxDecoration(
+              color: AppTheme.lightTheme.colorScheme.surface,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: AppTheme.lightTheme.colorScheme.outline.withOpacity(0.2),
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CustomIconWidget(
+                  iconName: 'grain',
+                  color: AppTheme.lightTheme.colorScheme.secondary,
+                  size: 5.w,
+                ),
+                SizedBox(width: 2.w),
+                Text(
+                  '${_ingredients.length} ingredients',
+                  style: AppTheme.lightTheme.textTheme.titleSmall?.copyWith(
+                    color: AppTheme.lightTheme.colorScheme.secondary,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildQuickActionsGrid() {
+    final generalTips = List<String>.from(_storageTips!['generalTips'] ?? []);
+
+    // Define labels for each tip category
+    final tipLabels = [
+      'Temperature Control',
+      'Freshness Tips',
+      'Best Practices',
+      'Storage Essentials',
+    ];
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Quick Tips',
+          style: AppTheme.lightTheme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+
+        SizedBox(height: 2.h),
+
+        GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 3.w,
+            mainAxisSpacing: 2.h,
+            childAspectRatio: 1.0,
+          ),
+          itemCount: math.min(generalTips.length, 4),
+          itemBuilder: (context, index) {
+            final tip = generalTips[index];
+            final icons = ['tips_and_updates', 'ac_unit', 'schedule', 'eco'];
+            final colors = [
+              AppTheme.lightTheme.colorScheme.primary,
+              AppTheme.lightTheme.colorScheme.secondary,
+              AppTheme.lightTheme.colorScheme.tertiary,
+              Colors.green,
+            ];
+
+            return GestureDetector(
+              onTap: () => _navigateToTipDetail(
+                title: tipLabels[index % tipLabels.length],
+                category: 'Quick Storage Tip',
+                data: {
+                  'tip': tip,
+                  'details': [
+                    'Follow this tip for optimal storage results',
+                    'Keep your ingredients fresh for longer',
+                    'Reduce food waste with proper storage',
+                  ],
+                },
+                type: 'general',
+              ),
+              child: Container(
+                padding: EdgeInsets.all(3.w),
                 decoration: BoxDecoration(
-                  color: AppTheme.lightTheme.colorScheme.surface,
-                  borderRadius: BorderRadius.circular(12),
+                  gradient: LinearGradient(
+                    colors: [
+                      colors[index % colors.length].withOpacity(0.15),
+                      colors[index % colors.length].withOpacity(0.05),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: AppTheme.lightTheme.colorScheme.outline.withOpacity(
-                      0.2,
+                    color: colors[index % colors.length].withOpacity(0.3),
+                    width: 1.5,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: colors[index % colors.length].withOpacity(0.1),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
                     ),
-                  ),
+                  ],
                 ),
-                child: Text(
-                  ingredient,
-                  style: AppTheme.lightTheme.textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w500,
-                  ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Icon
+                    Container(
+                      padding: EdgeInsets.all(3.w),
+                      decoration: BoxDecoration(
+                        color: colors[index % colors.length],
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: colors[index % colors.length].withOpacity(
+                              0.3,
+                            ),
+                            blurRadius: 6,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: CustomIconWidget(
+                        iconName: icons[index % icons.length],
+                        color: Colors.white,
+                        size: 6.w,
+                      ),
+                    ),
+
+                    SizedBox(height: 1.5.h),
+
+                    // Label
+                    Text(
+                      tipLabels[index % tipLabels.length],
+                      style: AppTheme.lightTheme.textTheme.labelLarge?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        color: colors[index % colors.length],
+                      ),
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+
+                    SizedBox(height: 0.5.h),
+
+                    // Short description
+                    Text(
+                      tip.length > 40 ? '${tip.substring(0, 40)}...' : tip,
+                      style: AppTheme.lightTheme.textTheme.bodySmall?.copyWith(
+                        fontWeight: FontWeight.w500,
+                        height: 1.2,
+                        color: AppTheme.lightTheme.colorScheme.onSurfaceVariant,
+                      ),
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+
+                    SizedBox(height: 1.h),
+
+                    // Tap hint
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 2.w,
+                        vertical: 0.5.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: colors[index % colors.length].withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        'TAP FOR MORE',
+                        style: AppTheme.lightTheme.textTheme.labelSmall
+                            ?.copyWith(
+                              color: colors[index % colors.length],
+                              fontWeight: FontWeight.w600,
+                            ),
+                      ),
+                    ),
+                  ],
                 ),
-              );
-            }).toList(),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTabBar() {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 4.w),
-      decoration: BoxDecoration(
-        color: AppTheme.lightTheme.colorScheme.surfaceVariant.withOpacity(0.3),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: TabBar(
-        controller: _tabController,
-        isScrollable: true,
-        tabAlignment: TabAlignment.start,
-        indicator: BoxDecoration(
-          color: AppTheme.lightTheme.colorScheme.primary,
-          borderRadius: BorderRadius.circular(8),
+              ),
+            );
+          },
         ),
-        labelColor: Colors.white,
-        unselectedLabelColor: AppTheme.lightTheme.colorScheme.onSurface,
-        labelStyle: AppTheme.lightTheme.textTheme.labelMedium?.copyWith(
-          fontWeight: FontWeight.w600,
-        ),
-        unselectedLabelStyle: AppTheme.lightTheme.textTheme.labelMedium,
-        tabs: const [
-          Tab(text: 'Overview'),
-          Tab(text: 'Detailed'),
-          Tab(text: 'By Category'),
-          Tab(text: 'Advanced'),
-        ],
-      ),
+      ],
     );
   }
 
-  Widget _buildOverviewTab() {
-    return SingleChildScrollView(
-      padding: EdgeInsets.all(4.w),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Quick tips section
-          QuickTipsWidget(
-            generalTips: List<String>.from(_storageTips!['generalTips'] ?? []),
-          ),
-
-          SizedBox(height: 3.h),
-
-          // Food safety highlights
-          if (_storageTips!['foodSafety'] != null) _buildFoodSafetySection(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDetailedTipsTab() {
+  Widget _buildStorageTipsSection() {
     final itemTips = List<Map<String, dynamic>>.from(
       _storageTips!['itemSpecificTips'] ?? [],
     );
 
-    return ListView.builder(
-      padding: EdgeInsets.all(4.w),
-      itemCount: itemTips.length,
-      itemBuilder: (context, index) {
-        return StorageTipCardWidget(tipData: itemTips[index]);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Ingredient Storage',
+          style: AppTheme.lightTheme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+
+        SizedBox(height: 2.h),
+
+        ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: math.min(itemTips.length, 6), // Limit to 6 items
+          itemBuilder: (context, index) {
+            return _buildSimpleStorageCard(itemTips[index]);
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSimpleStorageCard(Map<String, dynamic> tipData) {
+    final ingredient = tipData['ingredient'] ?? 'Unknown';
+    final location = tipData['location'] ?? '';
+    final shelfLife = tipData['shelfLife'] ?? '';
+    final storageMethod = tipData['storageMethod'] ?? '';
+
+    return GestureDetector(
+      onTap: () => _navigateToTipDetail(
+        title: ingredient,
+        category: 'Ingredient Storage',
+        data: {
+          'ingredient': ingredient,
+          'location': location,
+          'shelfLife': shelfLife,
+          'storageMethod': storageMethod,
+          'tips': _generateIngredientTips(ingredient, storageMethod),
+          'spoilageSigns': _generateSpoilageSigns(ingredient),
+        },
+        type: 'ingredient',
+      ),
+      child: Container(
+        margin: EdgeInsets.only(bottom: 2.h),
+        padding: EdgeInsets.all(4.w),
+        decoration: BoxDecoration(
+          color: AppTheme.lightTheme.colorScheme.surface,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: AppTheme.lightTheme.colorScheme.outline.withOpacity(0.1),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            // Icon
+            Container(
+              padding: EdgeInsets.all(3.w),
+              decoration: BoxDecoration(
+                color: _getStorageIconColor(storageMethod).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: CustomIconWidget(
+                iconName: _getStorageIcon(storageMethod),
+                color: _getStorageIconColor(storageMethod),
+                size: 6.w,
+              ),
+            ),
+
+            SizedBox(width: 4.w),
+
+            // Content
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          ingredient,
+                          style: AppTheme.lightTheme.textTheme.titleMedium
+                              ?.copyWith(fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 2.w,
+                          vertical: 0.5.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppTheme.lightTheme.colorScheme.primary
+                              .withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          'TAP FOR DETAILS',
+                          style: AppTheme.lightTheme.textTheme.labelSmall
+                              ?.copyWith(
+                                color: AppTheme.lightTheme.colorScheme.primary,
+                                fontWeight: FontWeight.w600,
+                              ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  SizedBox(height: 0.5.h),
+
+                  if (location.isNotEmpty)
+                    Row(
+                      children: [
+                        CustomIconWidget(
+                          iconName: 'place',
+                          color:
+                              AppTheme.lightTheme.colorScheme.onSurfaceVariant,
+                          size: 4.w,
+                        ),
+                        SizedBox(width: 1.w),
+                        Flexible(
+                          child: Text(
+                            location,
+                            style: AppTheme.lightTheme.textTheme.bodySmall
+                                ?.copyWith(
+                                  color: AppTheme
+                                      .lightTheme
+                                      .colorScheme
+                                      .onSurfaceVariant,
+                                ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+
+                  if (shelfLife.isNotEmpty) ...[
+                    SizedBox(height: 0.5.h),
+                    Row(
+                      children: [
+                        CustomIconWidget(
+                          iconName: 'schedule',
+                          color: AppTheme.lightTheme.colorScheme.secondary,
+                          size: 4.w,
+                        ),
+                        SizedBox(width: 1.w),
+                        Flexible(
+                          child: Text(
+                            shelfLife,
+                            style: AppTheme.lightTheme.textTheme.bodySmall
+                                ?.copyWith(
+                                  color:
+                                      AppTheme.lightTheme.colorScheme.secondary,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildEnvironmentalSection() {
+    final factors = Map<String, dynamic>.from(
+      _storageTips!['environmentalFactors'] ?? {},
+    );
+
+    if (factors.isEmpty) return const SizedBox.shrink();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Storage Conditions',
+          style: AppTheme.lightTheme.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+
+        SizedBox(height: 2.h),
+
+        Container(
+          padding: EdgeInsets.all(4.w),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                AppTheme.lightTheme.colorScheme.tertiaryContainer.withOpacity(
+                  0.3,
+                ),
+                AppTheme.lightTheme.colorScheme.tertiaryContainer.withOpacity(
+                  0.1,
+                ),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: AppTheme.lightTheme.colorScheme.tertiary.withOpacity(0.2),
+            ),
+          ),
+          child: GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 3.w,
+              mainAxisSpacing: 2.h,
+              childAspectRatio: 1.3,
+            ),
+            itemCount: factors.length,
+            itemBuilder: (context, index) {
+              final factor = factors.keys.elementAt(index);
+              final value = factors[factor]?.toString() ?? '';
+
+              return _buildEnvironmentalFactor(factor, value);
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildEnvironmentalFactor(String factor, String value) {
+    final factorData = _getEnvironmentalFactorData(factor);
+
+    return GestureDetector(
+      onTap: () => _navigateToTipDetail(
+        title: factorData['title'],
+        category: 'Environmental Factor',
+        data: {
+          'factor': factor,
+          'description': value,
+          'optimalRange': _getOptimalRange(factor),
+        },
+        type: 'environmental',
+      ),
+      child: Container(
+        padding: EdgeInsets.all(3.w),
+        decoration: BoxDecoration(
+          color: AppTheme.lightTheme.colorScheme.surface,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: factorData['color'].withOpacity(0.2)),
+          boxShadow: [
+            BoxShadow(
+              color: factorData['color'].withOpacity(0.1),
+              blurRadius: 6,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: EdgeInsets.all(2.w),
+              decoration: BoxDecoration(
+                color: factorData['color'].withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: CustomIconWidget(
+                iconName: factorData['icon'],
+                color: factorData['color'],
+                size: 6.w,
+              ),
+            ),
+
+            SizedBox(height: 1.h),
+
+            Text(
+              factorData['title'],
+              style: AppTheme.lightTheme.textTheme.labelLarge?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: factorData['color'],
+              ),
+              textAlign: TextAlign.center,
+            ),
+
+            SizedBox(height: 0.5.h),
+
+            Text(
+              value.length > 30 ? '${value.substring(0, 30)}...' : value,
+              style: AppTheme.lightTheme.textTheme.bodySmall,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+
+            SizedBox(height: 0.5.h),
+
+            // Tap hint
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 1.5.w, vertical: 0.3.h),
+              decoration: BoxDecoration(
+                color: factorData['color'].withOpacity(0.1),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Text(
+                'TAP',
+                style: AppTheme.lightTheme.textTheme.labelSmall?.copyWith(
+                  color: factorData['color'],
+                  fontWeight: FontWeight.w600,
+                  fontSize: 8.sp,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Map<String, dynamic> _getEnvironmentalFactorData(String factor) {
+    switch (factor.toLowerCase()) {
+      case 'temperature':
+        return {
+          'icon': 'thermostat',
+          'title': 'Temperature',
+          'color': Colors.red,
+        };
+      case 'humidity':
+        return {
+          'icon': 'water_drop',
+          'title': 'Humidity',
+          'color': Colors.blue,
+        };
+      case 'light':
+        return {'icon': 'wb_sunny', 'title': 'Light', 'color': Colors.amber};
+      case 'airflow':
+        return {'icon': 'air', 'title': 'Airflow', 'color': Colors.cyan};
+      default:
+        return {
+          'icon': 'tune',
+          'title': factor.substring(0, 1).toUpperCase() + factor.substring(1),
+          'color': AppTheme.lightTheme.colorScheme.primary,
+        };
+    }
+  }
+
+  String _getStorageIcon(String? storageMethod) {
+    if (storageMethod == null) return 'inventory';
+    final method = storageMethod.toLowerCase();
+    if (method.contains('refrigerat') || method.contains('fridge')) {
+      return 'ac_unit';
+    } else if (method.contains('freez')) {
+      return 'ac_unit';
+    } else if (method.contains('room') || method.contains('counter')) {
+      return 'room';
+    } else if (method.contains('pantry')) {
+      return 'kitchen';
+    }
+    return 'inventory';
+  }
+
+  Color _getStorageIconColor(String? storageMethod) {
+    if (storageMethod == null) return AppTheme.lightTheme.colorScheme.primary;
+    final method = storageMethod.toLowerCase();
+    if (method.contains('refrigerat') || method.contains('fridge')) {
+      return Colors.blue;
+    } else if (method.contains('freez')) {
+      return Colors.cyan;
+    } else if (method.contains('room') || method.contains('counter')) {
+      return Colors.orange;
+    } else if (method.contains('pantry')) {
+      return Colors.brown;
+    }
+    return AppTheme.lightTheme.colorScheme.primary;
+  }
+
+  // Navigation method to detail screen
+  void _navigateToTipDetail({
+    required String title,
+    required String category,
+    required Map<String, dynamic> data,
+    required String type,
+  }) {
+    HapticFeedback.lightImpact();
+    Navigator.of(context).pushNamed(
+      AppRoutes.storageTipDetail,
+      arguments: {
+        'title': title,
+        'category': category,
+        'data': data,
+        'type': type,
       },
     );
   }
 
-  Widget _buildCategoryTipsTab() {
-    final categoryTips = Map<String, dynamic>.from(
-      _storageTips!['categoryTips'] ?? {},
-    );
+  // Helper method to generate ingredient-specific tips
+  List<String> _generateIngredientTips(
+    String ingredient,
+    String storageMethod,
+  ) {
+    final tips = <String>[];
+    final method = storageMethod.toLowerCase();
 
-    return SingleChildScrollView(
-      padding: EdgeInsets.all(4.w),
-      child: Column(
-        children: categoryTips.entries.map((entry) {
-          return CategoryTipsWidget(
-            category: entry.key,
-            tips: List<String>.from(entry.value ?? []),
-          );
-        }).toList(),
-      ),
-    );
+    if (method.contains('refrigerat') || method.contains('fridge')) {
+      tips.addAll([
+        'Store in the main compartment, not in the door',
+        'Keep in original packaging or airtight container',
+        'Place on middle shelf for consistent temperature',
+      ]);
+    } else if (method.contains('freez')) {
+      tips.addAll([
+        'Wrap tightly to prevent freezer burn',
+        'Label with date before freezing',
+        'Use within recommended timeframe',
+      ]);
+    } else if (method.contains('room') || method.contains('counter')) {
+      tips.addAll([
+        'Keep in cool, dry place away from direct sunlight',
+        'Ensure good air circulation around the item',
+        'Check regularly for signs of spoilage',
+      ]);
+    } else {
+      tips.addAll([
+        'Follow storage instructions on packaging',
+        'Keep in optimal storage conditions',
+        'Monitor for freshness regularly',
+      ]);
+    }
+
+    return tips;
   }
 
-  Widget _buildAdvancedTab() {
-    return SingleChildScrollView(
-      padding: EdgeInsets.all(4.w),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Environmental factors
-          if (_storageTips!['environmentalFactors'] != null)
-            EnvironmentalFactorsWidget(
-              factors: Map<String, dynamic>.from(
-                _storageTips!['environmentalFactors'],
-              ),
-            ),
+  // Helper method to generate spoilage signs
+  Map<String, dynamic> _generateSpoilageSigns(String ingredient) {
+    final signs = <String, dynamic>{};
+    final item = ingredient.toLowerCase();
 
-          SizedBox(height: 3.h),
+    if (item.contains('meat') ||
+        item.contains('chicken') ||
+        item.contains('beef')) {
+      signs['Visual'] = 'Gray or green discoloration, slimy texture';
+      signs['Smell'] = 'Sour or putrid odor';
+      signs['Texture'] = 'Sticky or slimy surface';
+    } else if (item.contains('vegetable') ||
+        item.contains('lettuce') ||
+        item.contains('spinach')) {
+      signs['Visual'] = 'Wilting, yellowing, dark spots';
+      signs['Texture'] = 'Slimy or mushy feel';
+      signs['Smell'] = 'Off or sour smell';
+    } else if (item.contains('fruit') ||
+        item.contains('apple') ||
+        item.contains('banana')) {
+      signs['Visual'] = 'Brown spots, wrinkled skin, mold';
+      signs['Texture'] = 'Soft or mushy areas';
+      signs['Smell'] = 'Fermented or off odor';
+    } else {
+      signs['Visual'] = 'Discoloration, unusual appearance';
+      signs['Smell'] = 'Off or unusual odor';
+      signs['Texture'] = 'Changes in normal texture';
+    }
 
-          // Extended shelf life tips
-          if (_storageTips!['extendShelfLife'] != null)
-            _buildExtendedShelfLifeSection(),
-        ],
-      ),
-    );
+    return signs;
   }
 
-  Widget _buildFoodSafetySection() {
-    final safetyTips = List<String>.from(_storageTips!['foodSafety'] ?? []);
-
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      elevation: 2,
-      child: Container(
-        width: double.infinity,
-        padding: EdgeInsets.all(4.w),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          gradient: LinearGradient(
-            colors: [
-              AppTheme.lightTheme.colorScheme.errorContainer,
-              AppTheme.lightTheme.colorScheme.errorContainer.withOpacity(0.7),
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                CustomIconWidget(
-                  iconName: 'security',
-                  color: AppTheme.lightTheme.colorScheme.error,
-                  size: 6.w,
-                ),
-                SizedBox(width: 3.w),
-                Text(
-                  'Food Safety',
-                  style: AppTheme.lightTheme.textTheme.titleMedium?.copyWith(
-                    color: AppTheme.lightTheme.colorScheme.error,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 2.h),
-            ...safetyTips.map((tip) {
-              return Padding(
-                padding: EdgeInsets.only(bottom: 1.h),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: 2.w,
-                      height: 2.w,
-                      margin: EdgeInsets.only(top: 1.h, right: 3.w),
-                      decoration: BoxDecoration(
-                        color: AppTheme.lightTheme.colorScheme.error,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    Expanded(
-                      child: Text(
-                        tip,
-                        style: AppTheme.lightTheme.textTheme.bodyMedium
-                            ?.copyWith(
-                              color: AppTheme
-                                  .lightTheme
-                                  .colorScheme
-                                  .onErrorContainer,
-                            ),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }).toList(),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildExtendedShelfLifeSection() {
-    final extendTips = List<String>.from(
-      _storageTips!['extendShelfLife'] ?? [],
-    );
-
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      elevation: 2,
-      child: Container(
-        width: double.infinity,
-        padding: EdgeInsets.all(4.w),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(16),
-          gradient: LinearGradient(
-            colors: [
-              AppTheme.lightTheme.colorScheme.tertiaryContainer,
-              AppTheme.lightTheme.colorScheme.tertiaryContainer.withOpacity(
-                0.7,
-              ),
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                CustomIconWidget(
-                  iconName: 'trending_up',
-                  color: AppTheme.lightTheme.colorScheme.tertiary,
-                  size: 6.w,
-                ),
-                SizedBox(width: 3.w),
-                Text(
-                  'Extend Shelf Life',
-                  style: AppTheme.lightTheme.textTheme.titleMedium?.copyWith(
-                    color: AppTheme.lightTheme.colorScheme.tertiary,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 2.h),
-            ...extendTips.map((tip) {
-              return Padding(
-                padding: EdgeInsets.only(bottom: 1.h),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      width: 2.w,
-                      height: 2.w,
-                      margin: EdgeInsets.only(top: 1.h, right: 3.w),
-                      decoration: BoxDecoration(
-                        color: AppTheme.lightTheme.colorScheme.tertiary,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    Expanded(
-                      child: Text(
-                        tip,
-                        style: AppTheme.lightTheme.textTheme.bodyMedium
-                            ?.copyWith(
-                              color: AppTheme
-                                  .lightTheme
-                                  .colorScheme
-                                  .onTertiaryContainer,
-                            ),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }).toList(),
-          ],
-        ),
-      ),
-    );
+  // Helper method to get optimal ranges for environmental factors
+  String _getOptimalRange(String factor) {
+    switch (factor.toLowerCase()) {
+      case 'temperature':
+        return '32-40°F (0-4°C) for refrigeration, 0°F (-18°C) for freezing';
+      case 'humidity':
+        return '30-50% relative humidity for most dry goods';
+      case 'light':
+        return 'Keep away from direct sunlight and bright lights';
+      case 'airflow':
+        return 'Good ventilation without direct air currents';
+      default:
+        return 'Follow specific storage guidelines for optimal results';
+    }
   }
 
   Widget _buildErrorState() {

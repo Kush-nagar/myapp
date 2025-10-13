@@ -184,7 +184,8 @@ class _SearchFilterScreenState extends State<SearchFilterScreen> {
       }
 
       final pos = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high);
+        desiredAccuracy: LocationAccuracy.high,
+      );
       setState(() {
         _currentPosition = pos;
       });
@@ -239,8 +240,9 @@ class _SearchFilterScreenState extends State<SearchFilterScreen> {
       final mapped = places.map((p) {
         final meters = _distanceFromPositionMeters(lat, lng, p.lat, p.lng);
         final miles = meters != null ? _metersToMiles(meters) : null;
-        final double? distanceMilesRounded =
-            miles != null ? double.parse(miles.toStringAsFixed(1)) : null;
+        final double? distanceMilesRounded = miles != null
+            ? double.parse(miles.toStringAsFixed(1))
+            : null;
 
         return <String, dynamic>{
           'id': p.placeId.hashCode,
@@ -290,7 +292,11 @@ class _SearchFilterScreenState extends State<SearchFilterScreen> {
   }
 
   double? _distanceFromPositionMeters(
-      double? lat1, double? lng1, double lat2, double lng2) {
+    double? lat1,
+    double? lng1,
+    double lat2,
+    double lng2,
+  ) {
     if (lat1 == null || lng1 == null) return null;
     try {
       return Geolocator.distanceBetween(lat1, lng1, lat2, lng2);
@@ -312,15 +318,17 @@ class _SearchFilterScreenState extends State<SearchFilterScreen> {
       if (!hasPermission) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content:
-                  Text('Microphone permission is required for voice search')),
+            content: Text('Microphone permission is required for voice search'),
+          ),
         );
         return;
       }
 
       if (await _audioRecorder.hasPermission()) {
-        await _audioRecorder.start(const RecordConfig(),
-            path: 'voice_search.m4a');
+        await _audioRecorder.start(
+          const RecordConfig(),
+          path: 'voice_search.m4a',
+        );
         setState(() {
           _isRecording = true;
         });
@@ -333,9 +341,9 @@ class _SearchFilterScreenState extends State<SearchFilterScreen> {
         });
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Voice search is not available')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Voice search is not available')));
     }
   }
 
@@ -351,9 +359,9 @@ class _SearchFilterScreenState extends State<SearchFilterScreen> {
       _searchController.text = mockResult;
       await _performSearch(mockResult);
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Voice search: "$mockResult"')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Voice search: "$mockResult"')));
     } catch (e) {
       setState(() {
         _isRecording = false;
@@ -414,15 +422,17 @@ class _SearchFilterScreenState extends State<SearchFilterScreen> {
 
   void _toggleFavorite(int organizationId) {
     setState(() {
-      final index = _filteredOrganizations
-          .indexWhere((org) => org['id'] == organizationId);
+      final index = _filteredOrganizations.indexWhere(
+        (org) => org['id'] == organizationId,
+      );
       if (index != -1) {
         _filteredOrganizations[index]['isFavorite'] =
             !_filteredOrganizations[index]['isFavorite'];
       }
 
-      final allIndex =
-          _allOrganizations.indexWhere((org) => org['id'] == organizationId);
+      final allIndex = _allOrganizations.indexWhere(
+        (org) => org['id'] == organizationId,
+      );
       if (allIndex != -1) {
         _allOrganizations[allIndex]['isFavorite'] =
             !_allOrganizations[allIndex]['isFavorite'];
@@ -470,9 +480,9 @@ class _SearchFilterScreenState extends State<SearchFilterScreen> {
         arguments: detailArg,
       );
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to load details')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to load details')));
     } finally {
       setState(() {
         _isLoading = false;
@@ -503,7 +513,8 @@ class _SearchFilterScreenState extends State<SearchFilterScreen> {
               children: [
                 CustomIconWidget(
                   iconName: 'tune',
-                  color: DonationAppTheme.lightTheme.colorScheme.onSurfaceVariant,
+                  color:
+                      DonationAppTheme.lightTheme.colorScheme.onSurfaceVariant,
                   size: 6.w,
                 ),
                 if (_activeFilters.isNotEmpty)
@@ -575,26 +586,25 @@ class _SearchFilterScreenState extends State<SearchFilterScreen> {
                     ),
                   )
                 : _filteredOrganizations.isEmpty
-                    ? EmptySearchWidget(
-                        searchQuery: _searchController.text,
-                        onSuggestionTap: _onSuggestionTap,
-                      )
-                    : ListView.builder(
-                        itemCount: _filteredOrganizations.length,
-                        itemBuilder: (context, index) {
-                          final organization = _filteredOrganizations[index];
-                          return OrganizationCardWidget(
-                            organization: organization,
-                            onTap: () =>
-                                _navigateToOrganizationDetail(organization),
-                            onFavorite: () =>
-                                _toggleFavorite(organization['id']),
-                          );
-                        },
-                      ),
+                ? EmptySearchWidget(
+                    searchQuery: _searchController.text,
+                    onSuggestionTap: _onSuggestionTap,
+                  )
+                : ListView.builder(
+                    itemCount: _filteredOrganizations.length,
+                    itemBuilder: (context, index) {
+                      final organization = _filteredOrganizations[index];
+                      return OrganizationCardWidget(
+                        organization: organization,
+                        onTap: () =>
+                            _navigateToOrganizationDetail(organization),
+                        onFavorite: () => _toggleFavorite(organization['id']),
+                      );
+                    },
+                  ),
           ),
         ],
-      ),  
+      ),
     );
   }
 

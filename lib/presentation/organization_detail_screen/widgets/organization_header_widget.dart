@@ -107,8 +107,9 @@ class OrganizationHeaderWidget extends StatelessWidget {
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: CustomIconWidget(
-                              iconName:
-                                  isFavorite ? 'favorite' : 'favorite_border',
+                              iconName: isFavorite
+                                  ? 'favorite'
+                                  : 'favorite_border',
                               color: isFavorite ? Colors.red : Colors.white,
                               size: 6.w,
                             ),
@@ -133,11 +134,11 @@ class OrganizationHeaderWidget extends StatelessWidget {
                 children: [
                   Text(
                     organization['name'] as String,
-                    style:
-                        DonationAppTheme.lightTheme.textTheme.headlineMedium?.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: DonationAppTheme.lightTheme.textTheme.headlineMedium
+                        ?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -152,11 +153,11 @@ class OrganizationHeaderWidget extends StatelessWidget {
                       SizedBox(width: 1.w),
                       Text(
                         '${organization['rating']}',
-                        style:
-                            DonationAppTheme.lightTheme.textTheme.bodyLarge?.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                        ),
+                        style: DonationAppTheme.lightTheme.textTheme.bodyLarge
+                            ?.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                            ),
                       ),
                       SizedBox(width: 4.w),
                       CustomIconWidget(
@@ -167,10 +168,8 @@ class OrganizationHeaderWidget extends StatelessWidget {
                       SizedBox(width: 1.w),
                       Text(
                         '${organization['distance']} away',
-                        style:
-                            DonationAppTheme.lightTheme.textTheme.bodyLarge?.copyWith(
-                          color: Colors.white,
-                        ),
+                        style: DonationAppTheme.lightTheme.textTheme.bodyLarge
+                            ?.copyWith(color: Colors.white),
                       ),
                     ],
                   ),

@@ -259,13 +259,11 @@ Return nothing else.
     try {
       final parsed = jsonDecode(modelText);
       if (parsed is List) {
-        return parsed
-            .map<Map<String, dynamic>>((e) {
-              final map = Map<String, dynamic>.from(e);
-              map['instructions'] = _normalizeInstructions(map['instructions']);
-              return map;
-            })
-            .toList();
+        return parsed.map<Map<String, dynamic>>((e) {
+          final map = Map<String, dynamic>.from(e);
+          map['instructions'] = _normalizeInstructions(map['instructions']);
+          return map;
+        }).toList();
       } else if (parsed is Map) {
         final map = Map<String, dynamic>.from(parsed);
         map['instructions'] = _normalizeInstructions(map['instructions']);
@@ -280,8 +278,7 @@ Return nothing else.
         return (jsonDecode(arrayMatch.group(1)!) as List<dynamic>)
             .map<Map<String, dynamic>>((e) {
               final map = Map<String, dynamic>.from(e);
-              map['instructions'] =
-                  _normalizeInstructions(map['instructions']);
+              map['instructions'] = _normalizeInstructions(map['instructions']);
               return map;
             })
             .toList();
@@ -295,7 +292,7 @@ Return nothing else.
         "ingredients": [],
         "instructions": [],
         "cookingTime": 0,
-        "difficulty": "Unknown"
+        "difficulty": "Unknown",
       },
     ];
   }

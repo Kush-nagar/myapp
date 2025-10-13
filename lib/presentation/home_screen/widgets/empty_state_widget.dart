@@ -6,10 +6,7 @@ import '../../../core/app_export.dart';
 class EmptyStateWidget extends StatelessWidget {
   final VoidCallback? onExpandSearch;
 
-  const EmptyStateWidget({
-    Key? key,
-    this.onExpandSearch,
-  }) : super(key: key);
+  const EmptyStateWidget({Key? key, this.onExpandSearch}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -38,9 +35,8 @@ class EmptyStateWidget extends StatelessWidget {
             SizedBox(height: 4.h),
             Text(
               "No Organizations Nearby",
-              style: DonationAppTheme.lightTheme.textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
+              style: DonationAppTheme.lightTheme.textTheme.headlineSmall
+                  ?.copyWith(fontWeight: FontWeight.w600),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 2.h),

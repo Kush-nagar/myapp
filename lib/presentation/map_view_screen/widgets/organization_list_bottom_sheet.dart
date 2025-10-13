@@ -51,16 +51,15 @@ class OrganizationListBottomSheet extends StatelessWidget {
                   children: [
                     Text(
                       'Organizations in Area',
-                      style:
-                          DonationAppTheme.lightTheme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
-                      ),
+                      style: DonationAppTheme.lightTheme.textTheme.titleMedium
+                          ?.copyWith(fontWeight: FontWeight.w600),
                     ),
                     GestureDetector(
                       onTap: onClose,
                       child: CustomIconWidget(
                         iconName: 'close',
-                        color: DonationAppTheme.lightTheme.colorScheme.onSurface,
+                        color:
+                            DonationAppTheme.lightTheme.colorScheme.onSurface,
                         size: 24,
                       ),
                     ),
@@ -77,17 +76,23 @@ class OrganizationListBottomSheet extends StatelessWidget {
                       children: [
                         CustomIconWidget(
                           iconName: 'location_off',
-                          color: DonationAppTheme.lightTheme.colorScheme.outline,
+                          color:
+                              DonationAppTheme.lightTheme.colorScheme.outline,
                           size: 48,
                         ),
                         SizedBox(height: 2.h),
                         Text(
                           'No organizations found in this area',
-                          style: DonationAppTheme.lightTheme.textTheme.bodyMedium
+                          style: DonationAppTheme
+                              .lightTheme
+                              .textTheme
+                              .bodyMedium
                               ?.copyWith(
-                            color: DonationAppTheme
-                                .lightTheme.colorScheme.onSurfaceVariant,
-                          ),
+                                color: DonationAppTheme
+                                    .lightTheme
+                                    .colorScheme
+                                    .onSurfaceVariant,
+                              ),
                         ),
                       ],
                     ),
@@ -103,10 +108,14 @@ class OrganizationListBottomSheet extends StatelessWidget {
                         child: Container(
                           padding: EdgeInsets.all(3.w),
                           decoration: BoxDecoration(
-                            color: DonationAppTheme.lightTheme.colorScheme.surface,
+                            color:
+                                DonationAppTheme.lightTheme.colorScheme.surface,
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: DonationAppTheme.lightTheme.colorScheme.outline
+                              color: DonationAppTheme
+                                  .lightTheme
+                                  .colorScheme
+                                  .outline
                                   .withValues(alpha: 0.2),
                             ),
                           ),
@@ -117,19 +126,21 @@ class OrganizationListBottomSheet extends StatelessWidget {
                                 height: 12.w,
                                 decoration: BoxDecoration(
                                   color: _getTypeColor(
-                                          organization['type'] as String? ??
-                                              'food_bank')
-                                      .withValues(alpha: 0.1),
+                                    organization['type'] as String? ??
+                                        'food_bank',
+                                  ).withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Center(
                                   child: CustomIconWidget(
                                     iconName: _getTypeIcon(
-                                        organization['type'] as String? ??
-                                            'food_bank'),
+                                      organization['type'] as String? ??
+                                          'food_bank',
+                                    ),
                                     color: _getTypeColor(
-                                        organization['type'] as String? ??
-                                            'food_bank'),
+                                      organization['type'] as String? ??
+                                          'food_bank',
+                                    ),
                                     size: 24,
                                   ),
                                 ),
@@ -143,10 +154,12 @@ class OrganizationListBottomSheet extends StatelessWidget {
                                       organization['name'] as String? ??
                                           'Unknown Organization',
                                       style: DonationAppTheme
-                                          .lightTheme.textTheme.bodyMedium
+                                          .lightTheme
+                                          .textTheme
+                                          .bodyMedium
                                           ?.copyWith(
-                                        fontWeight: FontWeight.w600,
-                                      ),
+                                            fontWeight: FontWeight.w600,
+                                          ),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),
@@ -162,13 +175,17 @@ class OrganizationListBottomSheet extends StatelessWidget {
                                         Text(
                                           '${organization['rating'] ?? 0.0}',
                                           style: DonationAppTheme
-                                              .lightTheme.textTheme.bodySmall,
+                                              .lightTheme
+                                              .textTheme
+                                              .bodySmall,
                                         ),
                                         SizedBox(width: 3.w),
                                         CustomIconWidget(
                                           iconName: 'location_on',
                                           color: DonationAppTheme
-                                              .lightTheme.colorScheme.primary,
+                                              .lightTheme
+                                              .colorScheme
+                                              .primary,
                                           size: 14,
                                         ),
                                         SizedBox(width: 1.w),
@@ -176,7 +193,9 @@ class OrganizationListBottomSheet extends StatelessWidget {
                                           child: Text(
                                             '${organization['distance'] ?? 0.0} km',
                                             style: DonationAppTheme
-                                                .lightTheme.textTheme.bodySmall,
+                                                .lightTheme
+                                                .textTheme
+                                                .bodySmall,
                                             overflow: TextOverflow.ellipsis,
                                           ),
                                         ),
@@ -187,7 +206,10 @@ class OrganizationListBottomSheet extends StatelessWidget {
                               ),
                               CustomIconWidget(
                                 iconName: 'chevron_right',
-                                color: DonationAppTheme.lightTheme.colorScheme.outline,
+                                color: DonationAppTheme
+                                    .lightTheme
+                                    .colorScheme
+                                    .outline,
                                 size: 20,
                               ),
                             ],

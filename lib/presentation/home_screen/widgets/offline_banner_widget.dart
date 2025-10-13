@@ -6,10 +6,8 @@ import '../../../core/app_export.dart';
 class OfflineBannerWidget extends StatelessWidget {
   final DateTime lastUpdated;
 
-  const OfflineBannerWidget({
-    Key? key,
-    required this.lastUpdated,
-  }) : super(key: key);
+  const OfflineBannerWidget({Key? key, required this.lastUpdated})
+    : super(key: key);
 
   String _formatLastUpdated(DateTime dateTime) {
     final now = DateTime.now();
@@ -33,11 +31,14 @@ class OfflineBannerWidget extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.h),
       margin: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.h),
       decoration: BoxDecoration(
-        color: DonationAppTheme.lightTheme.colorScheme.tertiary.withValues(alpha: 0.1),
+        color: DonationAppTheme.lightTheme.colorScheme.tertiary.withValues(
+          alpha: 0.1,
+        ),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color:
-              DonationAppTheme.lightTheme.colorScheme.tertiary.withValues(alpha: 0.3),
+          color: DonationAppTheme.lightTheme.colorScheme.tertiary.withValues(
+            alpha: 0.3,
+          ),
         ),
       ),
       child: Row(
@@ -54,17 +55,19 @@ class OfflineBannerWidget extends StatelessWidget {
               children: [
                 Text(
                   "Offline Mode",
-                  style: DonationAppTheme.lightTheme.textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: DonationAppTheme.lightTheme.colorScheme.tertiary,
-                  ),
+                  style: DonationAppTheme.lightTheme.textTheme.bodyMedium
+                      ?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: DonationAppTheme.lightTheme.colorScheme.tertiary,
+                      ),
                 ),
                 Text(
                   "Last updated ${_formatLastUpdated(lastUpdated)}",
-                  style: DonationAppTheme.lightTheme.textTheme.bodySmall?.copyWith(
-                    color: DonationAppTheme.lightTheme.colorScheme.onSurface
-                        .withValues(alpha: 0.7),
-                  ),
+                  style: DonationAppTheme.lightTheme.textTheme.bodySmall
+                      ?.copyWith(
+                        color: DonationAppTheme.lightTheme.colorScheme.onSurface
+                            .withValues(alpha: 0.7),
+                      ),
                 ),
               ],
             ),

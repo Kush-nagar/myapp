@@ -6,10 +6,8 @@ import '../../../core/app_export.dart';
 class EmptyFavoritesWidget extends StatelessWidget {
   final VoidCallback onDiscoverTap;
 
-  const EmptyFavoritesWidget({
-    Key? key,
-    required this.onDiscoverTap,
-  }) : super(key: key);
+  const EmptyFavoritesWidget({Key? key, required this.onDiscoverTap})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +21,9 @@ class EmptyFavoritesWidget extends StatelessWidget {
               width: 40.w,
               height: 40.w,
               decoration: BoxDecoration(
-                color: DonationAppTheme.lightTheme.primaryColor.withValues(alpha: 0.1),
+                color: DonationAppTheme.lightTheme.primaryColor.withValues(
+                  alpha: 0.1,
+                ),
                 shape: BoxShape.circle,
               ),
               child: Center(
@@ -37,17 +37,17 @@ class EmptyFavoritesWidget extends StatelessWidget {
             SizedBox(height: 4.h),
             Text(
               'No Favorites Yet',
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w600),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 2.h),
             Text(
               'Start building your list of favorite organizations to make donating easier and more convenient.',
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).textTheme.bodySmall?.color,
-                  ),
+                color: Theme.of(context).textTheme.bodySmall?.color,
+              ),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 4.h),
@@ -73,9 +73,9 @@ class EmptyFavoritesWidget extends StatelessWidget {
                     Text(
                       'Discover Organizations',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                          ),
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ],
                 ),

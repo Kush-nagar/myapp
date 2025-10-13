@@ -53,13 +53,9 @@ class _OnboardingFlowState extends State<OnboardingFlow>
       duration: Duration(milliseconds: 800),
       vsync: this,
     );
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
     _animationController.forward();
   }
 
@@ -139,9 +135,7 @@ class _OnboardingFlowState extends State<OnboardingFlow>
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
           'Location Permission Required',
           style: AppTheme.lightTheme.textTheme.titleLarge?.copyWith(
@@ -198,16 +192,20 @@ class _OnboardingFlowState extends State<OnboardingFlow>
                           foregroundColor:
                               AppTheme.lightTheme.colorScheme.onSurfaceVariant,
                           padding: EdgeInsets.symmetric(
-                              horizontal: 4.w, vertical: 1.h),
+                            horizontal: 4.w,
+                            vertical: 1.h,
+                          ),
                         ),
                         child: Text(
                           'Skip',
                           style: AppTheme.lightTheme.textTheme.titleMedium
                               ?.copyWith(
-                            color: AppTheme
-                                .lightTheme.colorScheme.onSurfaceVariant,
-                            fontWeight: FontWeight.w500,
-                          ),
+                                color: AppTheme
+                                    .lightTheme
+                                    .colorScheme
+                                    .onSurfaceVariant,
+                                fontWeight: FontWeight.w500,
+                              ),
                         ),
                       ),
                   ],
@@ -281,10 +279,12 @@ class _OnboardingFlowState extends State<OnboardingFlow>
                                 'Next',
                                 style: AppTheme.lightTheme.textTheme.titleMedium
                                     ?.copyWith(
-                                  color:
-                                      AppTheme.lightTheme.colorScheme.onPrimary,
-                                  fontWeight: FontWeight.w600,
-                                ),
+                                      color: AppTheme
+                                          .lightTheme
+                                          .colorScheme
+                                          .onPrimary,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                               ),
                               SizedBox(width: 2.w),
                               CustomIconWidget(

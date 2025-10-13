@@ -109,20 +109,22 @@ class _RecipeDetailScreenState extends State<RecipeDetailScreen> {
     final servings = recipeData['servings'] ?? "N/A";
     final difficulty = recipeData['difficulty'] ?? "N/A";
 
-    final ingredients = (recipeData['ingredients'] as List?)
-            ?.map((i) => "• $i")
-            .join('\n') ??
+    final ingredients =
+        (recipeData['ingredients'] as List?)?.map((i) => "• $i").join('\n') ??
         "";
 
-    final steps = (recipeData['instructions'] as List?)
-        ?.asMap()
-        .entries
-        .map((e) => "${e.key + 1}. ${e.value}")
-        .join('\n\n') ?? "";
+    final steps =
+        (recipeData['instructions'] as List?)
+            ?.asMap()
+            .entries
+            .map((e) => "${e.key + 1}. ${e.value}")
+            .join('\n\n') ??
+        "";
 
     final nutrition = recipeData['nutrition'] as Map<String, dynamic>? ?? {};
 
-    final recipeText = """
+    final recipeText =
+        """
 $title
 
 Cooking Time: $cookingTime minutes
@@ -192,8 +194,10 @@ Shared from Chefify App
                 if (recipeData['description'] != null) ...[
                   Container(
                     width: double.infinity,
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 4.w,
+                      vertical: 2.h,
+                    ),
                     child: Text(
                       recipeData['description'] ?? "",
                       style: AppTheme.lightTheme.textTheme.bodyLarge?.copyWith(
@@ -209,8 +213,7 @@ Shared from Chefify App
                 // Ingredients Section
                 IngredientsSection(
                   ingredients: ingredients
-                      .map((i) =>
-                          {"name": i, "amount": "", "available": true})
+                      .map((i) => {"name": i, "amount": "", "available": true})
                       .toList(),
                   onIngredientToggle: _onIngredientToggle,
                   onAddToShoppingList: _addToShoppingList,

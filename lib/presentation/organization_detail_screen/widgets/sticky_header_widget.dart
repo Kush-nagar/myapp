@@ -43,10 +43,11 @@ class StickyHeaderWidget extends StatelessWidget {
                           children: [
                             Text(
                               organization['name'] as String,
-                              style: DonationAppTheme.lightTheme.textTheme.titleMedium
-                                  ?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: DonationAppTheme
+                                  .lightTheme
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(fontWeight: FontWeight.bold),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -61,23 +62,28 @@ class StickyHeaderWidget extends StatelessWidget {
                                 SizedBox(width: 1.w),
                                 Text(
                                   '${organization['rating']}',
-                                  style: DonationAppTheme.lightTheme.textTheme.bodySmall
-                                      ?.copyWith(
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                                  style: DonationAppTheme
+                                      .lightTheme
+                                      .textTheme
+                                      .bodySmall
+                                      ?.copyWith(fontWeight: FontWeight.w600),
                                 ),
                                 SizedBox(width: 3.w),
                                 CustomIconWidget(
                                   iconName: 'location_on',
-                                  color:
-                                      DonationAppTheme.lightTheme.colorScheme.primary,
+                                  color: DonationAppTheme
+                                      .lightTheme
+                                      .colorScheme
+                                      .primary,
                                   size: 4.w,
                                 ),
                                 SizedBox(width: 1.w),
                                 Text(
                                   '${organization['distance']} away',
-                                  style:
-                                      DonationAppTheme.lightTheme.textTheme.bodySmall,
+                                  style: DonationAppTheme
+                                      .lightTheme
+                                      .textTheme
+                                      .bodySmall,
                                 ),
                               ],
                             ),

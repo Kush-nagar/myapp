@@ -31,8 +31,9 @@ class OrganizationCardWidget extends StatelessWidget {
           color: DonationAppTheme.lightTheme.colorScheme.surface,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color:
-                DonationAppTheme.lightTheme.colorScheme.outline.withValues(alpha: 0.2),
+            color: DonationAppTheme.lightTheme.colorScheme.outline.withValues(
+              alpha: 0.2,
+            ),
             width: 1,
           ),
           boxShadow: [
@@ -80,7 +81,10 @@ class OrganizationCardWidget extends StatelessWidget {
                         iconName: isFavorite ? 'favorite' : 'favorite_border',
                         color: isFavorite
                             ? Colors.red
-                            : DonationAppTheme.lightTheme.colorScheme.onSurfaceVariant,
+                            : DonationAppTheme
+                                  .lightTheme
+                                  .colorScheme
+                                  .onSurfaceVariant,
                         size: 5.w,
                       ),
                     ),
@@ -92,18 +96,20 @@ class OrganizationCardWidget extends StatelessWidget {
                     left: 3.w,
                     child: Container(
                       padding: EdgeInsets.symmetric(
-                          horizontal: 2.w, vertical: 0.5.h),
+                        horizontal: 2.w,
+                        vertical: 0.5.h,
+                      ),
                       decoration: BoxDecoration(
                         color: DonationAppTheme.getSuccessColor(true),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
                         'Open Now',
-                        style:
-                            DonationAppTheme.lightTheme.textTheme.bodySmall?.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                        ),
+                        style: DonationAppTheme.lightTheme.textTheme.bodySmall
+                            ?.copyWith(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w600,
+                            ),
                       ),
                     ),
                   ),
@@ -126,21 +132,27 @@ class OrganizationCardWidget extends StatelessWidget {
                           children: [
                             Text(
                               organization['name'] ?? '',
-                              style: DonationAppTheme.lightTheme.textTheme.titleMedium
-                                  ?.copyWith(
-                                fontWeight: FontWeight.w600,
-                              ),
+                              style: DonationAppTheme
+                                  .lightTheme
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(fontWeight: FontWeight.w600),
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                             ),
                             SizedBox(height: 0.5.h),
                             Text(
                               organization['type'] ?? '',
-                              style: DonationAppTheme.lightTheme.textTheme.bodySmall
+                              style: DonationAppTheme
+                                  .lightTheme
+                                  .textTheme
+                                  .bodySmall
                                   ?.copyWith(
-                                color: DonationAppTheme.lightTheme.primaryColor,
-                                fontWeight: FontWeight.w500,
-                              ),
+                                    color: DonationAppTheme
+                                        .lightTheme
+                                        .primaryColor,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                             ),
                           ],
                         ),
@@ -150,10 +162,13 @@ class OrganizationCardWidget extends StatelessWidget {
                       if (rating > 0)
                         Container(
                           padding: EdgeInsets.symmetric(
-                              horizontal: 2.w, vertical: 0.5.h),
+                            horizontal: 2.w,
+                            vertical: 0.5.h,
+                          ),
                           decoration: BoxDecoration(
-                            color: DonationAppTheme.getAccentColor(true)
-                                .withValues(alpha: 0.1),
+                            color: DonationAppTheme.getAccentColor(
+                              true,
+                            ).withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Row(
@@ -167,11 +182,16 @@ class OrganizationCardWidget extends StatelessWidget {
                               SizedBox(width: 1.w),
                               Text(
                                 rating.toStringAsFixed(1),
-                                style: DonationAppTheme.lightTheme.textTheme.bodySmall
+                                style: DonationAppTheme
+                                    .lightTheme
+                                    .textTheme
+                                    .bodySmall
                                     ?.copyWith(
-                                  color: DonationAppTheme.getAccentColor(true),
-                                  fontWeight: FontWeight.w600,
-                                ),
+                                      color: DonationAppTheme.getAccentColor(
+                                        true,
+                                      ),
+                                      fontWeight: FontWeight.w600,
+                                    ),
                               ),
                             ],
                           ),
@@ -186,18 +206,23 @@ class OrganizationCardWidget extends StatelessWidget {
                     children: [
                       CustomIconWidget(
                         iconName: 'location_on',
-                        color: DonationAppTheme.lightTheme.colorScheme.onSurfaceVariant,
+                        color: DonationAppTheme
+                            .lightTheme
+                            .colorScheme
+                            .onSurfaceVariant,
                         size: 4.w,
                       ),
                       SizedBox(width: 1.w),
                       Expanded(
                         child: Text(
                           organization['address'] ?? '',
-                          style:
-                              DonationAppTheme.lightTheme.textTheme.bodySmall?.copyWith(
-                            color: DonationAppTheme
-                                .lightTheme.colorScheme.onSurfaceVariant,
-                          ),
+                          style: DonationAppTheme.lightTheme.textTheme.bodySmall
+                              ?.copyWith(
+                                color: DonationAppTheme
+                                    .lightTheme
+                                    .colorScheme
+                                    .onSurfaceVariant,
+                              ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -206,11 +231,11 @@ class OrganizationCardWidget extends StatelessWidget {
                         SizedBox(width: 2.w),
                         Text(
                           '${organization['distance']} mi',
-                          style:
-                              DonationAppTheme.lightTheme.textTheme.bodySmall?.copyWith(
-                            color: DonationAppTheme.lightTheme.primaryColor,
-                            fontWeight: FontWeight.w500,
-                          ),
+                          style: DonationAppTheme.lightTheme.textTheme.bodySmall
+                              ?.copyWith(
+                                color: DonationAppTheme.lightTheme.primaryColor,
+                                fontWeight: FontWeight.w500,
+                              ),
                         ),
                       ],
                     ],
@@ -223,17 +248,22 @@ class OrganizationCardWidget extends StatelessWidget {
                     children: [
                       CustomIconWidget(
                         iconName: 'access_time',
-                        color: DonationAppTheme.lightTheme.colorScheme.onSurfaceVariant,
+                        color: DonationAppTheme
+                            .lightTheme
+                            .colorScheme
+                            .onSurfaceVariant,
                         size: 4.w,
                       ),
                       SizedBox(width: 1.w),
                       Text(
                         organization['hours'] ?? 'Hours not available',
-                        style:
-                            DonationAppTheme.lightTheme.textTheme.bodySmall?.copyWith(
-                          color:
-                              DonationAppTheme.lightTheme.colorScheme.onSurfaceVariant,
-                        ),
+                        style: DonationAppTheme.lightTheme.textTheme.bodySmall
+                            ?.copyWith(
+                              color: DonationAppTheme
+                                  .lightTheme
+                                  .colorScheme
+                                  .onSurfaceVariant,
+                            ),
                       ),
                     ],
                   ),
@@ -245,30 +275,43 @@ class OrganizationCardWidget extends StatelessWidget {
                       runSpacing: 0.5.h,
                       children: donationTypes
                           .take(3)
-                          .map((type) => Container(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 2.w, vertical: 0.5.h),
-                                decoration: BoxDecoration(
-                                  color:
-                                      DonationAppTheme.lightTheme.colorScheme.surface,
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(
-                                    color: DonationAppTheme
-                                        .lightTheme.colorScheme.outline
-                                        .withValues(alpha: 0.3),
-                                    width: 1,
-                                  ),
+                          .map(
+                            (type) => Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 2.w,
+                                vertical: 0.5.h,
+                              ),
+                              decoration: BoxDecoration(
+                                color: DonationAppTheme
+                                    .lightTheme
+                                    .colorScheme
+                                    .surface,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  color: DonationAppTheme
+                                      .lightTheme
+                                      .colorScheme
+                                      .outline
+                                      .withValues(alpha: 0.3),
+                                  width: 1,
                                 ),
-                                child: Text(
-                                  type,
-                                  style: DonationAppTheme.lightTheme.textTheme.bodySmall
-                                      ?.copyWith(
-                                    color: DonationAppTheme.lightTheme.colorScheme
-                                        .onSurfaceVariant,
-                                    fontSize: 10.sp,
-                                  ),
-                                ),
-                              ))
+                              ),
+                              child: Text(
+                                type,
+                                style: DonationAppTheme
+                                    .lightTheme
+                                    .textTheme
+                                    .bodySmall
+                                    ?.copyWith(
+                                      color: DonationAppTheme
+                                          .lightTheme
+                                          .colorScheme
+                                          .onSurfaceVariant,
+                                      fontSize: 10.sp,
+                                    ),
+                              ),
+                            ),
+                          )
                           .toList(),
                     ),
                   ],
@@ -277,7 +320,9 @@ class OrganizationCardWidget extends StatelessWidget {
                     SizedBox(height: 1.h),
                     Container(
                       padding: EdgeInsets.symmetric(
-                          horizontal: 2.w, vertical: 0.8.h),
+                        horizontal: 2.w,
+                        vertical: 0.8.h,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.red.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
@@ -297,11 +342,14 @@ class OrganizationCardWidget extends StatelessWidget {
                           SizedBox(width: 1.w),
                           Text(
                             'Urgent Need',
-                            style: DonationAppTheme.lightTheme.textTheme.bodySmall
+                            style: DonationAppTheme
+                                .lightTheme
+                                .textTheme
+                                .bodySmall
                                 ?.copyWith(
-                              color: Colors.red,
-                              fontWeight: FontWeight.w600,
-                            ),
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.w600,
+                                ),
                           ),
                         ],
                       ),

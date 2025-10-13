@@ -210,6 +210,6 @@ class CameraControlsWidget extends StatelessWidget {
         return 'flash_on';
       case FlashMode.torch:
         return 'flashlight_on';
-      }
+    }
   }
 }

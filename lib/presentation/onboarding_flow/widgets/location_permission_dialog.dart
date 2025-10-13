@@ -16,9 +16,7 @@ class LocationPermissionDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Container(
         padding: EdgeInsets.all(6.w),
         child: Column(
@@ -28,8 +26,9 @@ class LocationPermissionDialog extends StatelessWidget {
               width: 15.w,
               height: 15.w,
               decoration: BoxDecoration(
-                color: AppTheme.lightTheme.colorScheme.primary
-                    .withValues(alpha: 0.1),
+                color: AppTheme.lightTheme.colorScheme.primary.withValues(
+                  alpha: 0.1,
+                ),
                 shape: BoxShape.circle,
               ),
               child: CustomIconWidget(

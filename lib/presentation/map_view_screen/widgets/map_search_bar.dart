@@ -9,11 +9,8 @@ class MapSearchBar extends StatefulWidget {
   final Function(String) onSearch;
   final VoidCallback? onFilterTap;
 
-  const MapSearchBar({
-    Key? key,
-    required this.onSearch,
-    this.onFilterTap,
-  }) : super(key: key);
+  const MapSearchBar({Key? key, required this.onSearch, this.onFilterTap})
+    : super(key: key);
 
   @override
   State<MapSearchBar> createState() => _MapSearchBarState();
@@ -69,7 +66,10 @@ class _MapSearchBarState extends State<MapSearchBar> {
                   padding: EdgeInsets.all(3.w),
                   child: CustomIconWidget(
                     iconName: 'search',
-                    color: DonationAppTheme.lightTheme.colorScheme.onSurfaceVariant,
+                    color: DonationAppTheme
+                        .lightTheme
+                        .colorScheme
+                        .onSurfaceVariant,
                     size: 20,
                   ),
                 ),
@@ -81,7 +81,10 @@ class _MapSearchBarState extends State<MapSearchBar> {
                           padding: EdgeInsets.all(3.w),
                           child: CustomIconWidget(
                             iconName: 'close',
-                            color: DonationAppTheme.lightTheme.colorScheme.onSurfaceVariant,
+                            color: DonationAppTheme
+                                .lightTheme
+                                .colorScheme
+                                .onSurfaceVariant,
                             size: 20,
                           ),
                         ),
@@ -90,10 +93,17 @@ class _MapSearchBarState extends State<MapSearchBar> {
                 border: InputBorder.none,
                 enabledBorder: InputBorder.none,
                 focusedBorder: InputBorder.none,
-                contentPadding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 2.h),
-                hintStyle: DonationAppTheme.lightTheme.textTheme.bodyMedium?.copyWith(
-                  color: DonationAppTheme.lightTheme.colorScheme.onSurfaceVariant,
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: 4.w,
+                  vertical: 2.h,
                 ),
+                hintStyle: DonationAppTheme.lightTheme.textTheme.bodyMedium
+                    ?.copyWith(
+                      color: DonationAppTheme
+                          .lightTheme
+                          .colorScheme
+                          .onSurfaceVariant,
+                    ),
               ),
               style: DonationAppTheme.lightTheme.textTheme.bodyMedium,
               // Do NOT call widget.onSearch here — only update UI state
@@ -112,7 +122,9 @@ class _MapSearchBarState extends State<MapSearchBar> {
           Container(
             width: 1,
             height: 6.h,
-            color: DonationAppTheme.lightTheme.colorScheme.outline.withValues(alpha: 0.2),
+            color: DonationAppTheme.lightTheme.colorScheme.outline.withValues(
+              alpha: 0.2,
+            ),
           ),
 
           // Search button (explicit)

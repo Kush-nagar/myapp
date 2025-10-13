@@ -125,7 +125,7 @@ class _MapViewScreenState extends State<MapViewScreen> {
       'shelter',
       'community center',
       'donation center',
-      'soup kitchen'
+      'soup kitchen',
     ];
 
     final Set<String> seenPlaceIds = {};
@@ -182,23 +182,38 @@ class _MapViewScreenState extends State<MapViewScreen> {
       'id': p.placeId, // keep placeId as id
       'placeId': p.placeId,
       'name': p.name ?? '',
-      'type': (p.types != null && p.types.isNotEmpty) ? p.types.first : 'organization',
+      'type': (p.types != null && p.types.isNotEmpty)
+          ? p.types.first
+          : 'organization',
       'latitude': p.lat,
       'longitude': p.lng,
       'rating': p.rating ?? 0.0,
-      'distance': distanceMiles != null ? double.parse(distanceMiles.toStringAsFixed(1)) : null,
+      'distance': distanceMiles != null
+          ? double.parse(distanceMiles.toStringAsFixed(1))
+          : null,
       'phone': null,
       'address': p.address ?? '',
-      'currentNeeds': '', // app-specific (you can load from backend keyed by placeId)
+      'currentNeeds':
+          '', // app-specific (you can load from backend keyed by placeId)
       'operatingHours': p.openNow == true ? 'Open now' : 'Hours not available',
       'description': '',
       'photoReference': p.photoReference,
-      'image': p.photoReference != null ? _placesService.photoUrlFromReference(p.photoReference!, maxWidth: 800) : '',
+      'image': p.photoReference != null
+          ? _placesService.photoUrlFromReference(
+              p.photoReference!,
+              maxWidth: 800,
+            )
+          : '',
       'raw': p,
     };
   }
 
-  double? _computeDistanceMiles(double lat1, double lng1, double lat2, double lng2) {
+  double? _computeDistanceMiles(
+    double lat1,
+    double lng1,
+    double lat2,
+    double lng2,
+  ) {
     try {
       final meters = Geolocator.distanceBetween(lat1, lng1, lat2, lng2);
       return meters / 1609.344;
@@ -214,7 +229,10 @@ class _MapViewScreenState extends State<MapViewScreen> {
     if (_currentPosition != null) {
       markers['user_location'] = Marker(
         markerId: const MarkerId('user_location'),
-        position: LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
+        position: LatLng(
+          _currentPosition!.latitude,
+          _currentPosition!.longitude,
+        ),
         icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
         infoWindow: const InfoWindow(title: 'You'),
       );
@@ -232,7 +250,9 @@ class _MapViewScreenState extends State<MapViewScreen> {
         icon: _getMarkerIconForType(type),
         infoWindow: InfoWindow(
           title: org['name'] as String?,
-          snippet: (org['rating'] != null) ? '${org['rating']} ⭐ • ${org['distance'] ?? '--'} mi' : null,
+          snippet: (org['rating'] != null)
+              ? '${org['rating']} ⭐ • ${org['distance'] ?? '--'} mi'
+              : null,
         ),
         onTap: () {
           _onMarkerTapped(org);
@@ -258,7 +278,9 @@ class _MapViewScreenState extends State<MapViewScreen> {
       case 'shelter':
         return BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen);
       case 'restaurant':
-        return BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueOrange);
+        return BitmapDescriptor.defaultMarkerWithHue(
+          BitmapDescriptor.hueOrange,
+        );
       default:
         return BitmapDescriptor.defaultMarker;
     }
@@ -273,7 +295,9 @@ class _MapViewScreenState extends State<MapViewScreen> {
     if (_mapController != null) {
       final lat = organization['latitude'] as double;
       final lng = organization['longitude'] as double;
-      _mapController!.animateCamera(CameraUpdate.newLatLngZoom(LatLng(lat, lng), 15.0));
+      _mapController!.animateCamera(
+        CameraUpdate.newLatLngZoom(LatLng(lat, lng), 15.0),
+      );
     }
   }
 
@@ -281,7 +305,10 @@ class _MapViewScreenState extends State<MapViewScreen> {
     _mapController = controller;
     if (_currentPosition != null) {
       _mapController!.animateCamera(
-        CameraUpdate.newLatLngZoom(LatLng(_currentPosition!.latitude, _currentPosition!.longitude), 13.5),
+        CameraUpdate.newLatLngZoom(
+          LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
+          13.5,
+        ),
       );
     }
   }
@@ -341,8 +368,12 @@ class _MapViewScreenState extends State<MapViewScreen> {
       // If there is at least one result, animate camera to first result
       if (results.isNotEmpty && _mapController != null) {
         final first = results.first;
-        _mapController!.animateCamera(CameraUpdate.newLatLngZoom(
-            LatLng(first['latitude'] as double, first['longitude'] as double), 14.0));
+        _mapController!.animateCamera(
+          CameraUpdate.newLatLngZoom(
+            LatLng(first['latitude'] as double, first['longitude'] as double),
+            14.0,
+          ),
+        );
       }
     } catch (e) {
       debugPrint('Search failed: $e');
@@ -358,14 +389,19 @@ class _MapViewScreenState extends State<MapViewScreen> {
 
   void _toggleMapType() {
     setState(() {
-      _currentMapType = _currentMapType == MapType.normal ? MapType.satellite : MapType.normal;
+      _currentMapType = _currentMapType == MapType.normal
+          ? MapType.satellite
+          : MapType.normal;
     });
   }
 
   Future<void> _goToCurrentLocation() async {
     if (_mapController != null && _currentPosition != null) {
       await _mapController!.animateCamera(
-        CameraUpdate.newLatLngZoom(LatLng(_currentPosition!.latitude, _currentPosition!.longitude), 16.0),
+        CameraUpdate.newLatLngZoom(
+          LatLng(_currentPosition!.latitude, _currentPosition!.longitude),
+          16.0,
+        ),
       );
     }
   }
@@ -391,7 +427,9 @@ class _MapViewScreenState extends State<MapViewScreen> {
   }
 
   Future<void> _getDirections(double lat, double lng) async {
-    final Uri mapsUri = Uri.parse('https://www.google.com/maps/dir/?api=1&destination=$lat,$lng');
+    final Uri mapsUri = Uri.parse(
+      'https://www.google.com/maps/dir/?api=1&destination=$lat,$lng',
+    );
     if (await canLaunchUrl(mapsUri)) {
       await launchUrl(mapsUri, mode: LaunchMode.externalApplication);
     }
@@ -406,7 +444,6 @@ class _MapViewScreenState extends State<MapViewScreen> {
       arguments: organization,
     );
   }
-
 
   void _showOrganizationsList() {
     setState(() {
@@ -478,7 +515,10 @@ class _MapViewScreenState extends State<MapViewScreen> {
                   onCameraMove: _onCameraMove,
                   initialCameraPosition: CameraPosition(
                     target: _currentPosition != null
-                        ? LatLng(_currentPosition!.latitude, _currentPosition!.longitude)
+                        ? LatLng(
+                            _currentPosition!.latitude,
+                            _currentPosition!.longitude,
+                          )
                         : const LatLng(37.7749, -122.4194),
                     zoom: 13.5,
                   ),
@@ -510,7 +550,9 @@ class _MapViewScreenState extends State<MapViewScreen> {
                   onZoomIn: _zoomIn,
                   onZoomOut: _zoomOut,
                   onMapTypeToggle: _toggleMapType,
-                  currentMapType: _currentMapType == MapType.satellite ? 'satellite' : 'normal',
+                  currentMapType: _currentMapType == MapType.satellite
+                      ? 'satellite'
+                      : 'normal',
                 ),
 
                 // Selected Organization Info Card
@@ -521,12 +563,15 @@ class _MapViewScreenState extends State<MapViewScreen> {
                     right: 0,
                     child: OrganizationInfoCard(
                       organization: _selectedOrganization!,
-                      onCall: () => _callOrganization(_selectedOrganization!['phone'] as String?),
+                      onCall: () => _callOrganization(
+                        _selectedOrganization!['phone'] as String?,
+                      ),
                       onDirections: () => _getDirections(
                         _selectedOrganization!['latitude'] as double,
                         _selectedOrganization!['longitude'] as double,
                       ),
-                      onViewDetails: () => _viewOrganizationDetails(_selectedOrganization!),
+                      onViewDetails: () =>
+                          _viewOrganizationDetails(_selectedOrganization!),
                     ),
                   ),
 

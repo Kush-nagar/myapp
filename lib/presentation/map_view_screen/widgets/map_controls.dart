@@ -49,19 +49,20 @@ class MapControls extends StatelessWidget {
                   child: Column(
                     children: [
                       CustomIconWidget(
-                        iconName:
-                            currentMapType == 'satellite' ? 'map' : 'satellite',
+                        iconName: currentMapType == 'satellite'
+                            ? 'map'
+                            : 'satellite',
                         color: DonationAppTheme.lightTheme.colorScheme.primary,
                         size: 24,
                       ),
                       SizedBox(height: 0.5.h),
                       Text(
                         currentMapType == 'satellite' ? 'Map' : 'Satellite',
-                        style:
-                            DonationAppTheme.lightTheme.textTheme.bodySmall?.copyWith(
-                          fontSize: 10.sp,
-                          fontWeight: FontWeight.w500,
-                        ),
+                        style: DonationAppTheme.lightTheme.textTheme.bodySmall
+                            ?.copyWith(
+                              fontSize: 10.sp,
+                              fontWeight: FontWeight.w500,
+                            ),
                       ),
                     ],
                   ),
@@ -89,8 +90,9 @@ class MapControls extends StatelessWidget {
                   color: Colors.transparent,
                   child: InkWell(
                     onTap: onZoomIn,
-                    borderRadius:
-                        BorderRadius.vertical(top: Radius.circular(8)),
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(8),
+                    ),
                     child: Container(
                       padding: EdgeInsets.all(3.w),
                       child: CustomIconWidget(
@@ -110,8 +112,9 @@ class MapControls extends StatelessWidget {
                   color: Colors.transparent,
                   child: InkWell(
                     onTap: onZoomOut,
-                    borderRadius:
-                        BorderRadius.vertical(bottom: Radius.circular(8)),
+                    borderRadius: BorderRadius.vertical(
+                      bottom: Radius.circular(8),
+                    ),
                     child: Container(
                       padding: EdgeInsets.all(3.w),
                       child: CustomIconWidget(

@@ -70,11 +70,11 @@ class PlacesService {
   }) async {
     final uri =
         Uri.https('maps.googleapis.com', '/maps/api/place/textsearch/json', {
-      'query': query,
-      if (lat != null && lng != null) 'location': '$lat,$lng',
-      if (lat != null && lng != null) 'radius': '$radiusMeters',
-      'key': _apiKey,
-    });
+          'query': query,
+          if (lat != null && lng != null) 'location': '$lat,$lng',
+          if (lat != null && lng != null) 'radius': '$radiusMeters',
+          'key': _apiKey,
+        });
 
     final res = await _client.get(uri);
     if (res.statusCode != 200)
@@ -84,7 +84,8 @@ class PlacesService {
     if (body['status'] != 'OK' && body['status'] != 'ZERO_RESULTS') {
       // you may want to handle OVER_QUERY_LIMIT, REQUEST_DENIED, etc.
       throw Exception(
-          'Places API error: ${body['status']}: ${body['error_message'] ?? ''}');
+        'Places API error: ${body['status']}: ${body['error_message'] ?? ''}',
+      );
     }
 
     final results = (body['results'] as List<dynamic>? ?? []);
@@ -123,15 +124,14 @@ class PlacesService {
       'rating',
       'types',
       'opening_hours',
-      'photos'
+      'photos',
     ].join(',');
 
-    final uri =
-        Uri.https('maps.googleapis.com', '/maps/api/place/details/json', {
-      'place_id': placeId,
-      'fields': fields,
-      'key': _apiKey,
-    });
+    final uri = Uri.https(
+      'maps.googleapis.com',
+      '/maps/api/place/details/json',
+      {'place_id': placeId, 'fields': fields, 'key': _apiKey},
+    );
 
     final res = await _client.get(uri);
     if (res.statusCode != 200)
@@ -181,8 +181,11 @@ class PlacesService {
       'maxwidth': '$maxWidth',
       'key': _apiKey,
     };
-    final uri =
-        Uri.https('maps.googleapis.com', '/maps/api/place/photo', params);
+    final uri = Uri.https(
+      'maps.googleapis.com',
+      '/maps/api/place/photo',
+      params,
+    );
     return uri.toString();
   }
 

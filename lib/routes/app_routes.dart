@@ -13,6 +13,7 @@ import '../presentation/favorites_screen/favorites_screen.dart';
 import '../presentation/home_screen/home_screen.dart';
 import '../presentation/map_view_screen/map_view_screen.dart';
 import '../presentation/store_it_screen/store_it_screen.dart';
+import '../presentation/store_it_screen/storage_tip_detail_screen.dart';
 
 class AppRoutes {
   static const String initial = '/';
@@ -29,6 +30,7 @@ class AppRoutes {
   static const String home = '/home-screen';
   static const String mapView = '/map-view-screen';
   static const String storeIt = '/store-it-screen';
+  static const String storageTipDetail = '/storage-tip-detail-screen';
 
   static Map<String, WidgetBuilder> routes = {
     initial: (context) => const SplashScreen(),
@@ -45,5 +47,6 @@ class AppRoutes {
     home: (context) => const HomeScreen(),
     mapView: (context) => const MapViewScreen(),
     storeIt: (context) => const StoreItScreen(),
+    storageTipDetail: (context) => const StorageTipDetailScreen(),
   };
 }
