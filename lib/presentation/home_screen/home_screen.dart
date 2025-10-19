@@ -98,6 +98,27 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   // This is the list actually displayed (after filtering). Default will be master list.
   List<Map<String, dynamic>> _displayOrganizations = [];
 
+  /// Helper function to filter out unwanted organizations like "Kedo Snackz"
+  bool _shouldShowOrganization(Map<String, dynamic> org) {
+    final name = (org['name'] as String?)?.toLowerCase() ?? '';
+
+    // Debug: Print organization names to help track where "Kedo Snackz" comes from
+    if (name.contains('kedo') || name.contains('snackz')) {
+      debugPrint('🚫 Filtering out organization: "${org['name']}"');
+      return false;
+    }
+
+    // Add more filter conditions here if needed
+    return true;
+  }
+
+  /// Filter a list of organizations to remove unwanted ones
+  List<Map<String, dynamic>> _filterOrganizations(
+    List<Map<String, dynamic>> orgs,
+  ) {
+    return orgs.where(_shouldShowOrganization).toList();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -106,10 +127,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       vsync: this,
     );
     _checkConnectivity();
-    // initialize with master list first
-    _displayOrganizations = List<Map<String, dynamic>>.from(
-      _masterOrganizations,
-    );
+    // initialize with master list first, but filter out unwanted organizations
+    _displayOrganizations = _filterOrganizations(_masterOrganizations);
     _loadOrganizations();
 
     // read arguments after first frame to apply donation filters if present
@@ -374,9 +393,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   void _applyDonationFilter(List<String> ingredientNames) {
     if (ingredientNames.isEmpty) {
       setState(() {
-        _displayOrganizations = List<Map<String, dynamic>>.from(
-          _masterOrganizations,
-        );
+        _displayOrganizations = _filterOrganizations(_masterOrganizations);
       });
       return;
     }
@@ -466,16 +483,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     // Limit to 8 results. If no matches found, fallback to master list.
     setState(() {
       if (scored.isEmpty) {
-        _displayOrganizations = List<Map<String, dynamic>>.from(
-          _masterOrganizations,
-        );
+        _displayOrganizations = _filterOrganizations(_masterOrganizations);
       } else {
-        _displayOrganizations = scored.take(8).map((m) {
+        final filteredResults = scored.take(8).map((m) {
           // Remove matchScore before passing to UI, but keep it if you like
           final Map<String, dynamic> copy = Map<String, dynamic>.from(m);
           //copy.remove('matchScore'); // optional
           return copy;
         }).toList();
+        _displayOrganizations = _filterOrganizations(filteredResults);
       }
     });
   }
@@ -633,7 +649,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
       final results = await Future.wait(futures);
       for (final r in results) {
-        if (r != null) candidateOrgs.add(r);
+        if (r != null && _shouldShowOrganization(r)) {
+          candidateOrgs.add(r);
+        }
       }
 
       // 4) If candidateOrgs non-empty -> run donation filter on these orgs instead of master list.
@@ -663,9 +681,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   ) {
     if (ingredientNames.isEmpty) {
       setState(() {
-        _displayOrganizations = List<Map<String, dynamic>>.from(
-          orgList.take(8).toList(),
-        );
+        final limitedOrgs = orgList.take(8).toList();
+        _displayOrganizations = _filterOrganizations(limitedOrgs);
       });
       return;
     }
@@ -748,15 +765,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
     setState(() {
       if (scored.isEmpty) {
-        _displayOrganizations = List<Map<String, dynamic>>.from(
-          _masterOrganizations,
-        );
+        _displayOrganizations = _filterOrganizations(_masterOrganizations);
       } else {
-        _displayOrganizations = scored.take(8).map((m) {
+        final filteredResults = scored.take(8).map((m) {
           final Map<String, dynamic> copy = Map<String, dynamic>.from(m);
           //copy.remove('matchScore'); // optional
           return copy;
         }).toList();
+        _displayOrganizations = _filterOrganizations(filteredResults);
       }
     });
   }

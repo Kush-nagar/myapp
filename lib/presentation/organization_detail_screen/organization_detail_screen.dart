@@ -36,13 +36,13 @@ class _OrganizationDetailScreenState extends State<OrganizationDetailScreen> {
   String _orgStatus = 'Not started';
   static const List<String> _statusOptions = [
     'Not started',
-    'Started',
-    'Finished',
+    'In progress',
+    'Completed',
   ];
   static const Map<String, Color> _statusColors = {
-    'Not started': Colors.grey,
-    'Started': Color(0xFFFFA726), // amber/orange
-    'Finished': Color(0xFF66BB6A), // green
+    'Not started': Color.fromARGB(255, 0, 153, 255),
+    'In progress': Color(0xFFFFA726), // amber/orange
+    'Completed': Color(0xFF66BB6A), // green
   };
   // --- END STATUS
 

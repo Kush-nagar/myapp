@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../../core/app_export.dart';
@@ -24,10 +25,23 @@ class OrganizationCardWidget extends StatefulWidget {
 }
 
 class _OrganizationCardWidgetState extends State<OrganizationCardWidget>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   bool isFavorited = false;
   bool _expanded = false;
   late final AnimationController _chevController;
+  
+  // Status management
+  String _orgStatus = 'Not started';
+  static const List<String> _statusOptions = [
+    'Not started',
+    'In progress',
+    'Completed',
+  ];
+  static const Map<String, Color> _statusColors = {
+    'Not started': Color.fromARGB(255, 0, 153, 255),
+    'In progress': Color(0xFFFFA726), // amber/orange
+    'Completed': Color(0xFF66BB6A), // green
+  };
 
   @override
   void initState() {
@@ -37,12 +51,30 @@ class _OrganizationCardWidgetState extends State<OrganizationCardWidget>
       vsync: this,
       duration: const Duration(milliseconds: 220),
     );
+    _loadOrgStatus();
+    WidgetsBinding.instance.addObserver(this);
   }
 
   @override
   void dispose() {
     _chevController.dispose();
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // Reload status when app comes back to foreground
+      _loadOrgStatus();
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant OrganizationCardWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Reload status when widget is updated (e.g., when coming back from detail screen)
+    _loadOrgStatus();
   }
 
   void _toggleFavorite() {
@@ -75,6 +107,22 @@ class _OrganizationCardWidgetState extends State<OrganizationCardWidget>
           content: Text('No website listed for this organization'),
         ),
       );
+    }
+  }
+
+  // Load organization status from SharedPreferences
+  Future<void> _loadOrgStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    final orgId = widget.organization['id']?.toString() ?? 
+                  widget.organization['mockId']?.toString() ?? '';
+    if (orgId.isNotEmpty) {
+      final key = 'org_status_$orgId';
+      final saved = prefs.getString(key);
+      if (saved != null && saved.isNotEmpty) {
+        setState(() {
+          _orgStatus = saved;
+        });
+      }
     }
   }
 
@@ -221,26 +269,56 @@ class _OrganizationCardWidgetState extends State<OrganizationCardWidget>
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // Top row: Name + Favorite button
+                          // Top row: Name + Status indicator + Favorite button
                           Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Expanded(
-                                child: Text(
-                                  org["name"] as String? ??
-                                      'Unknown Organization',
-                                  style: DonationAppTheme
-                                      .lightTheme
-                                      .textTheme
-                                      .titleMedium
-                                      ?.copyWith(
-                                        fontWeight: FontWeight.w700,
-                                        height: 1.2,
-                                        letterSpacing: -0.3,
-                                        fontSize: 18,
+                                child: Row(
+                                  children: [
+                                    // Status indicator circle with tooltip
+                                    Tooltip(
+                                      message: 'Status: $_orgStatus',
+                                      child: Container(
+                                        width: 3.w,
+                                        height: 3.w,
+                                        decoration: BoxDecoration(
+                                          color: _statusColors[_orgStatus] ?? Colors.grey,
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                            color: Colors.white,
+                                            width: 0.5,
+                                          ),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.black.withOpacity(0.1),
+                                              blurRadius: 2,
+                                              offset: const Offset(0, 1),
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
+                                    ),
+                                    SizedBox(width: 2.w),
+                                    Expanded(
+                                      child: Text(
+                                        org["name"] as String? ??
+                                            'Unknown Organization',
+                                        style: DonationAppTheme
+                                            .lightTheme
+                                            .textTheme
+                                            .titleMedium
+                                            ?.copyWith(
+                                              fontWeight: FontWeight.w700,
+                                              height: 1.2,
+                                              letterSpacing: -0.3,
+                                              fontSize: 18,
+                                            ),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                               SizedBox(width: 1.w),
