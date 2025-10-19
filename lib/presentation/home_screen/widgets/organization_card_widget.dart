@@ -113,6 +113,7 @@ class _OrganizationCardWidgetState extends State<OrganizationCardWidget>
     return Card(
       margin: EdgeInsets.symmetric(horizontal: 2.5.w, vertical: 0.6.h),
       elevation: 1.5,
+      shadowColor: const Color.fromARGB(255, 0, 0, 0).withOpacity(1),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: AnimatedSize(
         duration: const Duration(milliseconds: 300),

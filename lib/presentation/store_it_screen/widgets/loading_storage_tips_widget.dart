@@ -1,7 +1,7 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 import '../../../core/app_export.dart';
-import 'dart:math' as math;
 
 class LoadingStorageTipsWidget extends StatefulWidget {
   const LoadingStorageTipsWidget({Key? key}) : super(key: key);
@@ -13,21 +13,21 @@ class LoadingStorageTipsWidget extends StatefulWidget {
 
 class _LoadingStorageTipsWidgetState extends State<LoadingStorageTipsWidget>
     with TickerProviderStateMixin {
-  late AnimationController _pulseController;
-  late AnimationController _rotateController;
-  late AnimationController _fadeController;
-  late AnimationController _shimmerController;
-  late Animation<double> _pulseAnimation;
-  late Animation<double> _rotateAnimation;
-  late Animation<double> _fadeAnimation;
-  late Animation<double> _shimmerAnimation;
+  late final AnimationController _pulseController;
+  late final AnimationController _rotateController;
+  late final AnimationController _fadeController;
+  late final AnimationController _shimmerController;
+  late final Animation<double> _pulseAnimation;
+  late final Animation<double> _rotateAnimation;
+  late final Animation<double> _fadeAnimation;
+  late final Animation<double> _shimmerAnimation;
 
   @override
   void initState() {
     super.initState();
 
     _pulseController = AnimationController(
-      duration: const Duration(milliseconds: 1500),
+      duration: const Duration(milliseconds: 1400),
       vsync: this,
     )..repeat(reverse: true);
 
@@ -37,7 +37,7 @@ class _LoadingStorageTipsWidgetState extends State<LoadingStorageTipsWidget>
     )..repeat();
 
     _fadeController = AnimationController(
-      duration: const Duration(milliseconds: 2000),
+      duration: const Duration(milliseconds: 1800),
       vsync: this,
     )..repeat(reverse: true);
 
@@ -46,16 +46,15 @@ class _LoadingStorageTipsWidgetState extends State<LoadingStorageTipsWidget>
       vsync: this,
     )..repeat();
 
-    _pulseAnimation = Tween<double>(begin: 0.95, end: 1.05).animate(
+    _pulseAnimation = Tween<double>(begin: 0.96, end: 1.04).animate(
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
 
-    _rotateAnimation = Tween<double>(
-      begin: 0,
-      end: 1,
-    ).animate(CurvedAnimation(parent: _rotateController, curve: Curves.linear));
+    _rotateAnimation = Tween<double>(begin: 0, end: 1).animate(
+      CurvedAnimation(parent: _rotateController, curve: Curves.linear),
+    );
 
-    _fadeAnimation = Tween<double>(begin: 0.3, end: 1.0).animate(
+    _fadeAnimation = Tween<double>(begin: 0.35, end: 1.0).animate(
       CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut),
     );
 
@@ -79,54 +78,57 @@ class _LoadingStorageTipsWidgetState extends State<LoadingStorageTipsWidget>
     final isSmallScreen = screenHeight < 700;
 
     return SafeArea(
-      child: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              AppTheme.lightTheme.colorScheme.surface,
-              AppTheme.lightTheme.colorScheme.primary.withOpacity(0.03),
-              AppTheme.lightTheme.colorScheme.surface,
-            ],
-            stops: const [0.0, 0.5, 1.0],
-          ),
-        ),
-        child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: 5.w,
-              vertical: isSmallScreen ? 2.h : 4.h,
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 900),
+          child: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  AppTheme.lightTheme.colorScheme.surface,
+                  AppTheme.lightTheme.colorScheme.primary.withOpacity(0.03),
+                  AppTheme.lightTheme.colorScheme.surface,
+                ],
+                stops: const [0.0, 0.5, 1.0],
+              ),
             ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(height: isSmallScreen ? 2.h : 4.h),
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              padding: EdgeInsets.symmetric(
+                horizontal: 5.w,
+                vertical: isSmallScreen ? 2.h : 4.h,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(height: isSmallScreen ? 2.h : 4.h),
 
-                // Enhanced animated loading icon with glow effect
-                _buildAnimatedLoadingIcon(),
+                  // Animated icon
+                  _buildAnimatedLoadingIcon(),
 
-                SizedBox(height: isSmallScreen ? 4.h : 6.h),
+                  SizedBox(height: isSmallScreen ? 4.h : 6.h),
 
-                // Loading text with shimmer effect
-                _buildLoadingText(),
+                  // Loading text
+                  _buildLoadingText(),
 
-                SizedBox(height: isSmallScreen ? 3.h : 4.h),
+                  SizedBox(height: isSmallScreen ? 3.h : 4.h),
 
-                // Enhanced progress indicator with animated background
-                _buildProgressIndicator(),
+                  // Progress indicator
+                  _buildProgressIndicator(),
 
-                SizedBox(height: isSmallScreen ? 4.h : 6.h),
+                  SizedBox(height: isSmallScreen ? 4.h : 6.h),
 
-                // Beautiful loading tips section
-                _buildLoadingTips(),
+                  // Loading tips
+                  _buildLoadingTips(),
 
-                SizedBox(height: isSmallScreen ? 4.h : 6.h),
+                  SizedBox(height: isSmallScreen ? 4.h : 6.h),
 
-                // Enhanced skeleton cards with better animations
-                _buildEnhancedSkeletonCards(),
-              ],
+                  // Skeletons
+                  _buildEnhancedSkeletonCards(),
+                ],
+              ),
             ),
           ),
         ),
@@ -145,14 +147,14 @@ class _LoadingStorageTipsWidgetState extends State<LoadingStorageTipsWidget>
             return Transform.scale(
               scale: _pulseAnimation.value,
               child: Container(
-                width: 35.w,
-                height: 35.w,
+                width: 34.w,
+                height: 34.w,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
-                      AppTheme.lightTheme.colorScheme.primary.withOpacity(0.1),
-                      AppTheme.lightTheme.colorScheme.primary.withOpacity(0.05),
+                      AppTheme.lightTheme.colorScheme.primary.withOpacity(0.10),
+                      AppTheme.lightTheme.colorScheme.primary.withOpacity(0.03),
                       Colors.transparent,
                     ],
                   ),
@@ -176,7 +178,7 @@ class _LoadingStorageTipsWidgetState extends State<LoadingStorageTipsWidget>
                   border: Border.all(
                     width: 2,
                     color: AppTheme.lightTheme.colorScheme.primary.withOpacity(
-                      0.2,
+                      0.14,
                     ),
                   ),
                 ),
@@ -187,15 +189,11 @@ class _LoadingStorageTipsWidgetState extends State<LoadingStorageTipsWidget>
                     gradient: SweepGradient(
                       colors: [
                         Colors.transparent,
-                        AppTheme.lightTheme.colorScheme.primary.withOpacity(
-                          0.3,
-                        ),
-                        AppTheme.lightTheme.colorScheme.secondary.withOpacity(
-                          0.5,
-                        ),
+                        AppTheme.lightTheme.colorScheme.primary.withOpacity(0.2),
+                        AppTheme.lightTheme.colorScheme.secondary.withOpacity(0.3),
                         Colors.transparent,
                       ],
-                      stops: const [0.0, 0.3, 0.7, 1.0],
+                      stops: const [0.0, 0.35, 0.75, 1.0],
                     ),
                   ),
                 ),
@@ -209,7 +207,7 @@ class _LoadingStorageTipsWidgetState extends State<LoadingStorageTipsWidget>
           animation: _pulseAnimation,
           builder: (context, child) {
             return Transform.scale(
-              scale: _pulseAnimation.value * 0.9,
+              scale: _pulseAnimation.value * 0.92,
               child: Container(
                 width: 22.w,
                 height: 22.w,
@@ -227,16 +225,10 @@ class _LoadingStorageTipsWidgetState extends State<LoadingStorageTipsWidget>
                   boxShadow: [
                     BoxShadow(
                       color: AppTheme.lightTheme.colorScheme.primary
-                          .withOpacity(0.4),
-                      blurRadius: 25,
-                      spreadRadius: 8,
+                          .withOpacity(0.28),
+                      blurRadius: 22,
+                      spreadRadius: 6,
                       offset: const Offset(0, 4),
-                    ),
-                    BoxShadow(
-                      color: AppTheme.lightTheme.colorScheme.secondary
-                          .withOpacity(0.2),
-                      blurRadius: 40,
-                      spreadRadius: 12,
                     ),
                   ],
                 ),
@@ -268,24 +260,21 @@ class _LoadingStorageTipsWidgetState extends State<LoadingStorageTipsWidget>
                 style: AppTheme.lightTheme.textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.w700,
                   color: AppTheme.lightTheme.colorScheme.primary,
-                  letterSpacing: 0.5,
+                  letterSpacing: 0.3,
                 ),
                 textAlign: TextAlign.center,
               ),
             );
           },
         ),
-
         SizedBox(height: 2.h),
-
         Container(
           padding: EdgeInsets.symmetric(horizontal: 4.w),
           child: Text(
-            'Our AI is analyzing your ingredients to provide\npersonalized storage recommendations',
+            'Our AI is analyzing your ingredients to provide personalized storage recommendations.',
             style: AppTheme.lightTheme.textTheme.bodyLarge?.copyWith(
               color: AppTheme.lightTheme.colorScheme.onSurfaceVariant,
-              height: 1.5,
-              letterSpacing: 0.2,
+              height: 1.45,
             ),
             textAlign: TextAlign.center,
           ),
@@ -306,7 +295,7 @@ class _LoadingStorageTipsWidgetState extends State<LoadingStorageTipsWidget>
               return AnimatedBuilder(
                 animation: _shimmerController,
                 builder: (context, child) {
-                  final delay = index * 0.3;
+                  final delay = index * 0.25;
                   final animationValue =
                       (_shimmerController.value + delay) % 1.0;
                   final opacity =
@@ -319,7 +308,7 @@ class _LoadingStorageTipsWidgetState extends State<LoadingStorageTipsWidget>
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: AppTheme.lightTheme.colorScheme.primary
-                          .withOpacity(0.3 + (opacity * 0.7)),
+                          .withOpacity(0.25 + (opacity * 0.65)),
                     ),
                   );
                 },
@@ -329,56 +318,52 @@ class _LoadingStorageTipsWidgetState extends State<LoadingStorageTipsWidget>
 
           SizedBox(height: 3.h),
 
-          // Linear progress bar with shimmer effect
+          // Linear progress bar with shimmer
           Container(
             width: 70.w,
             height: 1.2.h,
             decoration: BoxDecoration(
               color: AppTheme.lightTheme.colorScheme.surfaceVariant,
-              borderRadius: BorderRadius.circular(0.6.h),
+              borderRadius: BorderRadius.circular(0.8.h),
             ),
             child: AnimatedBuilder(
               animation: _shimmerController,
               builder: (context, child) {
-                return Stack(
-                  children: [
-                    // Background progress
-                    Container(
-                      width: 70.w * 0.7,
+                return Stack(children: [
+                  // background progress fill
+                  FractionallySizedBox(
+                    widthFactor: 0.68,
+                    child: Container(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
-                            AppTheme.lightTheme.colorScheme.primary.withOpacity(
-                              0.3,
-                            ),
-                            AppTheme.lightTheme.colorScheme.secondary
-                                .withOpacity(0.3),
+                            AppTheme.lightTheme.colorScheme.primary.withOpacity(0.28),
+                            AppTheme.lightTheme.colorScheme.secondary.withOpacity(0.20),
                           ],
                         ),
-                        borderRadius: BorderRadius.circular(0.6.h),
+                        borderRadius: BorderRadius.circular(0.8.h),
                       ),
                     ),
-
-                    // Shimmer effect
-                    Positioned(
-                      left: _shimmerAnimation.value * 70.w * 0.3,
-                      child: Container(
-                        width: 15.w,
-                        height: 1.2.h,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Colors.white.withOpacity(0.0),
-                              Colors.white.withOpacity(0.4),
-                              Colors.white.withOpacity(0.0),
-                            ],
-                          ),
-                          borderRadius: BorderRadius.circular(0.6.h),
+                  ),
+                  // shimmer overlay
+                  Positioned(
+                    left: _shimmerAnimation.value * 70.w * 0.5,
+                    child: Container(
+                      width: 18.w,
+                      height: 1.2.h,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            Colors.white.withOpacity(0.0),
+                            Colors.white.withOpacity(0.35),
+                            Colors.white.withOpacity(0.0),
+                          ],
                         ),
+                        borderRadius: BorderRadius.circular(0.8.h),
                       ),
                     ),
-                  ],
-                );
+                  ),
+                ]);
               },
             ),
           ),
@@ -389,41 +374,38 @@ class _LoadingStorageTipsWidgetState extends State<LoadingStorageTipsWidget>
 
   Widget _buildLoadingTips() {
     final tips = [
-      "💡 Analyzing ingredient freshness patterns",
-      "🌡️ Calculating optimal temperature zones",
-      "📅 Determining best storage durations",
-      "🔬 Processing nutritional data",
+      "Analyzing ingredient freshness patterns",
+      "Calculating optimal temperature zones",
+      "Determining best storage durations",
+      "Processing nutritional data",
     ];
 
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 6.w),
       child: AnimatedBuilder(
-        animation: _fadeController,
+        animation: _fadeAnimation,
         builder: (context, child) {
           final currentTipIndex =
-              (_fadeController.value * tips.length).floor() % tips.length;
+              (_fadeAnimation.value * tips.length).floor() % tips.length;
 
           return AnimatedSwitcher(
-            duration: const Duration(milliseconds: 500),
+            duration: const Duration(milliseconds: 450),
             child: Container(
               key: ValueKey(currentTipIndex),
-              padding: EdgeInsets.all(4.w),
+              padding: EdgeInsets.all(3.w),
               decoration: BoxDecoration(
                 color: AppTheme.lightTheme.colorScheme.primaryContainer
-                    .withOpacity(0.1),
-                borderRadius: BorderRadius.circular(16),
+                    .withOpacity(0.08),
+                borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: AppTheme.lightTheme.colorScheme.primary.withOpacity(
-                    0.1,
-                  ),
-                  width: 1,
+                  color: AppTheme.lightTheme.colorScheme.primary.withOpacity(0.08),
                 ),
               ),
               child: Text(
                 tips[currentTipIndex],
                 style: AppTheme.lightTheme.textTheme.bodyMedium?.copyWith(
                   color: AppTheme.lightTheme.colorScheme.primary,
-                  fontWeight: FontWeight.w500,
+                  fontWeight: FontWeight.w600,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -440,78 +422,51 @@ class _LoadingStorageTipsWidgetState extends State<LoadingStorageTipsWidget>
         return AnimatedBuilder(
           animation: _shimmerController,
           builder: (context, child) {
+            final widths = [85.w, 70.w, 60.w];
+
             return Container(
               margin: EdgeInsets.only(bottom: 3.h),
-              padding: EdgeInsets.all(5.w),
+              padding: EdgeInsets.all(4.w),
               decoration: BoxDecoration(
                 color: AppTheme.lightTheme.colorScheme.surface,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: AppTheme.lightTheme.colorScheme.outline.withOpacity(
-                    0.1,
-                  ),
-                ),
+                borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.08),
-                    blurRadius: 20,
-                    offset: const Offset(0, 4),
-                    spreadRadius: -2,
-                  ),
-                  BoxShadow(
-                    color: AppTheme.lightTheme.colorScheme.primary.withOpacity(
-                      0.05,
-                    ),
-                    blurRadius: 30,
-                    offset: const Offset(0, 8),
-                    spreadRadius: -4,
+                    color: Colors.black.withOpacity(0.05),
+                    blurRadius: 18,
+                    offset: const Offset(0, 6),
                   ),
                 ],
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Header skeleton with enhanced shimmer
+                  // header skeleton
                   Row(
                     children: [
-                      _buildShimmerContainer(
-                        width: 14.w,
-                        height: 14.w,
-                        borderRadius: 7.w,
-                      ),
+                      _buildShimmerContainer(width: 14.w, height: 14.w, radius: 12),
                       SizedBox(width: 4.w),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            _buildShimmerContainer(
-                              width: 50.w,
-                              height: 2.h,
-                              borderRadius: 4,
-                            ),
+                            _buildShimmerContainer(width: 50.w, height: 2.h, radius: 6),
                             SizedBox(height: 1.h),
-                            _buildShimmerContainer(
-                              width: 30.w,
-                              height: 1.5.h,
-                              borderRadius: 4,
-                            ),
+                            _buildShimmerContainer(width: 30.w, height: 1.4.h, radius: 6),
                           ],
                         ),
                       ),
                     ],
                   ),
-
                   SizedBox(height: 3.h),
-
-                  // Content skeleton lines
-                  ...List.generate(3, (lineIndex) {
-                    final widths = [85.w, 75.w, 60.w];
+                  // content skeleton lines
+                  ...List.generate(3, (i) {
                     return Padding(
-                      padding: EdgeInsets.only(bottom: 1.5.h),
+                      padding: EdgeInsets.only(bottom: 1.6.h),
                       child: _buildShimmerContainer(
-                        width: widths[lineIndex % widths.length],
+                        width: widths[i % widths.length],
                         height: 1.8.h,
-                        borderRadius: 4,
+                        radius: 6,
                       ),
                     );
                   }),
@@ -527,28 +482,29 @@ class _LoadingStorageTipsWidgetState extends State<LoadingStorageTipsWidget>
   Widget _buildShimmerContainer({
     required double width,
     required double height,
-    required double borderRadius,
+    required double radius,
   }) {
     return AnimatedBuilder(
       animation: _shimmerController,
       builder: (context, child) {
+        final stop = _shimmerAnimation.value.clamp(0.0, 1.0);
         return Container(
           width: width,
           height: height,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(borderRadius),
+            borderRadius: BorderRadius.circular(radius),
             gradient: LinearGradient(
               begin: Alignment.centerLeft,
               end: Alignment.centerRight,
               colors: [
-                AppTheme.lightTheme.colorScheme.surfaceVariant.withOpacity(0.3),
-                AppTheme.lightTheme.colorScheme.surfaceVariant.withOpacity(0.6),
-                AppTheme.lightTheme.colorScheme.surfaceVariant.withOpacity(0.3),
+                AppTheme.lightTheme.colorScheme.surfaceVariant.withOpacity(0.28),
+                AppTheme.lightTheme.colorScheme.surfaceVariant.withOpacity(0.55),
+                AppTheme.lightTheme.colorScheme.surfaceVariant.withOpacity(0.28),
               ],
               stops: [
-                math.max(0.0, _shimmerAnimation.value - 0.3),
-                _shimmerAnimation.value,
-                math.min(1.0, _shimmerAnimation.value + 0.3),
+                (stop - 0.25).clamp(0.0, 1.0),
+                stop,
+                (stop + 0.25).clamp(0.0, 1.0),
               ],
             ),
           ),

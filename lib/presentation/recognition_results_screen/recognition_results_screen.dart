@@ -359,7 +359,7 @@ class _RecognitionResultsScreenState extends State<RecognitionResultsScreen> {
           title: Text(
             'Recognition Results',
             style: AppTheme.lightTheme.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w800,
             ),
           ),
           leading: IconButton(
@@ -491,6 +491,7 @@ class _RecognitionResultsScreenState extends State<RecognitionResultsScreen> {
                                 borderRadius: BorderRadius.circular(14),
                               ),
                               elevation: 2,
+                                shadowColor: const Color.fromARGB(255, 22, 77, 1).withOpacity(1),
                               color: AppTheme.lightTheme.colorScheme.surface,
                               child: Padding(
                                 padding: EdgeInsets.all(3.w),

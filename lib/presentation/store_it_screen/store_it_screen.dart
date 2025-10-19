@@ -28,11 +28,7 @@ class _StoreItScreenState extends State<StoreItScreen> {
   }
 
   void _initializeService() {
-    // Initialize the storage tips service with Gemini API
-    // TODO: Replace with your actual Gemini API key
-    // You can get it from: https://makersuite.google.com/app/apikey
-    const apiKey =
-        'AIzaSyBHaPa5KHVpklOP9d_I6B1q4W-4d09FfsQ'; // Replace with actual API key
+    const apiKey = 'AIzaSyBHaPa5KHVpklOP9d_I6B1q4W-4d09FfsQ';
     _storageTipsService = StorageTipsService(apiKey: apiKey);
     _loadArguments();
   }
@@ -92,9 +88,11 @@ class _StoreItScreenState extends State<StoreItScreen> {
 
     HapticFeedback.lightImpact();
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Storage tips copied to clipboard'),
-        duration: Duration(seconds: 2),
+      SnackBar(
+        content: const Text('Storage tips copied to clipboard'),
+        duration: const Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );
   }
@@ -104,9 +102,11 @@ class _StoreItScreenState extends State<StoreItScreen> {
 
     HapticFeedback.lightImpact();
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Storage tips saved to favorites'),
-        duration: Duration(seconds: 2),
+      SnackBar(
+        content: const Text('Storage tips saved to favorites'),
+        duration: const Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );
   }
@@ -122,7 +122,7 @@ class _StoreItScreenState extends State<StoreItScreen> {
         title: Text(
           'Storage Tips',
           style: AppTheme.lightTheme.textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w800,
           ),
         ),
         leading: IconButton(
@@ -140,7 +140,7 @@ class _StoreItScreenState extends State<StoreItScreen> {
               icon: CustomIconWidget(
                 iconName: 'share',
                 color: AppTheme.lightTheme.colorScheme.primary,
-                size: 6.w,
+                size: 5.5.w,
               ),
             ),
             IconButton(
@@ -148,9 +148,10 @@ class _StoreItScreenState extends State<StoreItScreen> {
               icon: CustomIconWidget(
                 iconName: 'favorite_border',
                 color: AppTheme.lightTheme.colorScheme.primary,
-                size: 6.w,
+                size: 5.5.w,
               ),
             ),
+            SizedBox(width: 1.w),
           ],
         ],
       ),
@@ -180,25 +181,14 @@ class _StoreItScreenState extends State<StoreItScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header with ingredients
           _buildIngredientsHeader(),
-
           SizedBox(height: 3.h),
-
-          // Quick Actions Grid
-          _buildQuickActionsGrid(),
-
-          SizedBox(height: 3.h),
-
-          // Storage Tips Cards
           _buildStorageTipsSection(),
-
           SizedBox(height: 3.h),
-
-          // Environmental Factors
+          _buildQuickActionsGrid(),
+          SizedBox(height: 3.h),
           _buildEnvironmentalSection(),
-
-          SizedBox(height: 10.h), // Bottom padding
+          SizedBox(height: 3.h),
         ],
       ),
     );
@@ -211,65 +201,58 @@ class _StoreItScreenState extends State<StoreItScreen> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            AppTheme.lightTheme.colorScheme.primary.withOpacity(0.1),
-            AppTheme.lightTheme.colorScheme.secondary.withOpacity(0.05),
+            AppTheme.lightTheme.colorScheme.primary.withOpacity(0.08),
+            AppTheme.lightTheme.colorScheme.secondary.withOpacity(0.04),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: AppTheme.lightTheme.colorScheme.primary.withOpacity(0.2),
+          color: AppTheme.lightTheme.colorScheme.primary.withOpacity(0.15),
           width: 1,
         ),
       ),
       child: Column(
         children: [
-          // Icon and title
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                padding: EdgeInsets.all(3.w),
+                padding: EdgeInsets.all(2.5.w),
                 decoration: BoxDecoration(
                   color: AppTheme.lightTheme.colorScheme.primary,
                   shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppTheme.lightTheme.colorScheme.primary
-                          .withOpacity(0.3),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
                 ),
                 child: CustomIconWidget(
                   iconName: 'inventory',
                   color: Colors.white,
-                  size: 7.w,
+                  size: 6.w,
                 ),
               ),
               SizedBox(width: 3.w),
-              Text(
-                'Storage Guide',
-                style: AppTheme.lightTheme.textTheme.headlineSmall?.copyWith(
-                  color: AppTheme.lightTheme.colorScheme.primary,
-                  fontWeight: FontWeight.w700,
+              Flexible(
+                child: Text(
+                  'Storage Guide',
+                  style: AppTheme.lightTheme.textTheme.titleLarge?.copyWith(
+                    color: AppTheme.lightTheme.colorScheme.primary,
+                    fontWeight: FontWeight.w800,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
           ),
-
           SizedBox(height: 2.h),
-
-          // Ingredients count
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 1.h),
+            padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 1.h),
             decoration: BoxDecoration(
               color: AppTheme.lightTheme.colorScheme.surface,
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(10),
               border: Border.all(
-                color: AppTheme.lightTheme.colorScheme.outline.withOpacity(0.2),
+                color: AppTheme.lightTheme.colorScheme.outline.withOpacity(
+                  0.15,
+                ),
               ),
             ),
             child: Row(
@@ -278,14 +261,14 @@ class _StoreItScreenState extends State<StoreItScreen> {
                 CustomIconWidget(
                   iconName: 'grain',
                   color: AppTheme.lightTheme.colorScheme.secondary,
-                  size: 5.w,
+                  size: 4.5.w,
                 ),
                 SizedBox(width: 2.w),
                 Text(
-                  '${_ingredients.length} ingredients',
-                  style: AppTheme.lightTheme.textTheme.titleSmall?.copyWith(
+                  '${_ingredients.length} ${_ingredients.length == 1 ? 'ingredient' : 'ingredients'}',
+                  style: AppTheme.lightTheme.textTheme.bodyMedium?.copyWith(
                     color: AppTheme.lightTheme.colorScheme.secondary,
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w800,
                   ),
                 ),
               ],
@@ -298,13 +281,13 @@ class _StoreItScreenState extends State<StoreItScreen> {
 
   Widget _buildQuickActionsGrid() {
     final generalTips = List<String>.from(_storageTips!['generalTips'] ?? []);
+    if (generalTips.isEmpty) return const SizedBox.shrink();
 
-    // Define labels for each tip category
     final tipLabels = [
-      'Temperature Control',
-      'Freshness Tips',
+      'Item Rotation',
+      'Freshness',
       'Best Practices',
-      'Storage Essentials',
+      'Storage Tips',
     ];
 
     return Column(
@@ -313,12 +296,10 @@ class _StoreItScreenState extends State<StoreItScreen> {
         Text(
           'Quick Tips',
           style: AppTheme.lightTheme.textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w800,
           ),
         ),
-
         SizedBox(height: 2.h),
-
         GridView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
@@ -326,7 +307,7 @@ class _StoreItScreenState extends State<StoreItScreen> {
             crossAxisCount: 2,
             crossAxisSpacing: 3.w,
             mainAxisSpacing: 2.h,
-            childAspectRatio: 1.0,
+            childAspectRatio: 0.95,
           ),
           itemCount: math.min(generalTips.length, 4),
           itemBuilder: (context, index) {
@@ -334,132 +315,108 @@ class _StoreItScreenState extends State<StoreItScreen> {
             final icons = ['tips_and_updates', 'ac_unit', 'schedule', 'eco'];
             final colors = [
               AppTheme.lightTheme.colorScheme.primary,
-              AppTheme.lightTheme.colorScheme.secondary,
-              AppTheme.lightTheme.colorScheme.tertiary,
-              Colors.green,
+              Colors.blue.shade600,
+              Colors.orange.shade600,
+              Colors.green.shade600,
             ];
 
-            return GestureDetector(
-              onTap: () => _navigateToTipDetail(
-                title: tipLabels[index % tipLabels.length],
-                category: 'Quick Storage Tip',
-                data: {
-                  'tip': tip,
-                  'details': [
-                    'Follow this tip for optimal storage results',
-                    'Keep your ingredients fresh for longer',
-                    'Reduce food waste with proper storage',
-                  ],
-                },
-                type: 'general',
-              ),
-              child: Container(
-                padding: EdgeInsets.all(3.w),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      colors[index % colors.length].withOpacity(0.15),
-                      colors[index % colors.length].withOpacity(0.05),
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: colors[index % colors.length].withOpacity(0.3),
-                    width: 1.5,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: colors[index % colors.length].withOpacity(0.1),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // Icon
-                    Container(
-                      padding: EdgeInsets.all(3.w),
-                      decoration: BoxDecoration(
-                        color: colors[index % colors.length],
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: colors[index % colors.length].withOpacity(
-                              0.3,
-                            ),
-                            blurRadius: 6,
-                            offset: const Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: CustomIconWidget(
-                        iconName: icons[index % icons.length],
-                        color: Colors.white,
-                        size: 6.w,
-                      ),
-                    ),
-
-                    SizedBox(height: 1.5.h),
-
-                    // Label
-                    Text(
-                      tipLabels[index % tipLabels.length],
-                      style: AppTheme.lightTheme.textTheme.labelLarge?.copyWith(
-                        fontWeight: FontWeight.w700,
-                        color: colors[index % colors.length],
-                      ),
-                      textAlign: TextAlign.center,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-
-                    SizedBox(height: 0.5.h),
-
-                    // Short description
-                    Text(
-                      tip.length > 40 ? '${tip.substring(0, 40)}...' : tip,
-                      style: AppTheme.lightTheme.textTheme.bodySmall?.copyWith(
-                        fontWeight: FontWeight.w500,
-                        height: 1.2,
-                        color: AppTheme.lightTheme.colorScheme.onSurfaceVariant,
-                      ),
-                      textAlign: TextAlign.center,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-
-                    SizedBox(height: 1.h),
-
-                    // Tap hint
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 2.w,
-                        vertical: 0.5.h,
-                      ),
-                      decoration: BoxDecoration(
-                        color: colors[index % colors.length].withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        'TAP FOR MORE',
-                        style: AppTheme.lightTheme.textTheme.labelSmall
-                            ?.copyWith(
-                              color: colors[index % colors.length],
-                              fontWeight: FontWeight.w600,
-                            ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            return _buildQuickTipCard(
+              tip: tip,
+              label: tipLabels[index % tipLabels.length],
+              icon: icons[index % icons.length],
+              color: colors[index % colors.length],
+              index: index,
             );
           },
         ),
       ],
+    );
+  }
+
+  Widget _buildQuickTipCard({
+    required String tip,
+    required String label,
+    required String icon,
+    required Color color,
+    required int index,
+  }) {
+    return InkWell(
+      onTap: () => _navigateToTipDetail(
+        title: label,
+        category: 'Quick Storage Tip',
+        data: {
+          'tip': tip,
+          'details': [
+            'Follow this tip for optimal storage results',
+            'Keep your ingredients fresh for longer',
+            'Reduce food waste with proper storage',
+          ],
+        },
+        type: 'general',
+      ),
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        padding: EdgeInsets.all(3.w),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.08),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: color.withOpacity(0.2), width: 1),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: EdgeInsets.all(4.w),
+              decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+              child: CustomIconWidget(
+                iconName: icon,
+                color: Colors.white,
+                size: 10.w,
+              ),
+            ),
+            SizedBox(height: 1.5.h),
+            Text(
+              label,
+              style: AppTheme.lightTheme.textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.w800,
+                color: color,
+                fontSize: 5.w,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            Spacer(),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 1.h),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.15),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: color.withOpacity(0.3), width: 0.5),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Tap for more',
+                    style: AppTheme.lightTheme.textTheme.bodySmall?.copyWith(
+                      color: color,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 14.sp,
+                    ),
+                  ),
+                  SizedBox(width: 1.5.w),
+                  CustomIconWidget(
+                    iconName: 'chevron_right',
+                    color: color,
+                    size: 3.5.w,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -468,37 +425,38 @@ class _StoreItScreenState extends State<StoreItScreen> {
       _storageTips!['itemSpecificTips'] ?? [],
     );
 
+    if (itemTips.isEmpty) return const SizedBox.shrink();
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Ingredient Storage',
           style: AppTheme.lightTheme.textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w800,
           ),
         ),
-
         SizedBox(height: 2.h),
-
-        ListView.builder(
+        ListView.separated(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          itemCount: math.min(itemTips.length, 6), // Limit to 6 items
+          itemCount: math.min(itemTips.length, 10),
+          separatorBuilder: (context, index) => SizedBox(height: 1.5.h),
           itemBuilder: (context, index) {
-            return _buildSimpleStorageCard(itemTips[index]);
+            return _buildStorageCard(itemTips[index]);
           },
         ),
       ],
     );
   }
 
-  Widget _buildSimpleStorageCard(Map<String, dynamic> tipData) {
+  Widget _buildStorageCard(Map<String, dynamic> tipData) {
     final ingredient = tipData['ingredient'] ?? 'Unknown';
     final location = tipData['location'] ?? '';
     final shelfLife = tipData['shelfLife'] ?? '';
     final storageMethod = tipData['storageMethod'] ?? '';
 
-    return GestureDetector(
+    return InkWell(
       onTap: () => _navigateToTipDetail(
         title: ingredient,
         category: 'Ingredient Storage',
@@ -512,18 +470,18 @@ class _StoreItScreenState extends State<StoreItScreen> {
         },
         type: 'ingredient',
       ),
+      borderRadius: BorderRadius.circular(12),
       child: Container(
-        margin: EdgeInsets.only(bottom: 2.h),
-        padding: EdgeInsets.all(4.w),
+        padding: EdgeInsets.all(3.5.w),
         decoration: BoxDecoration(
           color: AppTheme.lightTheme.colorScheme.surface,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: AppTheme.lightTheme.colorScheme.outline.withOpacity(0.1),
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: const Color.fromARGB(255, 11, 68, 0).withOpacity(0.4),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -531,68 +489,40 @@ class _StoreItScreenState extends State<StoreItScreen> {
         ),
         child: Row(
           children: [
-            // Icon
             Container(
-              padding: EdgeInsets.all(3.w),
+              padding: EdgeInsets.all(2.5.w),
               decoration: BoxDecoration(
                 color: _getStorageIconColor(storageMethod).withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(10),
               ),
               child: CustomIconWidget(
                 iconName: _getStorageIcon(storageMethod),
                 color: _getStorageIconColor(storageMethod),
-                size: 6.w,
+                size: 5.5.w,
               ),
             ),
-
-            SizedBox(width: 4.w),
-
-            // Content
+            SizedBox(width: 3.w),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          ingredient,
-                          style: AppTheme.lightTheme.textTheme.titleMedium
-                              ?.copyWith(fontWeight: FontWeight.w600),
-                        ),
-                      ),
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 2.w,
-                          vertical: 0.5.h,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppTheme.lightTheme.colorScheme.primary
-                              .withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          'TAP FOR DETAILS',
-                          style: AppTheme.lightTheme.textTheme.labelSmall
-                              ?.copyWith(
-                                color: AppTheme.lightTheme.colorScheme.primary,
-                                fontWeight: FontWeight.w600,
-                              ),
-                        ),
-                      ),
-                    ],
+                  Text(
+                    ingredient,
+                    style: AppTheme.lightTheme.textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w800,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-
-                  SizedBox(height: 0.5.h),
-
-                  if (location.isNotEmpty)
+                  if (location.isNotEmpty) ...[
+                    SizedBox(height: 0.5.h),
                     Row(
                       children: [
                         CustomIconWidget(
                           iconName: 'place',
                           color:
                               AppTheme.lightTheme.colorScheme.onSurfaceVariant,
-                          size: 4.w,
+                          size: 3.5.w,
                         ),
                         SizedBox(width: 1.w),
                         Flexible(
@@ -605,20 +535,21 @@ class _StoreItScreenState extends State<StoreItScreen> {
                                       .colorScheme
                                       .onSurfaceVariant,
                                 ),
+                            maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ],
                     ),
-
+                  ],
                   if (shelfLife.isNotEmpty) ...[
-                    SizedBox(height: 0.5.h),
+                    SizedBox(height: 0.3.h),
                     Row(
                       children: [
                         CustomIconWidget(
                           iconName: 'schedule',
                           color: AppTheme.lightTheme.colorScheme.secondary,
-                          size: 4.w,
+                          size: 3.5.w,
                         ),
                         SizedBox(width: 1.w),
                         Flexible(
@@ -628,8 +559,9 @@ class _StoreItScreenState extends State<StoreItScreen> {
                                 ?.copyWith(
                                   color:
                                       AppTheme.lightTheme.colorScheme.secondary,
-                                  fontWeight: FontWeight.w500,
+                                  fontWeight: FontWeight.w600,
                                 ),
+                            maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
@@ -638,6 +570,11 @@ class _StoreItScreenState extends State<StoreItScreen> {
                   ],
                 ],
               ),
+            ),
+            Icon(
+              Icons.chevron_right,
+              color: AppTheme.lightTheme.colorScheme.onSurfaceVariant,
+              size: 5.w,
             ),
           ],
         ),
@@ -658,49 +595,25 @@ class _StoreItScreenState extends State<StoreItScreen> {
         Text(
           'Storage Conditions',
           style: AppTheme.lightTheme.textTheme.titleLarge?.copyWith(
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w800,
           ),
         ),
-
         SizedBox(height: 2.h),
-
-        Container(
-          padding: EdgeInsets.all(4.w),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                AppTheme.lightTheme.colorScheme.tertiaryContainer.withOpacity(
-                  0.3,
-                ),
-                AppTheme.lightTheme.colorScheme.tertiaryContainer.withOpacity(
-                  0.1,
-                ),
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: AppTheme.lightTheme.colorScheme.tertiary.withOpacity(0.2),
-            ),
+        GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 3.w,
+            mainAxisSpacing: 2.h,
+            childAspectRatio: 0.95,
           ),
-          child: GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 3.w,
-              mainAxisSpacing: 2.h,
-              childAspectRatio: 1.3,
-            ),
-            itemCount: factors.length,
-            itemBuilder: (context, index) {
-              final factor = factors.keys.elementAt(index);
-              final value = factors[factor]?.toString() ?? '';
-
-              return _buildEnvironmentalFactor(factor, value);
-            },
-          ),
+          itemCount: math.min(factors.length, 4),
+          itemBuilder: (context, index) {
+            final factor = factors.keys.elementAt(index);
+            final value = factors[factor]?.toString() ?? '';
+            return _buildEnvironmentalFactor(factor, value);
+          },
         ),
       ],
     );
@@ -709,7 +622,7 @@ class _StoreItScreenState extends State<StoreItScreen> {
   Widget _buildEnvironmentalFactor(String factor, String value) {
     final factorData = _getEnvironmentalFactorData(factor);
 
-    return GestureDetector(
+    return InkWell(
       onTap: () => _navigateToTipDetail(
         title: factorData['title'],
         category: 'Environmental Factor',
@@ -720,73 +633,73 @@ class _StoreItScreenState extends State<StoreItScreen> {
         },
         type: 'environmental',
       ),
+      borderRadius: BorderRadius.circular(12),
       child: Container(
         padding: EdgeInsets.all(3.w),
         decoration: BoxDecoration(
-          color: AppTheme.lightTheme.colorScheme.surface,
+          color: factorData['color'].withOpacity(0.08),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: factorData['color'].withOpacity(0.2)),
-          boxShadow: [
-            BoxShadow(
-              color: factorData['color'].withOpacity(0.1),
-              blurRadius: 6,
-              offset: const Offset(0, 3),
-            ),
-          ],
+          border: Border.all(
+            color: factorData['color'].withOpacity(0.2),
+            width: 1,
+          ),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: EdgeInsets.all(2.w),
+              padding: EdgeInsets.all(3.w),
               decoration: BoxDecoration(
-                color: factorData['color'].withOpacity(0.1),
+                color: factorData['color'],
                 shape: BoxShape.circle,
               ),
               child: CustomIconWidget(
                 iconName: factorData['icon'],
-                color: factorData['color'],
-                size: 6.w,
+                color: Colors.white,
+                size: 10.w,
               ),
             ),
-
-            SizedBox(height: 1.h),
-
+            SizedBox(height: 1.5.h),
             Text(
               factorData['title'],
-              style: AppTheme.lightTheme.textTheme.labelLarge?.copyWith(
-                fontWeight: FontWeight.w600,
+              style: AppTheme.lightTheme.textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.w800,
                 color: factorData['color'],
+                fontSize: 5.w,
               ),
               textAlign: TextAlign.center,
-            ),
-
-            SizedBox(height: 0.5.h),
-
-            Text(
-              value.length > 30 ? '${value.substring(0, 30)}...' : value,
-              style: AppTheme.lightTheme.textTheme.bodySmall,
-              textAlign: TextAlign.center,
-              maxLines: 2,
+              maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
-
-            SizedBox(height: 0.5.h),
-
-            // Tap hint
+            Spacer(),
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 1.5.w, vertical: 0.3.h),
+              padding: EdgeInsets.symmetric(horizontal: 3.w, vertical: 1.h),
               decoration: BoxDecoration(
-                color: factorData['color'].withOpacity(0.1),
-                borderRadius: BorderRadius.circular(6),
-              ),
-              child: Text(
-                'TAP',
-                style: AppTheme.lightTheme.textTheme.labelSmall?.copyWith(
-                  color: factorData['color'],
-                  fontWeight: FontWeight.w600,
-                  fontSize: 8.sp,
+                color: factorData['color'].withOpacity(0.15),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: factorData['color'].withOpacity(0.3),
+                  width: 0.5,
                 ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Tap for more',
+                    style: AppTheme.lightTheme.textTheme.bodySmall?.copyWith(
+                      color: factorData['color'],
+                      fontWeight: FontWeight.w800,
+                      fontSize: 14.sp,
+                    ),
+                  ),
+                  SizedBox(width: 1.5.w),
+                  CustomIconWidget(
+                    iconName: 'chevron_right',
+                    color: factorData['color'],
+                    size: 3.5.w,
+                  ),
+                ],
               ),
             ),
           ],
@@ -801,18 +714,26 @@ class _StoreItScreenState extends State<StoreItScreen> {
         return {
           'icon': 'thermostat',
           'title': 'Temperature',
-          'color': Colors.red,
+          'color': Colors.red.shade600,
         };
       case 'humidity':
         return {
           'icon': 'water_drop',
           'title': 'Humidity',
-          'color': Colors.blue,
+          'color': Colors.blue.shade600,
         };
       case 'light':
-        return {'icon': 'wb_sunny', 'title': 'Light', 'color': Colors.amber};
+        return {
+          'icon': 'wb_sunny',
+          'title': 'Light',
+          'color': Colors.amber.shade700,
+        };
       case 'airflow':
-        return {'icon': 'air', 'title': 'Airflow', 'color': Colors.cyan};
+        return {
+          'icon': 'air',
+          'title': 'Airflow',
+          'color': Colors.cyan.shade600,
+        };
       default:
         return {
           'icon': 'tune',
@@ -841,18 +762,17 @@ class _StoreItScreenState extends State<StoreItScreen> {
     if (storageMethod == null) return AppTheme.lightTheme.colorScheme.primary;
     final method = storageMethod.toLowerCase();
     if (method.contains('refrigerat') || method.contains('fridge')) {
-      return Colors.blue;
+      return Colors.blue.shade600;
     } else if (method.contains('freez')) {
-      return Colors.cyan;
+      return Colors.cyan.shade600;
     } else if (method.contains('room') || method.contains('counter')) {
-      return Colors.orange;
+      return Colors.orange.shade600;
     } else if (method.contains('pantry')) {
-      return Colors.brown;
+      return Colors.brown.shade600;
     }
     return AppTheme.lightTheme.colorScheme.primary;
   }
 
-  // Navigation method to detail screen
   void _navigateToTipDetail({
     required String title,
     required String category,
@@ -871,7 +791,6 @@ class _StoreItScreenState extends State<StoreItScreen> {
     );
   }
 
-  // Helper method to generate ingredient-specific tips
   List<String> _generateIngredientTips(
     String ingredient,
     String storageMethod,
@@ -908,7 +827,6 @@ class _StoreItScreenState extends State<StoreItScreen> {
     return tips;
   }
 
-  // Helper method to generate spoilage signs
   Map<String, dynamic> _generateSpoilageSigns(String ingredient) {
     final signs = <String, dynamic>{};
     final item = ingredient.toLowerCase();
@@ -940,7 +858,6 @@ class _StoreItScreenState extends State<StoreItScreen> {
     return signs;
   }
 
-  // Helper method to get optimal ranges for environmental factors
   String _getOptimalRange(String factor) {
     switch (factor.toLowerCase()) {
       case 'temperature':
@@ -959,30 +876,40 @@ class _StoreItScreenState extends State<StoreItScreen> {
   Widget _buildErrorState() {
     return Center(
       child: Padding(
-        padding: EdgeInsets.all(6.w),
+        padding: EdgeInsets.symmetric(horizontal: 8.w),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CustomIconWidget(
-              iconName: 'error_outline',
-              color: AppTheme.lightTheme.colorScheme.error,
-              size: 20.w,
+            Container(
+              padding: EdgeInsets.all(4.w),
+              decoration: BoxDecoration(
+                color: AppTheme.lightTheme.colorScheme.errorContainer
+                    .withOpacity(0.3),
+                shape: BoxShape.circle,
+              ),
+              child: CustomIconWidget(
+                iconName: 'error_outline',
+                color: AppTheme.lightTheme.colorScheme.error,
+                size: 15.w,
+              ),
             ),
             SizedBox(height: 3.h),
             Text(
               'Oops! Something went wrong',
-              style: AppTheme.lightTheme.textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.w600,
+              style: AppTheme.lightTheme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w800,
               ),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 2.h),
+            SizedBox(height: 1.5.h),
             Text(
               _errorMessage ?? 'Unable to generate storage tips',
-              style: AppTheme.lightTheme.textTheme.bodyLarge?.copyWith(
+              style: AppTheme.lightTheme.textTheme.bodyMedium?.copyWith(
                 color: AppTheme.lightTheme.colorScheme.onSurfaceVariant,
               ),
               textAlign: TextAlign.center,
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
             ),
             SizedBox(height: 4.h),
             ElevatedButton.icon(
@@ -990,20 +917,21 @@ class _StoreItScreenState extends State<StoreItScreen> {
               icon: CustomIconWidget(
                 iconName: 'refresh',
                 color: Colors.white,
-                size: 5.w,
+                size: 4.5.w,
               ),
               label: Text(
                 'Try Again',
                 style: AppTheme.lightTheme.textTheme.labelLarge?.copyWith(
                   color: Colors.white,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w800,
                 ),
               ),
               style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
+                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 1.8.h),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
+                elevation: 0,
               ),
             ),
           ],
@@ -1015,30 +943,40 @@ class _StoreItScreenState extends State<StoreItScreen> {
   Widget _buildEmptyState() {
     return Center(
       child: Padding(
-        padding: EdgeInsets.all(6.w),
+        padding: EdgeInsets.symmetric(horizontal: 8.w),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CustomIconWidget(
-              iconName: 'inventory_2',
-              color: AppTheme.lightTheme.colorScheme.primary,
-              size: 20.w,
+            Container(
+              padding: EdgeInsets.all(4.w),
+              decoration: BoxDecoration(
+                color: AppTheme.lightTheme.colorScheme.primaryContainer
+                    .withOpacity(0.3),
+                shape: BoxShape.circle,
+              ),
+              child: CustomIconWidget(
+                iconName: 'inventory_2',
+                color: AppTheme.lightTheme.colorScheme.primary,
+                size: 15.w,
+              ),
             ),
             SizedBox(height: 3.h),
             Text(
               'No Ingredients Found',
-              style: AppTheme.lightTheme.textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.w600,
+              style: AppTheme.lightTheme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.w800,
               ),
               textAlign: TextAlign.center,
             ),
-            SizedBox(height: 2.h),
+            SizedBox(height: 1.5.h),
             Text(
               'Please go back and select some ingredients to get storage tips.',
-              style: AppTheme.lightTheme.textTheme.bodyLarge?.copyWith(
+              style: AppTheme.lightTheme.textTheme.bodyMedium?.copyWith(
                 color: AppTheme.lightTheme.colorScheme.onSurfaceVariant,
               ),
               textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
             SizedBox(height: 4.h),
             ElevatedButton.icon(
@@ -1046,20 +984,21 @@ class _StoreItScreenState extends State<StoreItScreen> {
               icon: CustomIconWidget(
                 iconName: 'arrow_back',
                 color: Colors.white,
-                size: 5.w,
+                size: 4.5.w,
               ),
               label: Text(
                 'Go Back',
                 style: AppTheme.lightTheme.textTheme.labelLarge?.copyWith(
                   color: Colors.white,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w800,
                 ),
               ),
               style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
+                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 1.8.h),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
+                elevation: 0,
               ),
             ),
           ],
