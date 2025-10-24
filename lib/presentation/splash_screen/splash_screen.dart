@@ -156,6 +156,7 @@ class _SplashScreenState extends State<SplashScreen>
   Future<void> _navigateToNextScreen() async {
     final prefs = await SharedPreferences.getInstance();
     final isFirstLaunch = prefs.getBool('first_launch') ?? true;
+    final isLoggedIn = prefs.getBool('is_logged_in') ?? false;
 
     // Restore system UI before navigation
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
@@ -163,6 +164,8 @@ class _SplashScreenState extends State<SplashScreen>
     if (mounted) {
       if (isFirstLaunch) {
         Navigator.pushReplacementNamed(context, '/onboarding-screen');
+      } else if (!isLoggedIn) {
+        Navigator.pushReplacementNamed(context, '/sign-in-screen');
       } else {
         Navigator.pushReplacementNamed(context, '/camera-screen');
       }

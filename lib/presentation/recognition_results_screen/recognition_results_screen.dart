@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:sizer/sizer.dart';
 
 import '../../core/app_export.dart';
+import '../../widgets/user_profile_widget.dart';
 import './widgets/add_ingredient_modal_widget.dart';
 import './widgets/captured_image_header_widget.dart';
 import './widgets/empty_recognition_widget.dart';
@@ -390,6 +391,13 @@ class _RecognitionResultsScreenState extends State<RecognitionResultsScreen> {
                   size: 6.w,
                 ),
               ),
+            // User Profile Widget
+            Padding(
+              padding: EdgeInsets.only(right: 3.w),
+              child: Center(
+                child: UserProfileWidget(size: 10.w, showBorder: true),
+              ),
+            ),
           ],
         ),
         body: RefreshIndicator(
@@ -491,7 +499,12 @@ class _RecognitionResultsScreenState extends State<RecognitionResultsScreen> {
                                 borderRadius: BorderRadius.circular(14),
                               ),
                               elevation: 2,
-                                shadowColor: const Color.fromARGB(255, 22, 77, 1).withOpacity(1),
+                              shadowColor: const Color.fromARGB(
+                                255,
+                                22,
+                                77,
+                                1,
+                              ).withOpacity(1),
                               color: AppTheme.lightTheme.colorScheme.surface,
                               child: Padding(
                                 padding: EdgeInsets.all(3.w),

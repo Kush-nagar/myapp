@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "242208760241",
+    "project_id": "kushagraapp-cfb84",
+    "storage_bucket": "kushagraapp-cfb84.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:242208760241:android:ef993bb8c1708978301d90",
+        "android_client_info": {
+          "package_name": "com.kushagra.myapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "242208760241-4f9r88n5s1888tv6ue4d6q5n6od3m1e8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kushagra.myapp",
+            "certificate_hash": "c84d2f8a066e372ad9955633ee320651a61c37bd"
+          }
+        },
+        {
+          "client_id": "242208760241-nt0hnu6k3cod9lgka12n66ji7p6thro5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDqOl0xtForyTHHuEgdYnfpCFCGMu8Z55k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "242208760241-nt0hnu6k3cod9lgka12n66ji7p6thro5.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "242208760241-0lo1lqtkscrfn85fdln3n0610qmtke1g.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.kushagra.myapp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -14,6 +14,7 @@ import '../presentation/home_screen/home_screen.dart';
 import '../presentation/map_view_screen/map_view_screen.dart';
 import '../presentation/store_it_screen/store_it_screen.dart';
 import '../presentation/store_it_screen/storage_tip_detail_screen.dart';
+import '../presentation/sign_in_screen/sign_in_screen.dart';
 
 class AppRoutes {
   static const String initial = '/';
@@ -31,11 +32,13 @@ class AppRoutes {
   static const String mapView = '/map-view-screen';
   static const String storeIt = '/store-it-screen';
   static const String storageTipDetail = '/storage-tip-detail-screen';
+  static const String signIn = '/sign-in-screen';
 
   static Map<String, WidgetBuilder> routes = {
     initial: (context) => const SplashScreen(),
     splash: (context) => const SplashScreen(),
     onboarding: (context) => const OnboardingScreen(),
+    signIn: (context) => const SignInScreen(),
     camera: (context) => const CameraScreen(),
     recognitionResults: (context) => const RecognitionResultsScreen(),
     recipeSuggestions: (context) => const RecipeSuggestionsScreen(),

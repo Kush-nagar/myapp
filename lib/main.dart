@@ -4,13 +4,19 @@ import 'package:sizer/sizer.dart';
 
 import '../core/app_export.dart';
 import '../widgets/custom_error_widget.dart';
+
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+// ignore: unused_import
+import 'package:firebase_analytics/firebase_analytics.dart';
 //import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Load environment variables
-  //await dotenv.load(fileName: "key.env");
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   // 🚨 CRITICAL: Custom error handling - DO NOT REMOVE
   ErrorWidget.builder = (FlutterErrorDetails details) {

@@ -5,6 +5,7 @@ import 'package:geolocator/geolocator.dart';
 
 import '../../core/app_export.dart';
 import '../../services/places_service.dart'; // <-- make sure this file exists and exposes the methods used below
+import '../../widgets/user_profile_widget.dart';
 import './widgets/empty_state_widget.dart';
 import './widgets/offline_banner_widget.dart';
 import './widgets/organization_card_widget.dart';
@@ -798,7 +799,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       padding: EdgeInsets.symmetric(horizontal: 4.w),
                       child: Column(
                         children: [
-                          // Back Arrow Row
+                          // Header Row with Back Button and Profile
                           Row(
                             children: [
                               Container(
@@ -905,6 +906,9 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                   ],
                                 ),
                               ),
+                              SizedBox(width: 3.w),
+                              // User Profile Widget
+                              UserProfileWidget(size: 12.w, showBorder: true),
                             ],
                           ),
 
