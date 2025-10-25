@@ -7,41 +7,42 @@ import '../../../theme/donation_app_theme.dart';
 class UrgentNeedsBannerWidget extends StatelessWidget {
   const UrgentNeedsBannerWidget({Key? key}) : super(key: key);
 
+  // Make this static const to avoid recreating on every build
+  static const List<Map<String, dynamic>> _urgentNeeds = [
+    {
+      "id": 1,
+      "organization": "Downtown Food Bank",
+      "need": "Fresh produce needed urgently",
+      "timeLeft": "2 hours",
+      "priority": "high",
+    },
+    {
+      "id": 2,
+      "organization": "Community Kitchen",
+      "need": "Canned goods for weekend meals",
+      "timeLeft": "6 hours",
+      "priority": "medium",
+    },
+    {
+      "id": 3,
+      "organization": "Shelter Hope",
+      "need": "Baby formula and diapers",
+      "timeLeft": "4 hours",
+      "priority": "high",
+    },
+  ];
+
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> urgentNeeds = [
-      {
-        "id": 1,
-        "organization": "Downtown Food Bank",
-        "need": "Fresh produce needed urgently",
-        "timeLeft": "2 hours",
-        "priority": "high",
-      },
-      {
-        "id": 2,
-        "organization": "Community Kitchen",
-        "need": "Canned goods for weekend meals",
-        "timeLeft": "6 hours",
-        "priority": "medium",
-      },
-      {
-        "id": 3,
-        "organization": "Shelter Hope",
-        "need": "Baby formula and diapers",
-        "timeLeft": "4 hours",
-        "priority": "high",
-      },
-    ];
-
-    return Container(
+    return SizedBox(
       height: 12.h,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         padding: EdgeInsets.symmetric(horizontal: 4.w),
-        itemCount: urgentNeeds.length,
+        itemCount: _urgentNeeds.length,
         separatorBuilder: (context, index) => SizedBox(width: 3.w),
         itemBuilder: (context, index) {
-          final need = urgentNeeds[index];
+          final need = _urgentNeeds[index];
           final isHighPriority = need["priority"] == "high";
 
           return Container(

@@ -69,48 +69,52 @@ class UserProfileWidget extends StatelessWidget {
         final displayName = user.displayName ?? 'User';
         final initials = _getInitials(displayName);
 
-        return GestureDetector(
-          onTap: onTap ?? () => _showProfileSheet(context, user),
-          child: Container(
-            width: size,
-            height: size,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: showBorder
-                  ? Border.all(
-                      color: AppTheme.lightTheme.colorScheme.primary,
-                      width: 2,
-                    )
-                  : null,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: ClipOval(
-              child: photoUrl != null && photoUrl.isNotEmpty
-                  ? Image.network(
-                      photoUrl,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return _buildInitialsAvatar(initials, size);
-                      },
-                      loadingBuilder: (context, child, loadingProgress) {
-                        if (loadingProgress == null) return child;
-                        return Center(
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              AppTheme.lightTheme.colorScheme.primary,
+        return RepaintBoundary(
+          child: GestureDetector(
+            onTap: onTap ?? () => _showProfileSheet(context, user),
+            child: Container(
+              width: size,
+              height: size,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: showBorder
+                    ? Border.all(
+                        color: AppTheme.lightTheme.colorScheme.primary,
+                        width: 2,
+                      )
+                    : null,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: ClipOval(
+                child: photoUrl != null && photoUrl.isNotEmpty
+                    ? Image.network(
+                        photoUrl,
+                        fit: BoxFit.cover,
+                        cacheWidth: (size * 2).toInt(),
+                        cacheHeight: (size * 2).toInt(),
+                        errorBuilder: (context, error, stackTrace) {
+                          return _buildInitialsAvatar(initials, size);
+                        },
+                        loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) return child;
+                          return Center(
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                AppTheme.lightTheme.colorScheme.primary,
+                              ),
                             ),
-                          ),
-                        );
-                      },
-                    )
-                  : _buildInitialsAvatar(initials, size),
+                          );
+                        },
+                      )
+                    : _buildInitialsAvatar(initials, size),
+              ),
             ),
           ),
         );

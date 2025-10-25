@@ -213,9 +213,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       case 2:
         Navigator.pushNamed(context, '/favorites-screen');
         break;
-      case 3:
-        // Navigate to profile (not implemented in this scope)
-        break;
     }
   }
 
@@ -965,7 +962,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 ),
               ),
 
-              // ========== StreamBuilder for Firestore organizations (REPLACEMENT) ==========
+              // ========== StreamBuilder for Firestore organizations (OPTIMIZED) ==========
               StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
                     .collection('organizations')
@@ -973,12 +970,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     .snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {
-                    return SliverFillRemaining(
-                      child: Center(
-                        child: Text(
-                          'Error loading organizations: ${snapshot.error}',
-                        ),
-                      ),
+                    return const SliverFillRemaining(
+                      child: Center(child: Text('Error loading organizations')),
                     );
                   }
 
@@ -993,81 +986,76 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     );
                   }
 
-                  // Map Firestore docs -> display-friendly maps
+                  // Map Firestore docs -> display-friendly maps (optimized)
                   final docs = snapshot.data!.docs.map((d) {
                     final data = d.data() as Map<String, dynamic>;
-                    return {
+                    final currentNeedsList =
+                        data['currentNeeds'] as List<dynamic>?;
+                    final needsStrings =
+                        currentNeedsList?.map((e) {
+                          if (e is Map && e['item'] != null)
+                            return e['item'].toString();
+                          return e.toString();
+                        }).toList() ??
+                        <String>[];
+
+                    return <String, dynamic>{
                       "id": data['mockId'] ?? d.id.hashCode,
-                      "placeId":
-                          data['placeId'] ?? null, // optional if you store it
+                      "placeId": data['placeId'],
                       "name": data['name'] ?? '',
-                      "logo": data['image'] ?? '', // for card display
-                      "image":
-                          data['image'] ??
-                          '', // for detail screen (Firebase Storage URL)
+                      "logo": data['image'] ?? '',
+                      "image": data['image'] ?? '',
                       "rating": (data['rating'] is num)
                           ? (data['rating'] as num).toDouble()
                           : 0.0,
-                      "distance": (data['distance'] != null)
-                          ? data['distance'].toString()
-                          : '',
-                      "currentNeeds":
-                          (data['currentNeeds'] as List<dynamic>?)?.map((e) {
-                            if (e is Map && e['item'] != null)
-                              return e['item'].toString();
-                            return e.toString();
-                          }).toList() ??
-                          [],
-                      "phone": (data['contact']?['phone']) ?? '',
-                      "address": (data['contact']?['address']) ?? '',
+                      "distance": data['distance']?.toString() ?? '',
+                      "currentNeeds": needsStrings,
+                      "phone": data['contact']?['phone'] ?? '',
+                      "address": data['contact']?['address'] ?? '',
                       "isFavorited": false,
                       "raw": data,
                     };
                   }).toList();
 
-                  // Filter both sources (Firestore docs + any filtered list) using your filter guard
+                  // Filter both sources using optimized filter
                   final filteredDocs = _filterOrganizations(docs);
                   final filteredDisplayOrgs = _filterOrganizations(
                     _displayOrganizations,
                   );
 
-                  // Combine them while deduplicating.
-                  // Priority: keep Firestore entries first, then append unique filtered orgs.
-                  final List<Map<String, dynamic>> combined = [];
-                  final Set<String> seenKeys = {};
+                  // Combine and deduplicate efficiently
+                  final combined = <Map<String, dynamic>>[];
+                  final seenKeys = <String>{};
 
                   String makeKey(Map<String, dynamic> org) {
-                    // prefer placeId -> id -> normalized name
                     final placeId = (org['placeId'] ?? '').toString();
-                    if (placeId.isNotEmpty) return 'placeId::$placeId';
+                    if (placeId.isNotEmpty) return 'p::$placeId';
                     final id = org['id']?.toString() ?? '';
-                    if (id.isNotEmpty) return 'id::$id';
+                    if (id.isNotEmpty) return 'i::$id';
                     final name = (org['name'] ?? '')
                         .toString()
                         .toLowerCase()
                         .trim();
-                    return 'name::$name';
+                    return 'n::$name';
                   }
 
                   // Add firestore items first
                   for (final org in filteredDocs) {
                     final key = makeKey(org);
-                    if (!seenKeys.contains(key)) {
-                      seenKeys.add(key);
+                    if (seenKeys.add(key)) {
                       combined.add(org);
                     }
                   }
 
-                  // Then append any items from _displayOrganizations that are not already present
+                  // Append unique items from _displayOrganizations
                   for (final org in filteredDisplayOrgs) {
                     final key = makeKey(org);
-                    if (!seenKeys.contains(key)) {
-                      seenKeys.add(key);
+                    if (seenKeys.add(key)) {
                       combined.add(org);
                     }
                   }
 
-                  // If still empty, fallback to master list (filtered)
+                  // Fallback to master list if empty
                   final finalList = combined.isEmpty
                       ? _filterOrganizations(_masterOrganizations)
                       : combined;
@@ -1078,17 +1066,24 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     );
                   }
 
+                  // Use SliverList with addAutomaticKeepAlives for better performance
                   return SliverList(
-                    delegate: SliverChildBuilderDelegate((context, index) {
-                      final organization = finalList[index];
-                      return OrganizationCardWidget(
-                        organization: organization,
-                        onTap: () => _onOrganizationTap(organization),
-                        onCall: () => _onCallOrganization(organization),
-                        onDirections: () => _onGetDirections(organization),
-                        onFavorite: () => _onToggleFavorite(organization),
-                      );
-                    }, childCount: finalList.length),
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        final organization = finalList[index];
+                        return OrganizationCardWidget(
+                          key: ValueKey(organization['id']),
+                          organization: organization,
+                          onTap: () => _onOrganizationTap(organization),
+                          onCall: () => _onCallOrganization(organization),
+                          onDirections: () => _onGetDirections(organization),
+                          onFavorite: () => _onToggleFavorite(organization),
+                        );
+                      },
+                      childCount: finalList.length,
+                      addAutomaticKeepAlives: true,
+                      addRepaintBoundaries: true,
+                    ),
                   );
                 },
               ),
@@ -1100,10 +1095,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _onMapViewTap,
-        backgroundColor: DonationAppTheme.lightTheme.colorScheme.primary,
+        backgroundColor: Colors.orange,
         child: CustomIconWidget(
-          iconName: 'map',
-          color: DonationAppTheme.lightTheme.colorScheme.onPrimary,
+          iconName: 'explore',
+          color: Colors.white,
           size: 24,
         ),
       ),
@@ -1149,17 +1144,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               size: 24,
             ),
             label: 'Favorites',
-          ),
-          BottomNavigationBarItem(
-            icon: CustomIconWidget(
-              iconName: 'person',
-              color: _currentIndex == 3
-                  ? DonationAppTheme.lightTheme.colorScheme.primary
-                  : DonationAppTheme.lightTheme.colorScheme.onSurface
-                        .withValues(alpha: 0.6),
-              size: 24,
-            ),
-            label: 'Reciepes',
           ),
         ],
       ),
