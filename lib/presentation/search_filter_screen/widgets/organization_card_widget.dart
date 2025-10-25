@@ -53,7 +53,8 @@ class OrganizationCardWidget extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
                   child: CustomImageWidget(
-                    imageUrl: organization['image'] ?? '',
+                    imageUrl:
+                        organization['image'] ?? organization['logo'] ?? '',
                     width: double.infinity,
                     height: 20.h,
                     fit: BoxFit.cover,

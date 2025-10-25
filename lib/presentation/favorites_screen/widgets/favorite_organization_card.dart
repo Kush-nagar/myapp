@@ -107,9 +107,12 @@ class FavoriteOrganizationCard extends StatelessWidget {
                               DonationAppTheme.lightTheme.colorScheme.surface,
                         ),
                         child: ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(12),
                           child: CustomImageWidget(
-                            imageUrl: organization['logo'] ?? '',
+                            imageUrl:
+                                organization['image'] ??
+                                organization['logo'] ??
+                                '',
                             width: 15.w,
                             height: 15.w,
                             fit: BoxFit.cover,

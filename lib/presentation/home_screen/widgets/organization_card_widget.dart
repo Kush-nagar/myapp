@@ -1,3 +1,6 @@
+// ignore_for_file: unused_field
+
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
@@ -29,7 +32,7 @@ class _OrganizationCardWidgetState extends State<OrganizationCardWidget>
   bool isFavorited = false;
   bool _expanded = false;
   late final AnimationController _chevController;
-  
+
   // Status management
   String _orgStatus = 'Not started';
   static const List<String> _statusOptions = [
@@ -52,6 +55,7 @@ class _OrganizationCardWidgetState extends State<OrganizationCardWidget>
       duration: const Duration(milliseconds: 220),
     );
     _loadOrgStatus();
+    _loadFavoriteStatus(); // Load favorite status from SharedPreferences
     WidgetsBinding.instance.addObserver(this);
   }
 
@@ -75,12 +79,18 @@ class _OrganizationCardWidgetState extends State<OrganizationCardWidget>
     super.didUpdateWidget(oldWidget);
     // Reload status when widget is updated (e.g., when coming back from detail screen)
     _loadOrgStatus();
+    _loadFavoriteStatus(); // Also reload favorite status
   }
 
-  void _toggleFavorite() {
+  Future<void> _toggleFavorite() async {
+    final newFavoriteState = !isFavorited;
     setState(() {
-      isFavorited = !isFavorited;
+      isFavorited = newFavoriteState;
     });
+
+    // Save to SharedPreferences
+    await _saveFavoriteStatus(newFavoriteState);
+
     widget.onFavorite?.call();
   }
 
@@ -113,8 +123,10 @@ class _OrganizationCardWidgetState extends State<OrganizationCardWidget>
   // Load organization status from SharedPreferences
   Future<void> _loadOrgStatus() async {
     final prefs = await SharedPreferences.getInstance();
-    final orgId = widget.organization['id']?.toString() ?? 
-                  widget.organization['mockId']?.toString() ?? '';
+    final orgId =
+        widget.organization['id']?.toString() ??
+        widget.organization['mockId']?.toString() ??
+        '';
     if (orgId.isNotEmpty) {
       final key = 'org_status_$orgId';
       final saved = prefs.getString(key);
@@ -124,6 +136,88 @@ class _OrganizationCardWidgetState extends State<OrganizationCardWidget>
         });
       }
     }
+  }
+
+  // Load favorite status from SharedPreferences
+  Future<void> _loadFavoriteStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    final favoriteIds = prefs.getStringList('favorite_organizations') ?? [];
+    final orgId =
+        widget.organization['id']?.toString() ??
+        widget.organization['mockId']?.toString() ??
+        '';
+
+    if (orgId.isNotEmpty) {
+      setState(() {
+        isFavorited = favoriteIds.contains(orgId);
+      });
+    }
+  }
+
+  // Save favorite status to SharedPreferences
+  Future<void> _saveFavoriteStatus(bool isFavorite) async {
+    final prefs = await SharedPreferences.getInstance();
+    final favoriteIds = prefs.getStringList('favorite_organizations') ?? [];
+    final orgId =
+        widget.organization['id']?.toString() ??
+        widget.organization['mockId']?.toString() ??
+        '';
+
+    if (orgId.isEmpty) return;
+
+    if (isFavorite) {
+      if (!favoriteIds.contains(orgId)) {
+        favoriteIds.add(orgId);
+
+        // Also save the complete organization data
+        final orgDataJson = prefs.getString('favorite_org_data') ?? '{}';
+        final Map<String, dynamic> allOrgData = {};
+        try {
+          allOrgData.addAll(
+            Map<String, dynamic>.from(jsonDecode(orgDataJson) as Map),
+          );
+        } catch (e) {
+          debugPrint('Error parsing favorite org data: $e');
+        }
+
+        // Store the organization data using its ID as key
+        allOrgData[orgId] = {
+          'id': widget.organization['id'],
+          'mockId': widget.organization['mockId'],
+          'placeId': widget.organization['placeId'],
+          'name': widget.organization['name'] ?? '',
+          'logo':
+              widget.organization['logo'] ?? widget.organization['image'] ?? '',
+          'image':
+              widget.organization['image'] ?? widget.organization['logo'] ?? '',
+          'rating': widget.organization['rating'],
+          'distance': widget.organization['distance'] ?? '',
+          'currentNeeds': widget.organization['currentNeeds'] ?? [],
+          'phone': widget.organization['phone'] ?? '',
+          'address': widget.organization['address'] ?? '',
+          'website': widget.organization['website'] ?? '',
+          'contact': widget.organization['contact'] ?? {},
+        };
+
+        await prefs.setString('favorite_org_data', jsonEncode(allOrgData));
+      }
+    } else {
+      favoriteIds.remove(orgId);
+
+      // Also remove from stored organization data
+      final orgDataJson = prefs.getString('favorite_org_data') ?? '{}';
+      try {
+        final Map<String, dynamic> allOrgData = Map<String, dynamic>.from(
+          jsonDecode(orgDataJson) as Map,
+        );
+        allOrgData.remove(orgId);
+        await prefs.setString('favorite_org_data', jsonEncode(allOrgData));
+      } catch (e) {
+        debugPrint('Error removing favorite org data: $e');
+      }
+    }
+
+    await prefs.setStringList('favorite_organizations', favoriteIds);
   }
 
   // Ultra compact icon button for maximum space efficiency
@@ -283,7 +377,9 @@ class _OrganizationCardWidgetState extends State<OrganizationCardWidget>
                                         width: 3.w,
                                         height: 3.w,
                                         decoration: BoxDecoration(
-                                          color: _statusColors[_orgStatus] ?? Colors.grey,
+                                          color:
+                                              _statusColors[_orgStatus] ??
+                                              Colors.grey,
                                           shape: BoxShape.circle,
                                           border: Border.all(
                                             color: Colors.white,
@@ -291,7 +387,9 @@ class _OrganizationCardWidgetState extends State<OrganizationCardWidget>
                                           ),
                                           boxShadow: [
                                             BoxShadow(
-                                              color: Colors.black.withOpacity(0.1),
+                                              color: Colors.black.withOpacity(
+                                                0.1,
+                                              ),
                                               blurRadius: 2,
                                               offset: const Offset(0, 1),
                                             ),

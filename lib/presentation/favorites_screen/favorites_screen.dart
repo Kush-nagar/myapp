@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sizer/sizer.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 import '../../core/app_export.dart';
 import './widgets/empty_favorites_widget.dart';
-import './widgets/favorite_organization_card.dart';
+import '../home_screen/widgets/organization_card_widget.dart';
 import './widgets/favorites_search_bar.dart';
 import './widgets/sort_options_bottom_sheet.dart';
 
@@ -15,147 +17,147 @@ class FavoritesScreen extends StatefulWidget {
   State<FavoritesScreen> createState() => _FavoritesScreenState();
 }
 
-class _FavoritesScreenState extends State<FavoritesScreen> {
+class _FavoritesScreenState extends State<FavoritesScreen>
+    with WidgetsBindingObserver {
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 
   bool _isMultiSelectMode = false;
-  Set<int> _selectedItems = {};
+  Set<String> _selectedItems = {};
   String _currentSort = 'recent';
   String _searchQuery = '';
   bool _isRefreshing = false;
+  bool _isLoading = true;
   DateTime _lastUpdated = DateTime.now();
 
-  // Mock data for favorite organizations
-  final List<Map<String, dynamic>> _favoriteOrganizations = [
-    {
-      "id": 1,
-      "name": "City Food Bank",
-      "logo":
-          "https://images.pexels.com/photos/6646918/pexels-photo-6646918.jpeg?auto=compress&cs=tinysrgb&w=400",
-      "distance": "0.8 miles",
-      "lastVisit": "2 days ago",
-      "isOpen": true,
-      "phone": "+1 (555) 123-4567",
-      "website": "https://cityfoodbank.org",
-      "address": "123 Main St, City, State 12345",
-      "donationType": "Food",
-      "addedDate": DateTime.now().subtract(Duration(days: 5)),
-      "lastVisitDate": DateTime.now().subtract(Duration(days: 2)),
-    },
-    {
-      "id": 2,
-      "name": "Hope Shelter",
-      "logo":
-          "https://images.pexels.com/photos/6646919/pexels-photo-6646919.jpeg?auto=compress&cs=tinysrgb&w=400",
-      "distance": "1.2 miles",
-      "lastVisit": "1 week ago",
-      "isOpen": false,
-      "phone": "+1 (555) 234-5678",
-      "website": "https://hopeshelter.org",
-      "address": "456 Oak Ave, City, State 12345",
-      "donationType": "Clothing",
-      "addedDate": DateTime.now().subtract(Duration(days: 12)),
-      "lastVisitDate": DateTime.now().subtract(Duration(days: 7)),
-    },
-    {
-      "id": 3,
-      "name": "Community Kitchen",
-      "logo":
-          "https://images.pexels.com/photos/6646920/pexels-photo-6646920.jpeg?auto=compress&cs=tinysrgb&w=400",
-      "distance": "2.1 miles",
-      "lastVisit": "3 days ago",
-      "isOpen": true,
-      "phone": "+1 (555) 345-6789",
-      "website": "https://communitykitchen.org",
-      "address": "789 Pine St, City, State 12345",
-      "donationType": "Food",
-      "addedDate": DateTime.now().subtract(Duration(days: 8)),
-      "lastVisitDate": DateTime.now().subtract(Duration(days: 3)),
-    },
-    {
-      "id": 4,
-      "name": "Helping Hands Foundation",
-      "logo":
-          "https://images.pexels.com/photos/6646921/pexels-photo-6646921.jpeg?auto=compress&cs=tinysrgb&w=400",
-      "distance": "3.5 miles",
-      "lastVisit": "Never",
-      "isOpen": true,
-      "phone": "+1 (555) 456-7890",
-      "website": "https://helpinghands.org",
-      "address": "321 Elm St, City, State 12345",
-      "donationType": "General",
-      "addedDate": DateTime.now().subtract(Duration(days: 1)),
-      "lastVisitDate": null,
-    },
-  ];
-
-  List<Map<String, dynamic>> get _filteredOrganizations {
-    var filtered = _favoriteOrganizations.where((org) {
-      if (_searchQuery.isEmpty) return true;
-      return (org['name'] as String).toLowerCase().contains(
-            _searchQuery.toLowerCase(),
-          ) ||
-          (org['donationType'] as String).toLowerCase().contains(
-            _searchQuery.toLowerCase(),
-          );
-    }).toList();
-
-    // Sort based on current sort option
-    switch (_currentSort) {
-      case 'recent':
-        filtered.sort(
-          (a, b) => (b['addedDate'] as DateTime).compareTo(
-            a['addedDate'] as DateTime,
-          ),
-        );
-        break;
-      case 'distance':
-        filtered.sort((a, b) {
-          double distanceA = double.parse(
-            (a['distance'] as String).split(' ')[0],
-          );
-          double distanceB = double.parse(
-            (b['distance'] as String).split(' ')[0],
-          );
-          return distanceA.compareTo(distanceB);
-        });
-        break;
-      case 'alphabetical':
-        filtered.sort(
-          (a, b) => (a['name'] as String).compareTo(b['name'] as String),
-        );
-        break;
-      case 'last_visited':
-        filtered.sort((a, b) {
-          DateTime? dateA = a['lastVisitDate'] as DateTime?;
-          DateTime? dateB = b['lastVisitDate'] as DateTime?;
-          if (dateA == null && dateB == null) return 0;
-          if (dateA == null) return 1;
-          if (dateB == null) return -1;
-          return dateB.compareTo(dateA);
-        });
-        break;
-    }
-
-    return filtered;
-  }
+  List<Map<String, dynamic>> _favoriteOrganizations = [];
+  List<String> _favoriteIds = [];
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _searchController.addListener(() {
       setState(() {
         _searchQuery = _searchController.text;
       });
     });
+    _loadFavorites();
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _searchController.dispose();
     _scrollController.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // Reload favorites when app comes back to foreground
+      _loadFavorites();
+    }
+  }
+
+  Future<void> _loadFavorites() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      // Load favorite IDs from SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      _favoriteIds = prefs.getStringList('favorite_organizations') ?? [];
+
+      if (_favoriteIds.isEmpty) {
+        setState(() {
+          _favoriteOrganizations = [];
+          _isLoading = false;
+        });
+        return;
+      }
+
+      // Load organizations data from SharedPreferences
+      final orgDataJson = prefs.getString('favorite_org_data') ?? '{}';
+      final Map<String, dynamic> allOrgData = {};
+
+      try {
+        allOrgData.addAll(
+          Map<String, dynamic>.from(jsonDecode(orgDataJson) as Map),
+        );
+      } catch (e) {
+        debugPrint('Error parsing favorite org data: $e');
+      }
+
+      // Build the list of favorite organizations from stored data
+      final List<Map<String, dynamic>> loadedOrgs = [];
+
+      for (final orgId in _favoriteIds) {
+        if (allOrgData.containsKey(orgId)) {
+          final orgData = Map<String, dynamic>.from(allOrgData[orgId] as Map);
+          orgData['isFavorited'] = true;
+          loadedOrgs.add(orgData);
+        }
+      }
+
+      setState(() {
+        _favoriteOrganizations = loadedOrgs;
+        _isLoading = false;
+        _lastUpdated = DateTime.now();
+      });
+    } catch (e) {
+      debugPrint('Error loading favorites: $e');
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  List<Map<String, dynamic>> get _filteredOrganizations {
+    var filtered = _favoriteOrganizations.where((org) {
+      if (_searchQuery.isEmpty) return true;
+      final name = (org['name'] as String? ?? '').toLowerCase();
+      final address = (org['address'] as String? ?? '').toLowerCase();
+      final query = _searchQuery.toLowerCase();
+      return name.contains(query) || address.contains(query);
+    }).toList();
+
+    // Sort based on current sort option
+    switch (_currentSort) {
+      case 'recent':
+        // Keep the order as loaded (most recently favorited first)
+        break;
+      case 'distance':
+        filtered.sort((a, b) {
+          final distA = a['distance'] as String? ?? '';
+          final distB = b['distance'] as String? ?? '';
+          if (distA.isEmpty) return 1;
+          if (distB.isEmpty) return -1;
+
+          try {
+            double distanceA = double.parse(distA.split(' ')[0]);
+            double distanceB = double.parse(distB.split(' ')[0]);
+            return distanceA.compareTo(distanceB);
+          } catch (e) {
+            return 0;
+          }
+        });
+        break;
+      case 'alphabetical':
+        filtered.sort(
+          (a, b) => (a['name'] as String? ?? '').compareTo(
+            b['name'] as String? ?? '',
+          ),
+        );
+        break;
+      case 'last_visited':
+        // For now, keep current order
+        break;
+    }
+
+    return filtered;
   }
 
   Future<void> _refreshFavorites() async {
@@ -163,12 +165,10 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
       _isRefreshing = true;
     });
 
-    // Simulate API call delay
-    await Future.delayed(Duration(seconds: 1));
+    await _loadFavorites();
 
     setState(() {
       _isRefreshing = false;
-      _lastUpdated = DateTime.now();
     });
 
     Fluttertoast.showToast(
@@ -178,25 +178,30 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     );
   }
 
-  void _removeFromFavorites(int organizationId) {
-    setState(() {
-      _favoriteOrganizations.removeWhere((org) => org['id'] == organizationId);
-    });
+  Future<void> _removeFromFavorites(String organizationId) async {
+    try {
+      // Remove from SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      _favoriteIds.remove(organizationId);
+      await prefs.setStringList('favorite_organizations', _favoriteIds);
 
-    Fluttertoast.showToast(
-      msg: "Removed from favorites",
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
-    );
-  }
+      // Remove from local list
+      setState(() {
+        _favoriteOrganizations.removeWhere(
+          (org) =>
+              org['id'].toString() == organizationId ||
+              org['mockId'].toString() == organizationId,
+        );
+      });
 
-  void _shareOrganization(Map<String, dynamic> organization) {
-    // Simulate sharing functionality
-    Fluttertoast.showToast(
-      msg: "Sharing ${organization['name']}",
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
-    );
+      Fluttertoast.showToast(
+        msg: "Removed from favorites",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+      );
+    } catch (e) {
+      debugPrint('Error removing favorite: $e');
+    }
   }
 
   void _callOrganization(Map<String, dynamic> organization) {
@@ -217,15 +222,6 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     );
   }
 
-  void _visitWebsite(Map<String, dynamic> organization) {
-    // Simulate website visit
-    Fluttertoast.showToast(
-      msg: "Opening ${organization['name']} website",
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
-    );
-  }
-
   void _toggleMultiSelect() {
     setState(() {
       _isMultiSelectMode = !_isMultiSelectMode;
@@ -235,7 +231,7 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     });
   }
 
-  void _toggleSelection(int organizationId) {
+  void _toggleSelection(String organizationId) {
     setState(() {
       if (_selectedItems.contains(organizationId)) {
         _selectedItems.remove(organizationId);
@@ -245,20 +241,25 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
     });
   }
 
-  void _removeSelectedItems() {
-    setState(() {
-      _favoriteOrganizations.removeWhere(
-        (org) => _selectedItems.contains(org['id']),
-      );
-      _selectedItems.clear();
-      _isMultiSelectMode = false;
-    });
+  Future<void> _removeSelectedItems() async {
+    try {
+      for (final orgId in _selectedItems) {
+        await _removeFromFavorites(orgId);
+      }
 
-    Fluttertoast.showToast(
-      msg: "Removed selected items",
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
-    );
+      setState(() {
+        _selectedItems.clear();
+        _isMultiSelectMode = false;
+      });
+
+      Fluttertoast.showToast(
+        msg: "Removed selected items",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+      );
+    } catch (e) {
+      debugPrint('Error removing selected items: $e');
+    }
   }
 
   void _showSortOptions() {
@@ -334,7 +335,13 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
           ],
         ],
       ),
-      body: filteredOrganizations.isEmpty
+      body: _isLoading
+          ? Center(
+              child: CircularProgressIndicator(
+                color: DonationAppTheme.lightTheme.colorScheme.primary,
+              ),
+            )
+          : filteredOrganizations.isEmpty
           ? EmptyFavoritesWidget(
               onDiscoverTap: () {
                 Navigator.pushNamed(context, '/home-screen');
@@ -386,11 +393,14 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                       itemCount: filteredOrganizations.length,
                       itemBuilder: (context, index) {
                         final organization = filteredOrganizations[index];
-                        final organizationId = organization['id'] as int;
+                        final organizationId =
+                            (organization['id'] ??
+                                    organization['mockId'] ??
+                                    index)
+                                .toString();
 
-                        return FavoriteOrganizationCard(
+                        return OrganizationCardWidget(
                           organization: organization,
-                          isSelected: _selectedItems.contains(organizationId),
                           onTap: () {
                             if (_isMultiSelectMode) {
                               _toggleSelection(organizationId);
@@ -402,17 +412,10 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                               );
                             }
                           },
-                          onLongPress: () {
-                            if (!_isMultiSelectMode) {
-                              _toggleMultiSelect();
-                              _toggleSelection(organizationId);
-                            }
-                          },
-                          onRemove: () => _removeFromFavorites(organizationId),
-                          onShare: () => _shareOrganization(organization),
                           onCall: () => _callOrganization(organization),
                           onDirections: () => _getDirections(organization),
-                          onWebsite: () => _visitWebsite(organization),
+                          onFavorite: () =>
+                              _removeFromFavorites(organizationId),
                         );
                       },
                     ),

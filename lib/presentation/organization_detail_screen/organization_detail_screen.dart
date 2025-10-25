@@ -142,6 +142,14 @@ class _OrganizationDetailScreenState extends State<OrganizationDetailScreen> {
       }
     }
 
+    // Priority: use 'image' from args if present (Firebase Storage URL from Firestore)
+    // then fall back to 'logo' field (for backwards compatibility with Places API data)
+    if (args['image'] != null && args['image'].toString().isNotEmpty) {
+      combined['image'] = args['image'];
+    } else if (args['logo'] != null && args['logo'].toString().isNotEmpty) {
+      combined['image'] = args['logo'];
+    }
+
     // Merge/override contact map sensibly
     final existingContact = <String, dynamic>{};
     if (combined['contact'] is Map) {

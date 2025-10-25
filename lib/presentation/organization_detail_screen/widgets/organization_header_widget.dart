@@ -28,7 +28,10 @@ class OrganizationHeaderWidget extends StatelessWidget {
             width: double.infinity,
             height: 35.h,
             child: CustomImageWidget(
-              imageUrl: organization['image'] as String,
+              imageUrl:
+                  organization['image'] as String? ??
+                  organization['logo'] as String? ??
+                  '',
               width: double.infinity,
               height: 35.h,
               fit: BoxFit.cover,
