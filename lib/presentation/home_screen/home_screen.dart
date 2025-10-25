@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sizer/sizer.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:geolocator/geolocator.dart';
+import 'dart:async';
 
 import '../../core/app_export.dart';
 import '../../services/places_service.dart'; // <-- make sure this file exists and exposes the methods used below
@@ -11,6 +12,8 @@ import './widgets/offline_banner_widget.dart';
 import './widgets/organization_card_widget.dart';
 import './widgets/search_bar_widget.dart';
 import './widgets/urgent_needs_banner_widget.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -138,6 +141,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     });
   }
 
+  @override
+  void dispose() {
+    _refreshController.dispose();
+    try {
+      _placesService.dispose();
+    } catch (_) {}
+    super.dispose();
+  }
+
   Future<void> _handlePostFrameArgs() async {
     final args =
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
@@ -153,16 +165,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       // If that fails (no matches), fall back to master organizations.
       await _searchNearbyAndApplyDonationFilter(names);
     }
-  }
-
-  @override
-  void dispose() {
-    _refreshController.dispose();
-    // Dispose places service if it provides a dispose method (best-effort)
-    try {
-      _placesService.dispose();
-    } catch (_) {}
-    super.dispose();
   }
 
   Future<void> _checkConnectivity() async {
@@ -498,8 +500,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
 
   // ---------- New: geolocation & places-based filtering ----------
-
-  /// Try to get current user location (best-effort). Returns null on failure.
+  // (methods unchanged)...
   Future<Position?> _tryGetCurrentPosition() async {
     try {
       final serviceEnabled = await Geolocator.isLocationServiceEnabled();
@@ -527,9 +528,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     return meters / 1609.344;
   }
 
-  /// Search nearby organizations (Places API), fetch details, synthesize an organization
-  /// model that includes a `currentNeeds` list where possible, then run donation matching
-  /// on that set. Limit to 8 displayed results.
   Future<void> _searchNearbyAndApplyDonationFilter(
     List<String> ingredientNames,
   ) async {
@@ -543,31 +541,25 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     });
 
     try {
-      // 1) Try to get position
       final pos = await _tryGetCurrentPosition();
 
-      // 2) Perform a places text search. Query can be customized or passed in.
       final query = 'food bank';
       final places = await _placesService.textSearch(
         query: query,
         lat: pos?.latitude,
         lng: pos?.longitude,
-        radiusMeters: 15000, // 15 km radius, tune as needed
+        radiusMeters: 15000,
       );
 
       if (places == null || places.isEmpty) {
-        // no nearby places -> fallback
         _applyDonationFilter(ingredientNames);
         return;
       }
 
-      // 3) For each place (limit to first N), fetch details and try to create a rich org map
       final List<Map<String, dynamic>> candidateOrgs = [];
-      final int maxDetails =
-          12; // fetch details for top 12, then filter to max 8
+      final int maxDetails = 12;
       final sliced = places.take(maxDetails).toList();
 
-      // Use Future.wait to fetch details in parallel with safe error handling
       final futures = sliced.map((p) async {
         try {
           final details = await _placesService.getPlaceDetails(p.placeId);
@@ -577,12 +569,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           final lowerName = (details.name ?? '').toString().toLowerCase();
           final List<String> typeKeywords =
               (details.types as List<dynamic>?)
-                  ?.map((t) => t.toString().toLowerCase())
-                  .toList() ??
-              [];
+                      ?.map((t) => t.toString().toLowerCase())
+                      .toList() ??
+                  [];
 
-          final isFoodOrg =
-              lowerName.contains('food') ||
+          final isFoodOrg = lowerName.contains('food') ||
               lowerName.contains('pantry') ||
               lowerName.contains('shelter') ||
               lowerName.contains('kitchen') ||
@@ -610,28 +601,19 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             inferredNeeds.add('bread');
           }
 
-          final deduped = inferredNeeds
-              .map((s) => s.toLowerCase())
-              .toSet()
-              .toList();
+          final deduped = inferredNeeds.map((s) => s.toLowerCase()).toSet().toList();
 
           final distanceText =
-              (_currentPosition != null &&
-                  details.lat != null &&
-                  details.lng != null)
-              ? "${_metersToMiles(Geolocator.distanceBetween(_currentPosition!.latitude, _currentPosition!.longitude, details.lat, details.lng)).toStringAsFixed(1)} mi"
-              : '';
+              (_currentPosition != null && details.lat != null && details.lng != null)
+                  ? "${_metersToMiles(Geolocator.distanceBetween(_currentPosition!.latitude, _currentPosition!.longitude, details.lat, details.lng)).toStringAsFixed(1)} mi"
+                  : '';
 
           final org = <String, dynamic>{
             'id': details.placeId.hashCode,
             'placeId': details.placeId,
             'name': details.name ?? '',
-            'logo':
-                (details.photoReferences != null &&
-                    (details.photoReferences as List).isNotEmpty)
-                ? _placesService.photoUrlFromReference(
-                    (details.photoReferences as List).first,
-                  )
+            'logo': (details.photoReferences != null && (details.photoReferences as List).isNotEmpty)
+                ? _placesService.photoUrlFromReference((details.photoReferences as List).first)
                 : '',
             'rating': details.rating ?? 0.0,
             'distance': distanceText,
@@ -655,16 +637,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         }
       }
 
-      // 4) If candidateOrgs non-empty -> run donation filter on these orgs instead of master list.
       if (candidateOrgs.isNotEmpty) {
         _applyDonationFilterToOrgs(ingredientNames, candidateOrgs);
       } else {
-        // fallback to master
         _applyDonationFilter(ingredientNames);
       }
     } catch (e) {
       debugPrint('Nearby search error: $e');
-      _applyDonationFilter(ingredientNames); // fallback
+      _applyDonationFilter(ingredientNames);
     } finally {
       if (mounted) {
         setState(() {
@@ -674,8 +654,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     }
   }
 
-  /// Apply donation matching to a custom org list (same matching logic as _applyDonationFilter,
-  /// but operates on a provided org list rather than _masterOrganizations).
   void _applyDonationFilterToOrgs(
     List<String> ingredientNames,
     List<Map<String, dynamic>> orgList,
@@ -688,21 +666,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       return;
     }
 
-    final Set<String> ingredientSet = ingredientNames
-        .map((e) => e.toLowerCase())
-        .toSet();
+    final Set<String> ingredientSet = ingredientNames.map((e) => e.toLowerCase()).toSet();
     final List<Map<String, dynamic>> scored = [];
 
     for (final org in orgList) {
       final List<String> needs =
-          (org['currentNeeds'] as List<dynamic>?)
-              ?.map((n) => n.toString().toLowerCase())
-              .toList() ??
-          [];
+          (org['currentNeeds'] as List<dynamic>?)?.map((n) => n.toString().toLowerCase()).toList() ?? [];
 
       int matches = 0;
 
-      // 1) direct substring match
       for (final ing in ingredientSet) {
         for (final need in needs) {
           if (need.contains(ing)) {
@@ -712,37 +684,21 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         }
       }
 
-      // 2) produce-level match using existing _produceKeywords
       final bool orgWantsProduce = needs.any(
-        (n) =>
-            n.contains('produce') ||
-            n.contains('vegetable') ||
-            n.contains('fruit') ||
-            n.contains('fresh'),
+        (n) => n.contains('produce') || n.contains('vegetable') || n.contains('fruit') || n.contains('fresh'),
       );
 
       if (orgWantsProduce) {
         if (ingredientSet.any((ing) => _produceKeywords.contains(ing))) {
-          matches += ingredientSet
-              .where((ing) => _produceKeywords.contains(ing))
-              .length;
+          matches += ingredientSet.where((ing) => _produceKeywords.contains(ing)).length;
         }
       }
 
-      // 3) canned / non-perishable logic
       final bool orgWantsCanned = needs.any(
-        (n) =>
-            n.contains('canned') ||
-            n.contains('non-perish') ||
-            n.contains('non perishable'),
+        (n) => n.contains('canned') || n.contains('non-perish') || n.contains('non perishable'),
       );
       if (orgWantsCanned) {
-        if (ingredientSet.any(
-          (ing) =>
-              ing.contains('beans') ||
-              ing.contains('soup') ||
-              ing.contains('canned'),
-        )) {
+        if (ingredientSet.any((ing) => ing.contains('beans') || ing.contains('soup') || ing.contains('canned'))) {
           matches += 1;
         }
       }
@@ -754,7 +710,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       }
     }
 
-    // Sort & limit exactly like _applyDonationFilter
     scored.sort((a, b) {
       final aScore = (a['matchScore'] as int?) ?? 0;
       final bScore = (b['matchScore'] as int?) ?? 0;
@@ -770,7 +725,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       } else {
         final filteredResults = scored.take(8).map((m) {
           final Map<String, dynamic> copy = Map<String, dynamic>.from(m);
-          //copy.remove('matchScore'); // optional
           return copy;
         }).toList();
         _displayOrganizations = _filterOrganizations(filteredResults);
@@ -788,28 +742,22 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           color: DonationAppTheme.lightTheme.colorScheme.primary,
           child: CustomScrollView(
             slivers: [
-              // replace the existing SliverToBoxAdapter(...) block with this one
+              // Header + search area
               SliverToBoxAdapter(
                 child: Column(
                   children: [
                     SizedBox(height: 2.h),
-
-                    // --- HEADER WITH BACK BUTTON + SEARCH BAR ---
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 4.w),
                       child: Column(
                         children: [
-                          // Header Row with Back Button and Profile
                           Row(
                             children: [
                               Container(
                                 width: 12.w,
                                 height: 12.w,
                                 decoration: BoxDecoration(
-                                  color: DonationAppTheme
-                                      .lightTheme
-                                      .colorScheme
-                                      .surface,
+                                  color: DonationAppTheme.lightTheme.colorScheme.surface,
                                   borderRadius: BorderRadius.circular(14),
                                   boxShadow: [
                                     BoxShadow(
@@ -826,11 +774,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                     ),
                                   ],
                                   border: Border.all(
-                                    color: DonationAppTheme
-                                        .lightTheme
-                                        .colorScheme
-                                        .outline
-                                        .withOpacity(0.08),
+                                    color: DonationAppTheme.lightTheme.colorScheme.outline.withOpacity(0.08),
                                     width: 1,
                                   ),
                                 ),
@@ -839,16 +783,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                   borderRadius: BorderRadius.circular(14),
                                   child: InkWell(
                                     borderRadius: BorderRadius.circular(14),
-                                    splashColor: DonationAppTheme
-                                        .lightTheme
-                                        .colorScheme
-                                        .primary
-                                        .withOpacity(0.1),
-                                    highlightColor: DonationAppTheme
-                                        .lightTheme
-                                        .colorScheme
-                                        .primary
-                                        .withOpacity(0.05),
+                                    splashColor: DonationAppTheme.lightTheme.colorScheme.primary.withOpacity(0.1),
+                                    highlightColor: DonationAppTheme.lightTheme.colorScheme.primary.withOpacity(0.05),
                                     onTap: () {
                                       Navigator.pop(context);
                                     },
@@ -856,10 +792,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                       alignment: Alignment.center,
                                       child: CustomIconWidget(
                                         iconName: 'arrow_back',
-                                        color: DonationAppTheme
-                                            .lightTheme
-                                            .colorScheme
-                                            .onSurface,
+                                        color: DonationAppTheme.lightTheme.colorScheme.onSurface,
                                         size: 6.w,
                                       ),
                                     ),
@@ -873,48 +806,29 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                                   children: [
                                     Text(
                                       "Find Organizations",
-                                      style: DonationAppTheme
-                                          .lightTheme
-                                          .textTheme
-                                          .headlineSmall
-                                          ?.copyWith(
-                                            fontWeight: FontWeight.w700,
-                                            fontSize: 24,
-                                            color: DonationAppTheme
-                                                .lightTheme
-                                                .colorScheme
-                                                .onSurface,
-                                          ),
+                                      style: DonationAppTheme.lightTheme.textTheme.headlineSmall?.copyWith(
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 24,
+                                        color: DonationAppTheme.lightTheme.colorScheme.onSurface,
+                                      ),
                                     ),
                                     SizedBox(height: 0.5.h),
                                     Text(
                                       "Donate your ingredients to those in need",
-                                      style: DonationAppTheme
-                                          .lightTheme
-                                          .textTheme
-                                          .bodyMedium
-                                          ?.copyWith(
-                                            color: DonationAppTheme
-                                                .lightTheme
-                                                .colorScheme
-                                                .onSurface
-                                                .withOpacity(0.7),
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w400,
-                                          ),
+                                      style: DonationAppTheme.lightTheme.textTheme.bodyMedium?.copyWith(
+                                        color: DonationAppTheme.lightTheme.colorScheme.onSurface.withOpacity(0.7),
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w400,
+                                      ),
                                     ),
                                   ],
                                 ),
                               ),
                               SizedBox(width: 3.w),
-                              // User Profile Widget
                               UserProfileWidget(size: 12.w, showBorder: true),
                             ],
                           ),
-
                           SizedBox(height: 3.h),
-
-                          // Search Bar
                           SearchBarWidget(
                             currentLocation: _currentLocation,
                             onSearchTap: _onSearchTap,
@@ -923,35 +837,27 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         ],
                       ),
                     ),
-
                     SizedBox(height: 2.h),
-
                     if (!_isOnline) ...[
                       OfflineBannerWidget(lastUpdated: _lastUpdated),
                       SizedBox(height: 2.h),
                     ],
-
                     Align(
                       alignment: Alignment.centerLeft,
                       child: Padding(
                         padding: EdgeInsets.symmetric(horizontal: 4.w),
                         child: Text(
                           "Urgent Needs",
-                          style: DonationAppTheme
-                              .lightTheme
-                              .textTheme
-                              .titleLarge
-                              ?.copyWith(
-                                fontWeight: FontWeight.w700,
-                                fontSize: 20,
-                              ),
+                          style: DonationAppTheme.lightTheme.textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 20,
+                          ),
                         ),
                       ),
                     ),
                     SizedBox(height: 1.5.h),
                     UrgentNeedsBannerWidget(),
                     SizedBox(height: 3.h),
-
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 4.w),
                       child: Row(
@@ -959,14 +865,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         children: [
                           Text(
                             "Nearby Organizations",
-                            style: DonationAppTheme
-                                .lightTheme
-                                .textTheme
-                                .titleLarge
-                                ?.copyWith(
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 20,
-                                ),
+                            style: DonationAppTheme.lightTheme.textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 20,
+                            ),
                           ),
                           if (_isLoading)
                             Container(
@@ -975,10 +877,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                               child: CircularProgressIndicator(
                                 strokeWidth: 2.5,
                                 valueColor: AlwaysStoppedAnimation<Color>(
-                                  DonationAppTheme
-                                      .lightTheme
-                                      .colorScheme
-                                      .primary,
+                                  DonationAppTheme.lightTheme.colorScheme.primary,
                                 ),
                               ),
                             ),
@@ -990,31 +889,113 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 ),
               ),
 
-              _isLoading
-                  ? SliverFillRemaining(
+              // ========== StreamBuilder for Firestore organizations (REPLACEMENT) ==========
+              StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('organizations')
+                    .orderBy('createdAt', descending: true)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return SliverFillRemaining(
+                      child: Center(
+                        child: Text('Error loading organizations: ${snapshot.error}'),
+                      ),
+                    );
+                  }
+
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return SliverFillRemaining(
                       child: Center(
                         child: CircularProgressIndicator(
-                          color:
-                              DonationAppTheme.lightTheme.colorScheme.primary,
+                          color: DonationAppTheme.lightTheme.colorScheme.primary,
                         ),
                       ),
-                    )
-                  : _displayOrganizations.isEmpty
-                  ? SliverFillRemaining(
+                    );
+                  }
+
+                  // Map Firestore docs -> display-friendly maps
+                  final docs = snapshot.data!.docs.map((d) {
+                    final data = d.data() as Map<String, dynamic>;
+                    return {
+                      "id": data['mockId'] ?? d.id.hashCode,
+                      "placeId": data['placeId'] ?? null, // optional if you store it
+                      "name": data['name'] ?? '',
+                      "logo": data['image'] ?? '',
+                      "rating": (data['rating'] is num) ? (data['rating'] as num).toDouble() : 0.0,
+                      "distance": (data['distance'] != null) ? data['distance'].toString() : '',
+                      "currentNeeds": (data['currentNeeds'] as List<dynamic>?)?.map((e) {
+                        if (e is Map && e['item'] != null) return e['item'].toString();
+                        return e.toString();
+                      }).toList() ?? [],
+                      "phone": (data['contact']?['phone']) ?? '',
+                      "address": (data['contact']?['address']) ?? '',
+                      "isFavorited": false,
+                      "raw": data,
+                    };
+                  }).toList();
+
+                  // Filter both sources (Firestore docs + any filtered list) using your filter guard
+                  final filteredDocs = _filterOrganizations(docs);
+                  final filteredDisplayOrgs = _filterOrganizations(_displayOrganizations);
+
+                  // Combine them while deduplicating.
+                  // Priority: keep Firestore entries first, then append unique filtered orgs.
+                  final List<Map<String, dynamic>> combined = [];
+                  final Set<String> seenKeys = {};
+
+                  String makeKey(Map<String, dynamic> org) {
+                    // prefer placeId -> id -> normalized name
+                    final placeId = (org['placeId'] ?? '').toString();
+                    if (placeId.isNotEmpty) return 'placeId::$placeId';
+                    final id = org['id']?.toString() ?? '';
+                    if (id.isNotEmpty) return 'id::$id';
+                    final name = (org['name'] ?? '').toString().toLowerCase().trim();
+                    return 'name::$name';
+                  }
+
+                  // Add firestore items first
+                  for (final org in filteredDocs) {
+                    final key = makeKey(org);
+                    if (!seenKeys.contains(key)) {
+                      seenKeys.add(key);
+                      combined.add(org);
+                    }
+                  }
+
+                  // Then append any items from _displayOrganizations that are not already present
+                  for (final org in filteredDisplayOrgs) {
+                    final key = makeKey(org);
+                    if (!seenKeys.contains(key)) {
+                      seenKeys.add(key);
+                      combined.add(org);
+                    }
+                  }
+
+                  // If still empty, fallback to master list (filtered)
+                  final finalList = combined.isEmpty ? _filterOrganizations(_masterOrganizations) : combined;
+
+                  if (finalList.isEmpty) {
+                    return SliverFillRemaining(
                       child: EmptyStateWidget(onExpandSearch: _onExpandSearch),
-                    )
-                  : SliverList(
-                      delegate: SliverChildBuilderDelegate((context, index) {
-                        final organization = _displayOrganizations[index];
-                        return OrganizationCardWidget(
-                          organization: organization,
-                          onTap: () => _onOrganizationTap(organization),
-                          onCall: () => _onCallOrganization(organization),
-                          onDirections: () => _onGetDirections(organization),
-                          onFavorite: () => _onToggleFavorite(organization),
-                        );
-                      }, childCount: _displayOrganizations.length),
-                    ),
+                    );
+                  }
+
+                  return SliverList(
+                    delegate: SliverChildBuilderDelegate((context, index) {
+                      final organization = finalList[index];
+                      return OrganizationCardWidget(
+                        organization: organization,
+                        onTap: () => _onOrganizationTap(organization),
+                        onCall: () => _onCallOrganization(organization),
+                        onDirections: () => _onGetDirections(organization),
+                        onFavorite: () => _onToggleFavorite(organization),
+                      );
+                    }, childCount: finalList.length),
+                  );
+                },
+              ),
+              
               SliverToBoxAdapter(child: SizedBox(height: 10.h)),
             ],
           ),
@@ -1035,17 +1016,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         type: BottomNavigationBarType.fixed,
         backgroundColor: DonationAppTheme.lightTheme.colorScheme.surface,
         selectedItemColor: DonationAppTheme.lightTheme.colorScheme.primary,
-        unselectedItemColor: DonationAppTheme.lightTheme.colorScheme.onSurface
-            .withValues(alpha: 0.6),
+        unselectedItemColor: DonationAppTheme.lightTheme.colorScheme.onSurface.withValues(alpha: 0.6),
         elevation: 8,
         items: [
           BottomNavigationBarItem(
             icon: CustomIconWidget(
               iconName: 'home',
-              color: _currentIndex == 0
-                  ? DonationAppTheme.lightTheme.colorScheme.primary
-                  : DonationAppTheme.lightTheme.colorScheme.onSurface
-                        .withValues(alpha: 0.6),
+              color: _currentIndex == 0 ? DonationAppTheme.lightTheme.colorScheme.primary : DonationAppTheme.lightTheme.colorScheme.onSurface.withValues(alpha: 0.6),
               size: 24,
             ),
             label: 'Home',
@@ -1053,10 +1030,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           BottomNavigationBarItem(
             icon: CustomIconWidget(
               iconName: 'search',
-              color: _currentIndex == 1
-                  ? DonationAppTheme.lightTheme.colorScheme.primary
-                  : DonationAppTheme.lightTheme.colorScheme.onSurface
-                        .withValues(alpha: 0.6),
+              color: _currentIndex == 1 ? DonationAppTheme.lightTheme.colorScheme.primary : DonationAppTheme.lightTheme.colorScheme.onSurface.withValues(alpha: 0.6),
               size: 24,
             ),
             label: 'Search',
@@ -1064,10 +1038,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           BottomNavigationBarItem(
             icon: CustomIconWidget(
               iconName: 'favorite',
-              color: _currentIndex == 2
-                  ? DonationAppTheme.lightTheme.colorScheme.primary
-                  : DonationAppTheme.lightTheme.colorScheme.onSurface
-                        .withValues(alpha: 0.6),
+              color: _currentIndex == 2 ? DonationAppTheme.lightTheme.colorScheme.primary : DonationAppTheme.lightTheme.colorScheme.onSurface.withValues(alpha: 0.6),
               size: 24,
             ),
             label: 'Favorites',
@@ -1075,10 +1046,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           BottomNavigationBarItem(
             icon: CustomIconWidget(
               iconName: 'person',
-              color: _currentIndex == 3
-                  ? DonationAppTheme.lightTheme.colorScheme.primary
-                  : DonationAppTheme.lightTheme.colorScheme.onSurface
-                        .withValues(alpha: 0.6),
+              color: _currentIndex == 3 ? DonationAppTheme.lightTheme.colorScheme.primary : DonationAppTheme.lightTheme.colorScheme.onSurface.withValues(alpha: 0.6),
               size: 24,
             ),
             label: 'Reciepes',

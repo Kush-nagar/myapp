@@ -1,2 +1,63 @@
-https://www.youtube.com/watch?v=k7TVYn5jwQk
-https://www.youtube.com/watch?v=VCWRxy0G4_Y
+here before showing the google sign in button, first show 2 button "sign is as a user" or "sign in as an organization" adn when the user clicks on any one of the button it should take them to sign in with a google account. then if the selected the "sin in as an organization" create a new screen called get_organization_data where the user who sign in as an orgnaization adn enter the data for their organization just like in the mock data. Then this data should be saved in firebase and should show up in the home_screen as an organization card.
+
+here is hwo the mock data currently looks like:
+{
+    "mockId": 1,
+    "name": "Elm Community Food Pantry #1",
+    "image":
+        "https://images.unsplash.com/photo-1546554137-f86b9593a222?auto=format&fit=crop&w=1400&q=60",
+    "rating": 3.6,
+    "distance": 15.3,
+    "description":
+        "A volunteer-run pantry serving Shoreline neighborhoods with regular grocery distributions, fresh produce, and emergency boxes.",
+    "services": [
+      "Holiday Meal Boxes",
+      "SNAP Enrollment Help",
+      "Cooking Classes",
+    ],
+    "currentNeeds": [
+      {
+        "item": "Fresh Produce",
+        "priority": "low",
+        "description": "Fresh, unbruised",
+        "quantity": "14",
+      },
+      {
+        "item": "Toilet Paper",
+        "priority": "medium",
+        "description": "Toilet Paper - sealed",
+        "quantity": "194",
+      },
+      {
+        "item": "Canned Tuna",
+        "priority": "urgent",
+        "description": "Canned Tuna - sealed",
+        "quantity": "303+",
+      },
+      {
+        "item": "Canned Beans",
+        "priority": "high",
+        "description": "Canned Beans - sealed",
+        "quantity": "425",
+      },
+    ],
+    "donationGuidelines": {
+      "acceptedItems": [
+        "Baby supplies",
+        "Dry goods",
+        "Canned goods",
+        "Bottled water",
+      ],
+      "restrictions": [
+        "Securely sealed packages only",
+        "No home-cooked perishable foods",
+      ],
+      "procedures": ["Drop off at front desk", "Book pickup online"],
+    },
+    "contact": {
+      "phone": "(201) 137-1097",
+      "email": "elm-community-food-pantry-1@example.org",
+      "address": "101 Washington Ave, Shoreline, FL",
+      "website": "https://elm-community-food-pantry-1.org",
+    },
+  },
