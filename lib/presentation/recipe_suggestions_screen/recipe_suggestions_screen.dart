@@ -12,6 +12,7 @@ import '../../services/gemini_service.dart';
 import './widgets/empty_state_widget.dart';
 import './widgets/filter_chip_widget.dart';
 import './widgets/ingredient_chip_widget.dart';
+import './widgets/loading_recipes_widget.dart';
 import './widgets/quick_actions_dialog_widget.dart';
 import './widgets/recipe_card_widget.dart';
 import './widgets/sort_bottom_sheet_widget.dart';
@@ -118,6 +119,11 @@ class _RecipeSuggestionsScreenState extends State<RecipeSuggestionsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Show full-screen loading widget when initially loading recipes
+    if (isLoading && allRecipes.isEmpty) {
+      return const Scaffold(body: SafeArea(child: LoadingRecipesWidget()));
+    }
+
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
