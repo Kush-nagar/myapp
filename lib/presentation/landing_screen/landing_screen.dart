@@ -87,7 +87,7 @@ class _LandingScreenState extends State<LandingScreen>
                   SizedBox(width: 3.w),
                   Expanded(
                     child: Text(
-                      'Add Ingredients',
+                      'Add Food Item(s)',
                       style: DonationAppTheme.lightTheme.textTheme.titleLarge
                           ?.copyWith(fontWeight: FontWeight.w700, fontSize: 20),
                     ),
@@ -100,7 +100,7 @@ class _LandingScreenState extends State<LandingScreen>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Enter ingredient names manually',
+                      'Enter food item(s) manually',
                       style: DonationAppTheme.lightTheme.textTheme.bodyMedium
                           ?.copyWith(
                             color: DonationAppTheme
@@ -343,8 +343,8 @@ class _LandingScreenState extends State<LandingScreen>
                             ),
                           ],
                         ),
-                        child: Icon(
-                          Icons.restaurant_menu_rounded,
+                        child: CustomIconWidget(
+                          iconName: "food_bank",
                           size: 20.w,
                           color: Colors.white,
                         ),
@@ -387,7 +387,7 @@ class _LandingScreenState extends State<LandingScreen>
                         theme: theme,
                         icon: Icons.camera_alt_rounded,
                         title: 'Scan',
-                        subtitle: 'Use camera to identify ingredients',
+                        subtitle: 'Use camera to identify food items',
                         onTap: _navigateToCamera,
                         isPrimary: true,
                       ),
@@ -400,7 +400,7 @@ class _LandingScreenState extends State<LandingScreen>
                         theme: theme,
                         icon: Icons.edit_rounded,
                         title: 'Manual Entry',
-                        subtitle: 'Add ingredients by typing',
+                        subtitle: 'Add food items manually',
                         onTap: _navigateToManualEntry,
                         isPrimary: false,
                       ),

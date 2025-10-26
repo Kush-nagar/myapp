@@ -695,7 +695,7 @@ class _RecognitionResultsScreenState extends State<RecognitionResultsScreen> {
                                   size: 6.w,
                                 ),
                                 label: Text(
-                                  'Make It',
+                                  'Cook It',
                                   style: AppTheme
                                       .lightTheme
                                       .textTheme

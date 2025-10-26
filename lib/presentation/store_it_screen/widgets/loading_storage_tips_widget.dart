@@ -329,7 +329,7 @@ class _LoadingStorageTipsWidgetState extends State<LoadingStorageTipsWidget>
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 2.w),
           child: Text(
-            'Our AI is analyzing your ingredients to provide personalized storage recommendations for optimal freshness.',
+            'Our AI is analyzing your ingredients to provide personalized storage recommendations for optimal freshness and increasing shelf life!',
             style: theme.textTheme.bodyLarge?.copyWith(
               color: colorScheme.onSurfaceVariant,
               height: 1.5,

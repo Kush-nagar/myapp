@@ -330,7 +330,7 @@ class _LoadingRecipesWidgetState extends State<LoadingRecipesWidget>
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 2.w),
           child: Text(
-            'Our AI is analyzing your ingredients to create delicious recipe suggestions tailored to your pantry.',
+            'Our AI is analyzing added ingredients to suggest delicious recipe ideas tailored to your pantry.',
             style: theme.textTheme.bodyLarge?.copyWith(
               color: colorScheme.onSurfaceVariant,
               height: 1.5,

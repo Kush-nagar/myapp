@@ -50,7 +50,7 @@ class _SplashScreenState extends State<SplashScreen>
       ),
     );
 
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 2.0).animate(
       CurvedAnimation(
         parent: _fadeAnimationController,
         curve: Curves.easeInOut,
@@ -321,8 +321,8 @@ class _SplashScreenState extends State<SplashScreen>
                                 ),
                                 child: Center(
                                   child: CustomIconWidget(
-                                    iconName: 'restaurant',
-                                    size: 12.w,
+                                    iconName: 'food_bank',
+                                    size: 15.w,
                                     color: AppTheme.lightTheme.primaryColor,
                                   ),
                                 ),
@@ -332,7 +332,7 @@ class _SplashScreenState extends State<SplashScreen>
 
                               // App Name
                               Text(
-                                'Chefify',
+                                'SavR',
                                 style: AppTheme
                                     .lightTheme
                                     .textTheme
@@ -348,13 +348,12 @@ class _SplashScreenState extends State<SplashScreen>
 
                               // Tagline
                               Text(
-                                'Cook Smart, Eat Better',
-                                style: AppTheme.lightTheme.textTheme.titleMedium
+                                'Save, Share, Savor',
+                                style: AppTheme.lightTheme.textTheme.titleLarge
                                     ?.copyWith(
-                                      color: Colors.white.withValues(
-                                        alpha: 0.9,
-                                      ),
+                                      color: Colors.white,
                                       fontWeight: FontWeight.w400,
+                                      fontStyle: FontStyle.italic,
                                     ),
                               ),
                             ],

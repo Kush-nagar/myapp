@@ -220,7 +220,7 @@ class _SignInScreenState extends State<SignInScreen> {
                         ),
                       ),
                       child: Icon(
-                        Icons.restaurant_menu_rounded,
+                        Icons.food_bank,
                         size: 60,
                         color: Colors.white,
                       ),
@@ -231,7 +231,7 @@ class _SignInScreenState extends State<SignInScreen> {
 
                   // Welcome Text
                   Text(
-                    'Welcome Back',
+                    'Welcome!',
                     style: theme.textTheme.headlineLarge?.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -240,7 +240,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Sign in to continue your food journey',
+                    'Sign in to reduce food waste and make a difference!',
                     style: theme.textTheme.bodyLarge?.copyWith(
                       color: Colors.white.withOpacity(0.9),
                       fontWeight: FontWeight.w400,
