@@ -99,9 +99,9 @@ class _SignInScreenState extends State<SignInScreen> {
             ).pushReplacementNamed(AppRoutes.getOrganizationData);
         }
       } else {
-        // user -> existing flow: camera
+        // user -> existing flow: landing screen
         if (mounted)
-          Navigator.of(context).pushReplacementNamed(AppRoutes.camera);
+          Navigator.of(context).pushReplacementNamed(AppRoutes.landing);
       }
     } catch (e) {
       if (mounted) {

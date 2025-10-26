@@ -51,55 +51,104 @@ class UserProfileSheetWidget extends StatelessWidget {
       ),
     );
 
-    if (shouldLogout == true && context.mounted) {
-      try {
-        // Close the bottom sheet first
-        Navigator.of(context).pop();
+    if (shouldLogout == true) {
+      // Get the root navigator context before it gets invalidated
+      final BuildContext dialogContext = context;
 
-        // Show loading
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) => Center(
+      // Close the bottom sheet first
+      if (context.mounted) {
+        Navigator.of(context).pop();
+      }
+
+      // Small delay to ensure sheet is closed
+      await Future.delayed(const Duration(milliseconds: 100));
+
+      if (!dialogContext.mounted) {
+        print('Context not mounted after closing sheet');
+        return;
+      }
+
+      // Show loading dialog and capture the navigator
+      final navigator = Navigator.of(dialogContext);
+
+      showDialog(
+        context: dialogContext,
+        barrierDismissible: false,
+        builder: (loadingContext) => WillPopScope(
+          onWillPop: () async => false,
+          child: Center(
             child: CircularProgressIndicator(
               color: AppTheme.lightTheme.colorScheme.primary,
             ),
           ),
-        );
+        ),
+      );
+
+      try {
+        print('Starting sign out...');
 
         // Sign out
         await AuthService().signOut();
 
-        if (context.mounted) {
-          // Close loading dialog
-          Navigator.of(context).pop();
+        print('Sign out completed, navigating...');
 
-          // Navigate to sign in screen
-          Navigator.of(
-            context,
-          ).pushNamedAndRemoveUntil(AppRoutes.signIn, (route) => false);
-
-          // Show success message
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: const Text('Successfully signed out'),
-              backgroundColor: AppTheme.lightTheme.colorScheme.tertiary,
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
+        // Close loading dialog - this must happen before navigation
+        try {
+          navigator.pop(); // Close loading dialog
+          print('Closed loading dialog');
+        } catch (e) {
+          print('Error closing dialog: $e');
         }
-      } catch (e) {
-        if (context.mounted) {
-          // Close loading dialog
-          Navigator.of(context).pop();
 
-          ScaffoldMessenger.of(context).showSnackBar(
+        // Small delay before navigation
+        await Future.delayed(const Duration(milliseconds: 200));
+
+        // Check context status
+        print('Context mounted: ${dialogContext.mounted}');
+        print('Attempting navigation to ${AppRoutes.signIn}');
+
+        // Navigate to sign in screen - use the captured navigator
+        try {
+          navigator.pushNamedAndRemoveUntil(AppRoutes.signIn, (route) => false);
+          print('Navigation completed');
+        } catch (e) {
+          print('Navigation error: $e');
+          // Fallback: try using pushReplacement
+          navigator.pushReplacementNamed(AppRoutes.signIn);
+        }
+
+        // Show success message
+        Future.delayed(const Duration(milliseconds: 500), () {
+          try {
+            ScaffoldMessenger.of(dialogContext).showSnackBar(
+              SnackBar(
+                content: const Text('Successfully signed out'),
+                backgroundColor: AppTheme.lightTheme.colorScheme.tertiary,
+                behavior: SnackBarBehavior.floating,
+                duration: const Duration(seconds: 2),
+              ),
+            );
+          } catch (e) {
+            print('Error showing snackbar: $e');
+          }
+        });
+      } catch (e) {
+        print('Sign out error: $e');
+
+        try {
+          // Close loading dialog
+          navigator.pop();
+
+          ScaffoldMessenger.of(dialogContext).showSnackBar(
             SnackBar(
               content: Text('Failed to sign out: ${e.toString()}'),
               backgroundColor: AppTheme.lightTheme.colorScheme.error,
               behavior: SnackBarBehavior.floating,
+              duration: const Duration(seconds: 3),
             ),
           );
+        } catch (navError) {
+          print('Error handling sign out error: $navError');
         }
       }
     }

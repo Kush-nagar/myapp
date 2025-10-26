@@ -400,434 +400,483 @@ class _RecognitionResultsScreenState extends State<RecognitionResultsScreen> {
             ),
           ],
         ),
-        body: RefreshIndicator(
-          onRefresh: () async {
-            _tryAgainRecognition();
-          },
-          child: Column(
-            children: [
-              // Header with captured image
-              CapturedImageHeaderWidget(
-                imagePath: _capturedImagePath,
-                onRetake: _retakePhoto,
-              ),
+        body: Stack(
+          children: [
+            RefreshIndicator(
+              onRefresh: () async {
+                _tryAgainRecognition();
+              },
+              child: Column(
+                children: [
+                  // Header with captured image
+                  CapturedImageHeaderWidget(
+                    imagePath: _capturedImagePath,
+                    onRetake: _retakePhoto,
+                  ),
 
-              // Main content
-              Expanded(
-                child: _isLoading
-                    ? const LoadingSkeletonWidget()
-                    : _recognizedIngredients.isEmpty
-                    ? EmptyRecognitionWidget(
-                        onTryAgain: _tryAgainRecognition,
-                        onAddManually: _showAddIngredientModal,
-                      )
-                    : SingleChildScrollView(
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 4.w,
-                          vertical: 2.h,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  // Main content
+                  Expanded(
+                    child: _isLoading
+                        ? const LoadingSkeletonWidget()
+                        : _recognizedIngredients.isEmpty
+                        ? EmptyRecognitionWidget(
+                            onTryAgain: _tryAgainRecognition,
+                            onAddManually: _showAddIngredientModal,
+                          )
+                        : SingleChildScrollView(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            padding: EdgeInsets.only(
+                              left: 4.w,
+                              right: 4.w,
+                              top: 2.h,
+                              bottom: 22.h, // Space for floating buttons
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text(
-                                      'Recognized Ingredients',
-                                      style: AppTheme
-                                          .lightTheme
-                                          .textTheme
-                                          .titleMedium
-                                          ?.copyWith(
-                                            fontWeight: FontWeight.w700,
-                                          ),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Recognized Ingredients',
+                                          style: AppTheme
+                                              .lightTheme
+                                              .textTheme
+                                              .titleMedium
+                                              ?.copyWith(
+                                                fontWeight: FontWeight.w700,
+                                              ),
+                                        ),
+                                        SizedBox(height: 0.5.h),
+                                        Text(
+                                          '${_recognizedIngredients.length} items detected',
+                                          style: AppTheme
+                                              .lightTheme
+                                              .textTheme
+                                              .bodySmall
+                                              ?.copyWith(
+                                                color: AppTheme
+                                                    .lightTheme
+                                                    .colorScheme
+                                                    .onSurfaceVariant,
+                                              ),
+                                        ),
+                                      ],
                                     ),
-                                    SizedBox(height: 0.5.h),
-                                    Text(
-                                      '${_recognizedIngredients.length} items detected',
-                                      style: AppTheme
-                                          .lightTheme
-                                          .textTheme
-                                          .bodySmall
-                                          ?.copyWith(
-                                            color: AppTheme
-                                                .lightTheme
-                                                .colorScheme
-                                                .onSurfaceVariant,
+                                    OutlinedButton.icon(
+                                      onPressed: _showAddIngredientModal,
+                                      icon: CustomIconWidget(
+                                        iconName: 'add',
+                                        color: AppTheme
+                                            .lightTheme
+                                            .colorScheme
+                                            .primary,
+                                        size: 5.w,
+                                      ),
+                                      label: Text(
+                                        'Add',
+                                        style: AppTheme
+                                            .lightTheme
+                                            .textTheme
+                                            .labelLarge
+                                            ?.copyWith(
+                                              color: AppTheme
+                                                  .lightTheme
+                                                  .colorScheme
+                                                  .primary,
+                                            ),
+                                      ),
+                                      style: OutlinedButton.styleFrom(
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            12,
                                           ),
+                                        ),
+                                      ),
                                     ),
                                   ],
                                 ),
-                                OutlinedButton.icon(
-                                  onPressed: _showAddIngredientModal,
-                                  icon: CustomIconWidget(
-                                    iconName: 'add',
-                                    color:
-                                        AppTheme.lightTheme.colorScheme.primary,
-                                    size: 5.w,
+
+                                SizedBox(height: 2.h),
+
+                                Card(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(14),
                                   ),
-                                  label: Text(
-                                    'Add',
-                                    style: AppTheme
-                                        .lightTheme
-                                        .textTheme
-                                        .labelLarge
-                                        ?.copyWith(
-                                          color: AppTheme
-                                              .lightTheme
-                                              .colorScheme
-                                              .primary,
+                                  elevation: 2,
+                                  shadowColor: const Color.fromARGB(
+                                    255,
+                                    22,
+                                    77,
+                                    1,
+                                  ).withOpacity(1),
+                                  color:
+                                      AppTheme.lightTheme.colorScheme.surface,
+                                  child: Padding(
+                                    padding: EdgeInsets.all(3.w),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Wrap(
+                                          spacing: 2.w,
+                                          runSpacing: 1.5.h,
+                                          children: _recognizedIngredients
+                                              .asMap()
+                                              .entries
+                                              .map((entry) {
+                                                final index = entry.key;
+                                                final ingredient = entry.value;
+
+                                                return Dismissible(
+                                                  key: Key(
+                                                    'ingredient_${ingredient['id']}',
+                                                  ),
+                                                  direction: DismissDirection
+                                                      .endToStart,
+                                                  onDismissed: (_) =>
+                                                      _removeIngredient(index),
+                                                  background: Container(
+                                                    alignment:
+                                                        Alignment.centerRight,
+                                                    padding: EdgeInsets.only(
+                                                      right: 4.w,
+                                                    ),
+                                                    decoration: BoxDecoration(
+                                                      color: AppTheme
+                                                          .lightTheme
+                                                          .colorScheme
+                                                          .error,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            12,
+                                                          ),
+                                                    ),
+                                                    child: CustomIconWidget(
+                                                      iconName: 'delete',
+                                                      color: Colors.white,
+                                                      size: 6.w,
+                                                    ),
+                                                  ),
+                                                  child: IngredientChipWidget(
+                                                    ingredientName:
+                                                        ingredient['name']
+                                                            as String,
+                                                    confidence:
+                                                        (ingredient['confidence']
+                                                                as num)
+                                                            .toDouble(),
+                                                    onRemove: () =>
+                                                        _removeIngredient(
+                                                          index,
+                                                        ),
+                                                    onLongPress: () =>
+                                                        _editIngredientName(
+                                                          index,
+                                                          ingredient['name']
+                                                              as String,
+                                                        ),
+                                                  ),
+                                                );
+                                              })
+                                              .toList(),
                                         ),
-                                  ),
-                                  style: OutlinedButton.styleFrom(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12),
+
+                                        SizedBox(height: 2.h),
+
+                                        // Confidence legend (fixed overflow by using Wrap + constrained chips)
+                                        Container(
+                                          padding: EdgeInsets.all(3.w),
+                                          decoration: BoxDecoration(
+                                            color: AppTheme
+                                                .lightTheme
+                                                .colorScheme
+                                                .surfaceVariant,
+                                            borderRadius: BorderRadius.circular(
+                                              12,
+                                            ),
+                                          ),
+                                          child: Wrap(
+                                            spacing: 3.w,
+                                            runSpacing: 1.2.h,
+                                            children: [
+                                              _buildConfidenceLegend(
+                                                color: AppTheme
+                                                    .lightTheme
+                                                    .colorScheme
+                                                    .tertiary,
+                                                label: 'High (80%+)',
+                                              ),
+                                              _buildConfidenceLegend(
+                                                color: AppTheme
+                                                    .lightTheme
+                                                    .colorScheme
+                                                    .secondary,
+                                                label: 'Medium (50-80%)',
+                                              ),
+                                              _buildConfidenceLegend(
+                                                color: AppTheme
+                                                    .lightTheme
+                                                    .colorScheme
+                                                    .error,
+                                                label: 'Low (<50%)',
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+
+                                        SizedBox(height: 2.h),
+
+                                        // Subtle helper text
+                                        Text(
+                                          'Tip: Long-press an item to edit its name. Swipe left to remove.',
+                                          style: AppTheme
+                                              .lightTheme
+                                              .textTheme
+                                              .bodySmall
+                                              ?.copyWith(
+                                                color: AppTheme
+                                                    .lightTheme
+                                                    .colorScheme
+                                                    .onSurfaceVariant,
+                                              ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
                               ],
                             ),
+                          ),
+                  ),
+                ],
+              ),
+            ),
 
-                            SizedBox(height: 2.h),
-
-                            Card(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(14),
-                              ),
-                              elevation: 2,
-                              shadowColor: const Color.fromARGB(
-                                255,
-                                22,
-                                77,
-                                1,
-                              ).withOpacity(1),
-                              color: AppTheme.lightTheme.colorScheme.surface,
-                              child: Padding(
-                                padding: EdgeInsets.all(3.w),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Wrap(
-                                      spacing: 2.w,
-                                      runSpacing: 1.5.h,
-                                      children: _recognizedIngredients
-                                          .asMap()
-                                          .entries
-                                          .map((entry) {
-                                            final index = entry.key;
-                                            final ingredient = entry.value;
-
-                                            return Dismissible(
-                                              key: Key(
-                                                'ingredient_${ingredient['id']}',
-                                              ),
-                                              direction:
-                                                  DismissDirection.endToStart,
-                                              onDismissed: (_) =>
-                                                  _removeIngredient(index),
-                                              background: Container(
-                                                alignment:
-                                                    Alignment.centerRight,
-                                                padding: EdgeInsets.only(
-                                                  right: 4.w,
-                                                ),
-                                                decoration: BoxDecoration(
-                                                  color: AppTheme
-                                                      .lightTheme
-                                                      .colorScheme
-                                                      .error,
-                                                  borderRadius:
-                                                      BorderRadius.circular(12),
-                                                ),
-                                                child: CustomIconWidget(
-                                                  iconName: 'delete',
-                                                  color: Colors.white,
-                                                  size: 6.w,
-                                                ),
-                                              ),
-                                              child: IngredientChipWidget(
-                                                ingredientName:
-                                                    ingredient['name']
-                                                        as String,
-                                                confidence:
-                                                    (ingredient['confidence']
-                                                            as num)
-                                                        .toDouble(),
-                                                onRemove: () =>
-                                                    _removeIngredient(index),
-                                                onLongPress: () =>
-                                                    _editIngredientName(
-                                                      index,
-                                                      ingredient['name']
-                                                          as String,
-                                                    ),
-                                              ),
-                                            );
-                                          })
-                                          .toList(),
-                                    ),
-
-                                    SizedBox(height: 2.h),
-
-                                    // Confidence legend (fixed overflow by using Wrap + constrained chips)
-                                    Container(
-                                      padding: EdgeInsets.all(3.w),
-                                      decoration: BoxDecoration(
-                                        color: AppTheme
-                                            .lightTheme
-                                            .colorScheme
-                                            .surfaceVariant,
-                                        borderRadius: BorderRadius.circular(12),
+            // Floating action buttons at the bottom
+            if (!_isLoading && _recognizedIngredients.isNotEmpty)
+              Positioned(
+                left: 4.w,
+                right: 4.w,
+                bottom: 4.h,
+                child: Container(
+                  padding: EdgeInsets.all(3.w),
+                  decoration: BoxDecoration(
+                    color: AppTheme.lightTheme.scaffoldBackgroundColor,
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 20,
+                        offset: const Offset(0, -5),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // First row: Find Recipes and Add More buttons
+                      Row(
+                        children: [
+                          // Find Recipes Button - Green
+                          Expanded(
+                            child: SizedBox(
+                              height: 7.h,
+                              child: ElevatedButton.icon(
+                                onPressed: _findRecipes,
+                                icon: CustomIconWidget(
+                                  iconName: 'restaurant_menu',
+                                  color: Colors.white,
+                                  size: 6.w,
+                                ),
+                                label: Text(
+                                  'Make It',
+                                  style: AppTheme
+                                      .lightTheme
+                                      .textTheme
+                                      .titleMedium
+                                      ?.copyWith(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600,
                                       ),
-                                      child: Wrap(
-                                        spacing: 3.w,
-                                        runSpacing: 1.2.h,
-                                        children: [
-                                          _buildConfidenceLegend(
-                                            color: AppTheme
-                                                .lightTheme
-                                                .colorScheme
-                                                .tertiary,
-                                            label: 'High (80%+)',
-                                          ),
-                                          _buildConfidenceLegend(
-                                            color: AppTheme
-                                                .lightTheme
-                                                .colorScheme
-                                                .secondary,
-                                            label: 'Medium (50-80%)',
-                                          ),
-                                          _buildConfidenceLegend(
-                                            color: AppTheme
-                                                .lightTheme
-                                                .colorScheme
-                                                .error,
-                                            label: 'Low (<50%)',
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-
-                                    SizedBox(height: 2.h),
-
-                                    // Subtle helper text
-                                    Text(
-                                      'Tip: Long-press an item to edit its name. Swipe left to remove.',
-                                      style: AppTheme
-                                          .lightTheme
-                                          .textTheme
-                                          .bodySmall
-                                          ?.copyWith(
-                                            color: AppTheme
-                                                .lightTheme
-                                                .colorScheme
-                                                .onSurfaceVariant,
-                                          ),
-                                    ),
-
-                                    SizedBox(height: 1.h),
-
-                                    // Quick actions inside the card (icons added and spacing tightened)
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: ElevatedButton.icon(
-                                            onPressed: _findRecipes,
-                                            icon: CustomIconWidget(
-                                              iconName: 'restaurant_menu',
-                                              color: Colors.white,
-                                              size: 5.w,
-                                            ),
-                                            label: Text(
-                                              'Find Recipes',
-                                              style: AppTheme
-                                                  .lightTheme
-                                                  .textTheme
-                                                  .labelLarge
-                                                  ?.copyWith(
-                                                    color: Colors.white,
-                                                  ),
-                                            ),
-                                            style: ElevatedButton.styleFrom(
-                                              padding: EdgeInsets.symmetric(
-                                                vertical: 1.6.h,
-                                              ),
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(12),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(width: 3.w),
-                                        Expanded(
-                                          child: OutlinedButton.icon(
-                                            onPressed: _donateItems,
-                                            icon: CustomIconWidget(
-                                              iconName: 'favorite',
-                                              color: AppTheme
-                                                  .lightTheme
-                                                  .colorScheme
-                                                  .primary,
-                                              size: 5.w,
-                                            ),
-                                            label: Text(
-                                              'Donate It',
-                                              style: AppTheme
-                                                  .lightTheme
-                                                  .textTheme
-                                                  .labelLarge,
-                                            ),
-                                            style: OutlinedButton.styleFrom(
-                                              padding: EdgeInsets.symmetric(
-                                                vertical: 1.6.h,
-                                              ),
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(12),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-
-                                    SizedBox(height: 2.h),
-
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: OutlinedButton.icon(
-                                            onPressed: _storeItems,
-                                            icon: CustomIconWidget(
-                                              iconName: 'inventory',
-                                              color: AppTheme
-                                                  .lightTheme
-                                                  .colorScheme
-                                                  .onSurface,
-                                              size: 5.w,
-                                            ),
-                                            label: Text(
-                                              'Store It',
-                                              style: AppTheme
-                                                  .lightTheme
-                                                  .textTheme
-                                                  .labelLarge,
-                                            ),
-                                            style: OutlinedButton.styleFrom(
-                                              padding: EdgeInsets.symmetric(
-                                                vertical: 1.6.h,
-                                              ),
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(12),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(width: 3.w),
-                                        SizedBox(
-                                          width: 36.w,
-                                          child: ElevatedButton.icon(
-                                            onPressed: () async {
-                                              // Push camera again but keep current ingredients
-                                              final newIngredients =
-                                                  await Navigator.pushNamed(
-                                                    context,
-                                                    '/camera-screen',
-                                                    arguments: {
-                                                      'existingIngredients':
-                                                          _recognizedIngredients,
-                                                    },
-                                                  );
-
-                                              if (newIngredients != null &&
-                                                  newIngredients
-                                                      is List<
-                                                        Map<String, dynamic>
-                                                      >) {
-                                                setState(() {
-                                                  // Merge old + new
-                                                  _recognizedIngredients.addAll(
-                                                    newIngredients,
-                                                  );
-                                                  // Deduplicate by name
-                                                  final dedup =
-                                                      <
-                                                        String,
-                                                        Map<String, dynamic>
-                                                      >{};
-                                                  for (var it
-                                                      in _recognizedIngredients) {
-                                                    final key =
-                                                        (it['name'] as String)
-                                                            .toLowerCase();
-                                                    if (!dedup.containsKey(
-                                                          key,
-                                                        ) ||
-                                                        (it['confidence']
-                                                                as double) >
-                                                            (dedup[key]!['confidence']
-                                                                as double)) {
-                                                      dedup[key] = it;
-                                                    }
-                                                  }
-                                                  _recognizedIngredients = dedup
-                                                      .values
-                                                      .toList();
-                                                });
-                                              }
-                                            },
-                                            icon: CustomIconWidget(
-                                              iconName: 'add_a_photo',
-                                              color: Colors.white,
-                                              size: 5.w,
-                                            ),
-                                            label: Text(
-                                              'Add Photo',
-                                              style: AppTheme
-                                                  .lightTheme
-                                                  .textTheme
-                                                  .labelLarge
-                                                  ?.copyWith(
-                                                    color: Colors.white,
-                                                  ),
-                                            ),
-                                            style: ElevatedButton.styleFrom(
-                                              padding: EdgeInsets.symmetric(
-                                                vertical: 1.6.h,
-                                              ),
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(12),
-                                              ),
-                                              backgroundColor: AppTheme
-                                                  .lightTheme
-                                                  .colorScheme
-                                                  .secondary,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-
-                                    SizedBox(height: 1.h),
-                                  ],
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(
+                                    0xFF4CAF50,
+                                  ), // Green
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  elevation: 4,
                                 ),
                               ),
                             ),
+                          ),
 
-                            SizedBox(height: 6.h), // Space for bottom area
-                          ],
-                        ),
+                          SizedBox(width: 3.w),
+
+                          // Add More Button - Purple
+                          Expanded(
+                            child: SizedBox(
+                              height: 7.h,
+                              child: ElevatedButton.icon(
+                                onPressed: () async {
+                                  // Push camera again but keep current ingredients
+                                  final newIngredients =
+                                      await Navigator.pushNamed(
+                                        context,
+                                        '/camera-screen',
+                                        arguments: {
+                                          'existingIngredients':
+                                              _recognizedIngredients,
+                                        },
+                                      );
+
+                                  if (newIngredients != null &&
+                                      newIngredients
+                                          is List<Map<String, dynamic>>) {
+                                    setState(() {
+                                      // Merge old + new
+                                      _recognizedIngredients.addAll(
+                                        newIngredients,
+                                      );
+                                      // Deduplicate by name
+                                      final dedup =
+                                          <String, Map<String, dynamic>>{};
+                                      for (var it in _recognizedIngredients) {
+                                        final key = (it['name'] as String)
+                                            .toLowerCase();
+                                        if (!dedup.containsKey(key) ||
+                                            (it['confidence'] as double) >
+                                                (dedup[key]!['confidence']
+                                                    as double)) {
+                                          dedup[key] = it;
+                                        }
+                                      }
+                                      _recognizedIngredients = dedup.values
+                                          .toList();
+                                    });
+                                  }
+                                },
+                                icon: CustomIconWidget(
+                                  iconName: 'add_a_photo',
+                                  color: Colors.white,
+                                  size: 6.w,
+                                ),
+                                label: Text(
+                                  'Add',
+                                  style: AppTheme
+                                      .lightTheme
+                                      .textTheme
+                                      .titleMedium
+                                      ?.copyWith(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(
+                                    0xFF9C27B0,
+                                  ), // Purple
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  elevation: 4,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
+
+                      SizedBox(height: 2.h),
+
+                      // Second row: Donate It and Store It buttons
+                      Row(
+                        children: [
+                          // Donate It Button - Orange
+                          Expanded(
+                            child: SizedBox(
+                              height: 7.h,
+                              child: ElevatedButton.icon(
+                                onPressed: _donateItems,
+                                icon: CustomIconWidget(
+                                  iconName: 'favorite',
+                                  color: Colors.white,
+                                  size: 6.w,
+                                ),
+                                label: Text(
+                                  'Donate It',
+                                  style: AppTheme
+                                      .lightTheme
+                                      .textTheme
+                                      .titleMedium
+                                      ?.copyWith(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(
+                                    0xFFFF9800,
+                                  ), // Orange
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  elevation: 4,
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          SizedBox(width: 3.w),
+
+                          // Store It Button - Light Blue
+                          Expanded(
+                            child: SizedBox(
+                              height: 7.h,
+                              child: ElevatedButton.icon(
+                                onPressed: _storeItems,
+                                icon: CustomIconWidget(
+                                  iconName: 'inventory',
+                                  color: Colors.white,
+                                  size: 6.w,
+                                ),
+                                label: Text(
+                                  'Store It',
+                                  style: AppTheme
+                                      .lightTheme
+                                      .textTheme
+                                      .titleMedium
+                                      ?.copyWith(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(
+                                    0xFF03A9F4,
+                                  ), // Light Blue
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  elevation: 4,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ],
-          ),
+          ],
         ),
       ),
     );

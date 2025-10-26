@@ -6,6 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../routes/app_routes.dart';
+import '../../widgets/user_profile_widget.dart';
 
 class GetOrganizationDataScreen extends StatefulWidget {
   const GetOrganizationDataScreen({Key? key}) : super(key: key);
@@ -537,6 +538,12 @@ class _GetOrganizationDataScreenState extends State<GetOrganizationDataScreen> {
         ),
         centerTitle: true,
         elevation: 0,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 16.0),
+            child: Center(child: UserProfileWidget(size: 40, showBorder: true)),
+          ),
+        ],
       ),
       body: _saving
           ? Center(

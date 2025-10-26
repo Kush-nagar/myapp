@@ -331,6 +331,10 @@ class _CameraScreenState extends State<CameraScreen>
     _showErrorSnackBar('Settings screen coming soon!');
   }
 
+  void _navigateBackToLanding() {
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -348,8 +352,9 @@ class _CameraScreenState extends State<CameraScreen>
             left: 0,
             right: 0,
             child: CameraTopBarWidget(
+              onBackPressed: _navigateBackToLanding,
               onSettingsPressed: _navigateToSettings,
-              showBackButton: false,
+              showBackButton: true,
             ),
           ),
           Positioned(

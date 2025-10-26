@@ -16,7 +16,7 @@ import '../presentation/store_it_screen/store_it_screen.dart';
 import '../presentation/store_it_screen/storage_tip_detail_screen.dart';
 import '../presentation/sign_in_screen/sign_in_screen.dart';
 import '../presentation/get_organization_data/get_organization_data.dart';
-
+import '../presentation/landing_screen/landing_screen.dart';
 
 class AppRoutes {
   static const String initial = '/';
@@ -36,12 +36,14 @@ class AppRoutes {
   static const String storageTipDetail = '/storage-tip-detail-screen';
   static const String signIn = '/sign-in-screen';
   static const String getOrganizationData = '/get-organization-data';
+  static const String landing = '/landing-screen';
 
   static Map<String, WidgetBuilder> routes = {
     initial: (context) => const SplashScreen(),
     splash: (context) => const SplashScreen(),
     onboarding: (context) => const OnboardingScreen(),
     signIn: (context) => const SignInScreen(),
+    landing: (context) => const LandingScreen(),
     camera: (context) => const CameraScreen(),
     recognitionResults: (context) => const RecognitionResultsScreen(),
     recipeSuggestions: (context) => const RecipeSuggestionsScreen(),
