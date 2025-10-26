@@ -43,6 +43,7 @@ class NeedItem {
 
 class _GetOrganizationDataScreenState extends State<GetOrganizationDataScreen> {
   final _formKey = GlobalKey<FormState>();
+  Key _needsEditorKey = UniqueKey(); // Key to force rebuild of needs editor
   final nameCtrl = TextEditingController();
   final imageCtrl = TextEditingController();
   final ratingCtrl = TextEditingController(text: '3.6');
@@ -354,8 +355,24 @@ class _GetOrganizationDataScreenState extends State<GetOrganizationDataScreen> {
                     children: [
                       Expanded(
                         child: OutlinedButton(
-                          onPressed: () {
+                          onPressed: () async {
                             Navigator.of(context).pop();
+                            // Use a small delay to ensure dialog is fully closed
+                            await Future.delayed(
+                              const Duration(milliseconds: 100),
+                            );
+                            if (mounted) {
+                              _clearForm();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: const Text(
+                                    'Form cleared. You can create another organization.',
+                                  ),
+                                  backgroundColor: theme.colorScheme.primary,
+                                  duration: const Duration(seconds: 2),
+                                ),
+                              );
+                            }
                           },
                           style: OutlinedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 12),
@@ -364,7 +381,7 @@ class _GetOrganizationDataScreenState extends State<GetOrganizationDataScreen> {
                             ),
                           ),
                           child: const Text(
-                            'Stay Here',
+                            'Create Another',
                             style: TextStyle(fontSize: 14),
                           ),
                         ),
@@ -507,6 +524,37 @@ class _GetOrganizationDataScreenState extends State<GetOrganizationDataScreen> {
         );
       },
     );
+  }
+
+  void _clearForm() {
+    // Clear all text controllers
+    nameCtrl.clear();
+    imageCtrl.clear();
+    ratingCtrl.text = '3.6';
+    distanceCtrl.text = '1.0';
+    descriptionCtrl.clear();
+    servicesCtrl.text =
+        'Holiday Meal Boxes,SNAP Enrollment Help,Cooking Classes';
+    phoneCtrl.clear();
+    emailCtrl.clear();
+    addressCtrl.clear();
+    websiteCtrl.clear();
+
+    // Clear selected image
+    _selectedImage = null;
+
+    // Reset the needs list to one empty row
+    _needsList.clear();
+    _needsList.add(NeedItem());
+
+    // Generate new key to force rebuild of form fields
+    _needsEditorKey = UniqueKey();
+
+    // Reset form validation
+    _formKey.currentState?.reset();
+
+    // Trigger UI update
+    setState(() {});
   }
 
   @override
@@ -1032,6 +1080,7 @@ class _GetOrganizationDataScreenState extends State<GetOrganizationDataScreen> {
     final theme = Theme.of(context);
 
     return Column(
+      key: _needsEditorKey, // Key to force rebuild when form is cleared
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(

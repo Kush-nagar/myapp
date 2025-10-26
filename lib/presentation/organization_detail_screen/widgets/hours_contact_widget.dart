@@ -167,6 +167,8 @@ class _HoursContactWidgetState extends State<HoursContactWidget> {
                       color: DonationAppTheme.lightTheme.colorScheme.primary,
                       fontWeight: FontWeight.w600,
                     ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
             if (isExpanded) ...[
@@ -205,12 +207,18 @@ class _HoursContactWidgetState extends State<HoursContactWidget> {
                                   .bodyMedium
                                   ?.copyWith(fontWeight: FontWeight.w500),
                             ),
-                            Text(
-                              entry.value as String,
-                              style: DonationAppTheme
-                                  .lightTheme
-                                  .textTheme
-                                  .bodyMedium,
+                            SizedBox(width: 2.w),
+                            Flexible(
+                              child: Text(
+                                entry.value as String,
+                                style: DonationAppTheme
+                                    .lightTheme
+                                    .textTheme
+                                    .bodyMedium,
+                                textAlign: TextAlign.end,
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                              ),
                             ),
                           ],
                         ),
