@@ -58,7 +58,7 @@ class CameraTopBarWidget extends StatelessWidget {
               : SizedBox(width: 10.w),
           // App title
           Text(
-            'Chefify',
+            'SavR',
             style: AppTheme.lightTheme.textTheme.titleLarge?.copyWith(
               color: Colors.white,
               fontWeight: FontWeight.w600,

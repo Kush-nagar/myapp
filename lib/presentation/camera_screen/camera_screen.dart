@@ -139,7 +139,7 @@ class _CameraScreenState extends State<CameraScreen>
       builder: (context) => PermissionDialogWidget(
         title: 'Camera Permission Required',
         message:
-            'Chefify needs camera access to recognize ingredients from photos.',
+            'SavR needs camera access to recognize ingredients from photos.',
         onOpenSettings: () async {
           Navigator.of(context).pop();
           await openAppSettings();
