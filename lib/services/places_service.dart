@@ -56,7 +56,7 @@ class PlaceDetails {
 }
 
 class PlacesService {
-  final String _apiKey = 'AIzaSyC2Ei8wsfT5dJuF9s3lkZC3je2G1NEzTB0';
+  final String _apiKey = 'API KEY GOES HERE';
   final http.Client _client;
 
   PlacesService({http.Client? client}) : _client = client ?? http.Client();
