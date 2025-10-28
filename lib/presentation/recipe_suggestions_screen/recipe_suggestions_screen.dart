@@ -64,7 +64,7 @@ class _RecipeSuggestionsScreenState extends State<RecipeSuggestionsScreen> {
     // IMPORTANT: don't hardcode your real API key in source for production.
     // Use secure storage, environment variables or native build-time variables.
     _geminiService = GeminiService(
-      apiKey: 'AIzaSyBHaPa5KHVpklOP9d_I6B1q4W-4d09FfsQ',
+      apiKey: 'API KEY GOES HERE',
       //unsplashKey: '98KP7IyvCWdYX0TLN8rTiKWBux0SW70ohmnTxmyb_o8',
     );
 
