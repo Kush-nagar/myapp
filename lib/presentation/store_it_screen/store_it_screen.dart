@@ -28,7 +28,7 @@ class _StoreItScreenState extends State<StoreItScreen> {
   }
 
   void _initializeService() {
-    const apiKey = 'AIzaSyBHaPa5KHVpklOP9d_I6B1q4W-4d09FfsQ';
+    const apiKey = 'API KEY GOES HERE';
     _storageTipsService = StorageTipsService(apiKey: apiKey);
     _loadArguments();
   }
