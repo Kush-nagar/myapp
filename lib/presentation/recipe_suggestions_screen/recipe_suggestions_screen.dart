@@ -65,7 +65,6 @@ class _RecipeSuggestionsScreenState extends State<RecipeSuggestionsScreen> {
     // Use secure storage, environment variables or native build-time variables.
     _geminiService = GeminiService(
       apiKey: 'API KEY GOES HERE',
-      //unsplashKey: '98KP7IyvCWdYX0TLN8rTiKWBux0SW70ohmnTxmyb_o8',
     );
 
     // ✅ Read navigation args after the first frame is rendered
